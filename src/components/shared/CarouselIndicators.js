@@ -1,6 +1,6 @@
 import React, {useMemo, useRef} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
-import {colors, sizes} from '../constants/theme';
+import {colors, sizes} from '../../constants/theme';
 
 const CarouselIndicators = ({
   slidesCount,

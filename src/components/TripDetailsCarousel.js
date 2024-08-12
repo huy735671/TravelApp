@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import {View, StyleSheet, Image, Animated} from 'react-native';
 import {sizes} from '../constants/theme';
 import {SharedElement} from 'react-navigation-shared-element';
-import CarouselIndicators from './CarouselIndicators';
+import CarouselIndicators from './shared/CarouselIndicators';
 import * as Animatable from 'react-native-animatable';
 
 const TripDetailsCarousel = ({slides, id}) => {

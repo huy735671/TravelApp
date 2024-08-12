@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import { sizes, spacing } from '../constants/theme';
+import { sizes, spacing } from '../../constants/theme';
 
 const ScreenHeader = ({mainTitle, secondTitle}) => {
   return (

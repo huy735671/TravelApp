@@ -1,9 +1,8 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import FavoriteScreen from '../screens/FavoriteScreen';
-import Icon from '../components/Icon';
+import Icon from '../components/shared/Icon';
 import {colors, sizes} from '../constants/theme';
 import {StyleSheet, Animated} from 'react-native';
 import HomeNavigator from './HomeNavigator';
