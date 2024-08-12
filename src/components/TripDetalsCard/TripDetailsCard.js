@@ -1,11 +1,22 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {colors, sizes, spacing} from '../../constants/theme';
 import * as Animatable from 'react-native-animatable';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {colors, sizes, spacing} from '../../constants/theme';
+import CustomHandler from './CustomHandler';
+import CustomBackground from './CustomBackground';
 
 const TripDetailsCard = ({trip}) => {
+  const snapPoints = useMemo(() => ['30%', '80%']);
+  
   return (
-    <View style={styles.card}>
+    <BottomSheet
+      index={0}
+      snapPoints={snapPoints}
+      handleComponent={CustomHandler}
+      backgroundComponent={CustomBackground}
+      >
+      
       <Animatable.View
         style={styles.header}
         animation="fadeInUp"
@@ -15,18 +26,11 @@ const TripDetailsCard = ({trip}) => {
         <Text style={styles.title}>{trip.title}</Text>
         <Text style={styles.location}>{trip.location}</Text>
       </Animatable.View>
-    </View>
+    </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '30%',
-  },
   header: {
     paddingVertical: spacing.l,
     paddingHorizontal: spacing.l,

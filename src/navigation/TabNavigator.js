@@ -85,10 +85,10 @@ const TabNavigator = () => {
 const styles = StyleSheet.create({
   indicator: {
     position: 'absolute',
-    width: 10,
+    width: 15,
     height: 2,
-    left: sizes.width / tabs.length / 2 - 5,
-    bottom: 30,
+    left: sizes.width / tabs.length / 2 - 8,
+    bottom: 40,
     backgroundColor: colors.primary,
     zIndex: 100,
   },
