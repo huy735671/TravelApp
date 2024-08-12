@@ -15,6 +15,7 @@ import Animated, {
 import Icon from '../shared/Icon';
 import Divider from '../shared/Divider';
 import SectionHeader from '../shared/SectionHeader';
+import RatingOverall from '../shared/Rating/RatingOverall';
 
 const AnimatedDivider = Animated.createAnimatedComponent(Divider);
 
@@ -112,9 +113,11 @@ const TripDetailsCard = ({trip}) => {
 
       <AnimatedDivider style={contentStyle} />
       <BottomSheetScrollView
+        style={styles.scrollBox}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}>
         <Animated.View style={contentStyle}>
+          <RatingOverall rating={trip.rating} containerStyle={styles.rating}/>
           <SectionHeader
             title="Sumary"
             containerStyle={styles.SectionHeader}
@@ -124,6 +127,12 @@ const TripDetailsCard = ({trip}) => {
           <View style={styles.summary}>
             <Text style={styles.summaryText}>{trip.description}</Text>
           </View>
+
+          <SectionHeader
+            title="Hotels"
+            containerStyle={styles.SectionHeader}
+            titleStyle={styles.sectionTitle}
+          />
         </Animated.View>
       </BottomSheetScrollView>
     </BottomSheet>
@@ -151,6 +160,10 @@ const styles = StyleSheet.create({
   locationIcon: {
     tintColor: colors.gray,
   },
+  scrollBox:{
+    marginTop: spacing.s,
+    marginBottom: spacing.m,
+  },
   SectionHeader: {
     marginTop: spacing.m,
   },
@@ -158,14 +171,15 @@ const styles = StyleSheet.create({
     color: colors.lightGray,
     fontWeight: 'normal',
   },
-  summary:{
-    marginHorizontal:spacing.l,
+  summary: {
+    marginHorizontal: spacing.l,
   },
-  summaryText:{
+  summaryText: {
     color: colors.primary,
   },
-
-
+  rating:{
+    marginHorizontal: spacing.l,
+  },
 });
 
 export default TripDetailsCard;
