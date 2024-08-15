@@ -1,9 +1,9 @@
 import React, {useRef} from 'react';
 import {View, StyleSheet, Image, Animated} from 'react-native';
-import {sizes} from '../constants/theme';
 import {SharedElement} from 'react-navigation-shared-element';
-import CarouselIndicators from './shared/CarouselIndicators';
 import * as Animatable from 'react-native-animatable';
+import CarouselIndicators from '../shared/CarouselIndicators';
+import { sizes } from '../../constants/theme';
 
 const TripDetailsCarousel = ({slides, id}) => {
   const scrollAnimated = useRef(new Animated.Value(0)).current;

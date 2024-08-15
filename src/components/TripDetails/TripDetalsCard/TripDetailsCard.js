@@ -2,7 +2,6 @@ import React, {useMemo} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import {colors, sizes, spacing} from '../../constants/theme';
 import CustomHandler from './CustomHandler';
 import CustomBackground from './CustomBackground';
 import Animated, {
@@ -12,10 +11,13 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import Icon from '../shared/Icon';
-import Divider from '../shared/Divider';
-import SectionHeader from '../shared/SectionHeader';
-import RatingOverall from '../shared/Rating/RatingOverall';
+import HotelsCarousel from './HotelsCarousel';
+import Icon from '../../shared/Icon';
+import Divider from '../../shared/Divider';
+import SectionHeader from '../../shared/SectionHeader';
+import RatingOverall from '../../shared/Rating/RatingOverall';
+import Reviews from '../../Reviews/Reviews';
+import { colors, sizes, spacing } from '../../../constants/theme';
 
 const AnimatedDivider = Animated.createAnimatedComponent(Divider);
 
@@ -90,6 +92,7 @@ const TripDetailsCard = ({trip}) => {
       snapPoints={snapPoints}
       handleComponent={CustomHandler}
       backgroundComponent={CustomBackground}>
+
       <Animatable.View
         style={styles.header}
         animation="fadeInUp"
@@ -110,6 +113,7 @@ const TripDetailsCard = ({trip}) => {
           </Animated.View>
         </View>
       </Animatable.View>
+      
 
       <AnimatedDivider style={contentStyle} />
       <BottomSheetScrollView
@@ -117,11 +121,14 @@ const TripDetailsCard = ({trip}) => {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}>
         <Animated.View style={contentStyle}>
-          <RatingOverall rating={trip.rating} containerStyle={styles.rating}/>
+          <RatingOverall rating={trip.rating} containerStyle={styles.rating} />
+          
           <SectionHeader
             title="Sumary"
             containerStyle={styles.SectionHeader}
             titleStyle={styles.sectionTitle}
+            onPress={() => {}}
+            buttonTitle="See All"
           />
 
           <View style={styles.summary}>
@@ -132,7 +139,21 @@ const TripDetailsCard = ({trip}) => {
             title="Hotels"
             containerStyle={styles.SectionHeader}
             titleStyle={styles.sectionTitle}
+            onPress={() => {}}
+            buttonTitle="See All"
           />
+
+          <HotelsCarousel hotels={trip.hotels} />
+         
+
+          <SectionHeader
+            title="Reviews"
+            containerStyle={styles.sectionHeader}
+            titleStyle={styles.sectionTitle}
+            onPress={() => {}}
+            buttonTitle="See All"
+          />
+          <Reviews reviews={trip.reviews} />
         </Animated.View>
       </BottomSheetScrollView>
     </BottomSheet>
@@ -160,7 +181,7 @@ const styles = StyleSheet.create({
   locationIcon: {
     tintColor: colors.gray,
   },
-  scrollBox:{
+  scrollBox: {
     marginTop: spacing.s,
     marginBottom: spacing.m,
   },
@@ -177,7 +198,7 @@ const styles = StyleSheet.create({
   summaryText: {
     color: colors.primary,
   },
-  rating:{
+  rating: {
     marginHorizontal: spacing.l,
   },
 });

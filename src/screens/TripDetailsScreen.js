@@ -6,8 +6,9 @@ import Icon from '../components/shared/Icon';
 
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import * as Animatable from 'react-native-animatable';
-import TripDetailsCarousel from '../components/TripDetailsCarousel';
-import TripDetailsCard from '../components/TripDetalsCard/TripDetailsCard';
+import TripDetailsCard from '../components/TripDetails/TripDetalsCard/TripDetailsCard';
+import FavoriteButton from '../components/shared/FavoriteButton';
+import TripDetailsCarousel from '../components/TripDetails/TripDetailsCarousel';
 
 const TripDetailsScreen = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
@@ -28,6 +29,16 @@ const TripDetailsScreen = ({navigation, route}) => {
           onPress={navigation.goBack}
         />
       </Animatable.View>
+
+      <Animatable.View
+        style={[styles.favoriteButton, {marginTop: insets.top}]}
+        animation="fadeIn"
+        delay={500}
+        duration={400}
+        easing="ease-in-out">
+        <FavoriteButton onPress={()=>{}}/>
+      </Animatable.View>
+
       <TripDetailsCarousel slides={slides}  id={trip.id}/>
      
       <TripDetailsCard trip={trip} />
@@ -60,6 +71,11 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: spacing.l,
+    zIndex: 1,
+  },
+  favoriteButton:{
+    position: 'absolute',
+    right: spacing.l,
     zIndex: 1,
   },
   backIcon: {

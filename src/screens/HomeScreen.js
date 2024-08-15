@@ -3,10 +3,10 @@ import React from 'react';
 import {colors} from '../constants/theme';
 import MainHeader from '../components/shared/MainHeader';
 import ScreenHeader from '../components/shared/ScreenHeader';
-import TopPlacesCorousel from '../components/TopPlacesCorousel';
+import TopPlacesCorousel from '../components/Home/TopPlacesCorousel';
 import {PLACES, TOP_PLACES} from '../data';
 import SectionHeader from '../components/shared/SectionHeader';
-import TripsList from '../components/TripsList';
+import TripsList from '../components/Home/TripsList';
 
 const HomeScreen = () => {
   return (
