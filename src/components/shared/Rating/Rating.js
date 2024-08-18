@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {AirbnbRating} from 'react-native-ratings';
+import {Rating} from 'react-native-ratings'; // Thay thế AirbnbRating bằng Rating
 import {colors} from '../../../constants/theme';
 import {
   getCorrectRating,
@@ -8,9 +8,9 @@ import {
   getRatingLabel,
 } from './utils';
 
-const Rating = ({
-  showLabelInline,
-  showLabelTop,
+const StarRating = ({
+  showLabelInline = false,
+  showLabelTop = false,
   containerStyle,
   rating,
   disabled = true,
@@ -19,22 +19,33 @@ const Rating = ({
   const _rating = getCorrectRating(rating);
   return (
     <View
-      style={[styles.container, containerStyle].concat(
+      style={[
+        styles.container,
+        containerStyle,
         showLabelInline ? styles.containerRow : null,
-      )}>
+      ]}>
       {showLabelTop && (
         <Text style={styles.label}>
           {getRatingLabel(_rating)} {getFractionDigitsRating(rating)}
         </Text>
       )}
-      <AirbnbRating
+      <Rating
+        type="star"
+        imageSize={size}
+        readonly={disabled}
+        startingValue={_rating}
+        ratingColor={colors.primary}
+        ratingBackgroundColor={colors.lightGray}
+      />
+
+      {/* <AirbnbRating
         defaultRating={_rating}
         count={5}
         showRating={false}
         selectedColor={colors.primary}
         isDisabled={disabled}
         size={size}
-      />
+      /> */}
       {showLabelInline && (
         <Text style={styles.label}>{getFractionDigitsRating(rating)}</Text>
       )}
@@ -58,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Rating;
+export default StarRating;

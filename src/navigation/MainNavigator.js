@@ -4,6 +4,7 @@ import TabNavigator from './TabNavigator';
 import {StatusBar} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import TripDetailsScreen from '../screens/TripDetailsScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -11,15 +12,26 @@ const MainNavigator = () => {
   return (
     <NavigationContainer>
       <StatusBar hidden />
-      <Stack.Navigator>
+
+      <Stack.Navigator >
+        
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+          }}
+        />
+
         <Stack.Screen
           name="Root"
           component={TabNavigator}
           options={{
             headerShown: false,
             useNativeDriver: true,
-            gestureEnabled:false,
-
+            gestureEnabled: false,
           }}
         />
         <Stack.Screen
@@ -28,7 +40,7 @@ const MainNavigator = () => {
           options={{
             headerShown: false,
             useNativeDriver: true,
-            gestureEnabled:false,
+            gestureEnabled: false,
 
             cardStyleInterpolator: ({current: {progress}}) => ({
               cardStyle: {
@@ -37,8 +49,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-
-
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -6,6 +6,7 @@ import Icon from '../components/shared/Icon';
 import {colors, sizes} from '../constants/theme';
 import {StyleSheet, Animated} from 'react-native';
 import HomeNavigator from './HomeNavigator';
+import UserScreen from '../screens/UserScreen';
 
 const tabs = [
   {
@@ -19,6 +20,10 @@ const tabs = [
   {
     name: 'Favorite',
     screen: FavoriteScreen,
+  },
+  {
+    name: 'User',
+    screen: UserScreen,
   },
 ];
 
@@ -65,6 +70,9 @@ const TabNavigator = () => {
           );
         })}
       </Tab.Navigator>
+
+
+
       <Animated.View
         style={[
           styles.indicator,
@@ -84,10 +92,10 @@ const TabNavigator = () => {
 const styles = StyleSheet.create({
   indicator: {
     position: 'absolute',
-    width: 15,
+    width: 20,
     height: 2,
-    left: sizes.width / tabs.length / 2 - 8,
-    bottom: 40,
+    left: sizes.width / tabs.length / 2 - 10,
+    bottom: 45,
     backgroundColor: colors.primary,
     zIndex: 100,
   },

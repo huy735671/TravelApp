@@ -8,9 +8,8 @@ const CARD_WIDTH_SPACING = CARD_WIDTH + spacing.l;
 const Carousel = ({renderItem, items = []}) => {
   return (
     <FlatList
-      data={items} 
+      data={items}
       horizontal
-
       style={styles.container}
       snapToInterval={CARD_WIDTH_SPACING}
       decelerationRate="fast"

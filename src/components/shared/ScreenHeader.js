@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import { sizes, spacing } from '../../constants/theme';
+import { colors, sizes, spacing } from '../../constants/theme';
 
 const ScreenHeader = ({mainTitle, secondTitle}) => {
   return (
@@ -21,9 +21,12 @@ const styles = StyleSheet.create({
     mainTitle:{
         fontSize: sizes.title,
         fontWeight:'bold',
+        color: colors.black,
     },
     secondTitle:{
         fontSize: sizes.title,
+        color: colors.lightGray,
+
     },
     
 });
