@@ -20,7 +20,7 @@ const SignUp = () => {
     
   return (
     <View style={styles.container}>
-      <Text style={styles.titleHeader}>Get started.</Text>
+      <Text style={styles.titleHeader}>...</Text>
 
       <View style={styles.bodyContainer}>
         <FontAwesome name="user" size={30} style={styles.LoginIcon} />

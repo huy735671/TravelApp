@@ -5,9 +5,10 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-
-import ProfileHeader from '../components/Profile/profileHeader';
+import ProfileHeader from '../components/Profile/ProfileHeader';
 import ProfileService from '../components/Profile/ProfileService';
+
+
 
 export default function UserScreen() {
   return (

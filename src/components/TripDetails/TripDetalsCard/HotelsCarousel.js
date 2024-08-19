@@ -1,6 +1,5 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
-
 import Carousel from '../../shared/Carousel';
 import Icon from '../../shared/Icon';
 import Rating from '../../shared/Rating/Rating';
@@ -14,7 +13,7 @@ const CARD_HEIGHT = 200;
 
 const HotelsCarousel = ({hotels}) => {
   return (
-    <Carousel
+    <Carousel 
       items={hotels}
       renderItem={({item, style}) => {
         return (
@@ -50,6 +49,7 @@ const HotelsCarousel = ({hotels}) => {
 const styles = StyleSheet.create({
   card: {
     height: CARD_HEIGHT,
+    width: sizes.width - 40,
   },
   content: {
     height: 88,

@@ -7,6 +7,7 @@ const CARD_WIDTH_SPACING = CARD_WIDTH + spacing.l;
 
 const Carousel = ({renderItem, items = []}) => {
   return (
+    
     <FlatList
       data={items}
       horizontal
