@@ -1,12 +1,19 @@
-import React from 'react'
-import MainNavigator from './src/navigation/MainNavigator'
-import { SafeAreaView } from 'react-native'
+import React from 'react';
+import MainNavigator from './src/navigation/MainNavigator';
+import { SafeAreaView, StyleSheet } from 'react-native';
 
 const App = () => {
   return (
-   <MainNavigator/>
-  )
-}
+    <SafeAreaView style={styles.container}>
+      <MainNavigator />
+    </SafeAreaView>
+  );
+};
 
-export default App
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
+export default App;

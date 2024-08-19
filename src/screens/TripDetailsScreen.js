@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Image} from 'react-native';
-import {colors, sizes, spacing} from '../constants/theme';
+import {colors, shadow, sizes, spacing} from '../constants/theme';
 
 import Icon from '../components/shared/Icon';
 
@@ -23,11 +23,7 @@ const TripDetailsScreen = ({navigation, route}) => {
         delay={500}
         duration={400}
         easing="ease-in-out">
-        <Icon
-          icon="ArrowLeft"
-          style={styles.backIcon}
-          onPress={navigation.goBack}
-        />
+        <Icon icon="Back" style={styles.backIcon} onPress={navigation.goBack} />
       </Animatable.View>
 
       <Animatable.View
@@ -36,11 +32,11 @@ const TripDetailsScreen = ({navigation, route}) => {
         delay={500}
         duration={400}
         easing="ease-in-out">
-        <FavoriteButton onPress={()=>{}}/>
+        <FavoriteButton onPress={() => {}} />
       </Animatable.View>
 
-      <TripDetailsCarousel slides={slides}  id={trip.id}/>
-     
+      <TripDetailsCarousel slides={slides} id={trip.id} />
+
       <TripDetailsCard trip={trip} />
     </View>
   );
@@ -73,13 +69,16 @@ const styles = StyleSheet.create({
     left: spacing.l,
     zIndex: 1,
   },
-  favoriteButton:{
+  favoriteButton: {
     position: 'absolute',
     right: spacing.l,
     zIndex: 1,
   },
   backIcon: {
-    tintColor: colors.white,
+    backgroundColor: colors.white,
+    padding: 4,
+    borderRadius: sizes.radius,
+    ...shadow.light,
   },
 });
 

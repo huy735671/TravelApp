@@ -7,7 +7,9 @@ const Notification = require('../../assets/icons/Notification.png');
 const ArrowLeft = require('../../assets/icons/Arrow_Left.png');
 const Location = require('../../assets/icons/Location.png');
 const User = require('../../assets/icons/User.png')
-const PasswordEye = require('../../assets/icons/PasswordEye.png')
+const Back = require('../../assets/icons/Back.png');
+const Filter = require('../../assets/icons/Filter.png');
+
 
 
 
@@ -21,5 +23,6 @@ export default {
   ArrowLeft,
   Location,
   User,
-  PasswordEye,
+  Back,
+  Filter,
 };
