@@ -4,7 +4,7 @@ import React from 'react';
 const SIGN_IN = 'SIGN_IN';
 const SIGN_UP = 'SIGN_UP';
 
-const LoginHome = ({page, setPage}) => {
+const LoginHeader = ({page, setPage}) => {
   return (
     <View style={{flex: 1}}>
       <View style={{width: '100%', height: '100%'}}>
@@ -33,7 +33,7 @@ const LoginHome = ({page, setPage}) => {
   );
 };
 
-export default LoginHome;
+export default LoginHeader;
 
 const styles = StyleSheet.create({
   container: {

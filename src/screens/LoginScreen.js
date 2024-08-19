@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import LoginHome from '../components/SignInUp/LoginHome';
+import LoginHome from '../components/SignInUp/LoginHeader';
 import Login from '../components/SignInUp/Login';
 import FooterLogin from '../components/SignInUp/FooterLogin';
 import SignUp from '../components/SignInUp/SignUp';

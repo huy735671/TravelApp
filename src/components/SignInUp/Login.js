@@ -11,12 +11,18 @@ import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
 import {colors, sizes} from '../../constants/theme';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [pwdHidden, setPwdHidden] = useState(true);
+  
+  const navigation = useNavigation();
 
+  const handlerLogin= ()=>{
+    navigation.replace('Root');
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.titleHeader}>Login your account.</Text>
@@ -62,7 +68,7 @@ const Login = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.buttonLogin}>
+      <TouchableOpacity onPress={handlerLogin} style={styles.buttonLogin}>
         <Text style={styles.buttonLoginText}>Login</Text>
       </TouchableOpacity>
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import TabNavigator from './TabNavigator';
 import {StatusBar} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import TripDetailsScreen from '../screens/TripDetailsScreen';
 import LoginScreen from '../screens/LoginScreen';
+import MenuNavigator from './MenuNavigator'; 
 
 const Stack = createSharedElementStackNavigator();
 
@@ -12,9 +12,7 @@ const MainNavigator = () => {
   return (
     <NavigationContainer>
       <StatusBar hidden />
-
-      <Stack.Navigator >
-        
+      <Stack.Navigator>
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -24,10 +22,9 @@ const MainNavigator = () => {
             gestureEnabled: false,
           }}
         />
-
         <Stack.Screen
           name="Root"
-          component={TabNavigator}
+          component={MenuNavigator} 
           options={{
             headerShown: false,
             useNativeDriver: true,
@@ -41,7 +38,6 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: false,
-
             cardStyleInterpolator: ({current: {progress}}) => ({
               cardStyle: {
                 opacity: progress,
