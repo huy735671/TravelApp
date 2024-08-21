@@ -3,8 +3,8 @@ import React from 'react'
 
 const FavoriteScreen = () => {
   return (
-    <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
-      <Text>Favorite</Text>
+    <View>
+      <Text>FavoriteScreen</Text>
     </View>
   )
 }

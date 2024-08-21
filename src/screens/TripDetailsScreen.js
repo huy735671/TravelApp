@@ -15,6 +15,8 @@ const TripDetailsScreen = ({navigation, route}) => {
   const {trip} = route.params;
   const slides = [trip.image, ...trip.gallery];
 
+
+  
   return (
     <View style={styles.container}>
       <Animatable.View
@@ -32,7 +34,8 @@ const TripDetailsScreen = ({navigation, route}) => {
         delay={500}
         duration={400}
         easing="ease-in-out">
-        <FavoriteButton onPress={() => {}} />
+        <FavoriteButton onPress={() => {}} 
+          />
       </Animatable.View>
 
       <TripDetailsCarousel slides={slides} id={trip.id} />

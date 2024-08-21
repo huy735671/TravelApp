@@ -14,7 +14,7 @@ export default LoginScreen = ({navigation}) => {
       <View style={{width: '100%', height: '25%'}}>
         <LoginHome page={page} setPage={setPage} />
       </View>
-      <View style={{height: '55%', width: '100%', backgroundColor: '#eeeeee',}}>
+      <View style={{height: '60%', width: '100%', backgroundColor: '#eeeeee',}}>
         {page === SIGN_IN ? <Login /> : <SignUp/>}
       </View>
       <View style={{flex: 1}}>

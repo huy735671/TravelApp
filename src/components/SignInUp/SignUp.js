@@ -109,6 +109,7 @@ const SignUp = () => {
           style={styles.textInput}
           onChange={setEmail}
           value={email}
+          keyboardType="phone-pad"
         />
       </View>
 

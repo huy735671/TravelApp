@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {colors, shadow} from '../../constants/theme';
 import Icon from './Icon';
 
-const FavoriteButton = ({active, style}) => {
+const FavoriteButton = ({active, style, onPress}) => {
   return (
     <View
       style={[

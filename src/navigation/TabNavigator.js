@@ -3,10 +3,12 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FavoriteScreen from '../screens/FavoriteScreen';
 import Icon from '../components/shared/Icon';
 import {colors, sizes} from '../constants/theme';
-import {StyleSheet, Animated} from 'react-native';
+import {StyleSheet, Animated, View, TouchableOpacity} from 'react-native';
 import HomeNavigator from './HomeNavigator';
 import UserScreen from '../screens/UserScreen';
 import SearchNavigator from './SearchNavigator';
+
+import OffersScreen from '../screens/OffersScreen';
 
 const tabs = [
   {
@@ -17,9 +19,10 @@ const tabs = [
     name: 'Search',
     screen: SearchNavigator,
   },
+  
   {
-    name: 'Favorite',
-    screen: FavoriteScreen,
+    name: 'Graph',
+    screen: OffersScreen,
   },
   {
     name: 'User',
@@ -57,6 +60,7 @@ const TabNavigator = () => {
                     />
                   );
                 },
+                
               }}
               listeners={{
                 focus: () => {
@@ -69,9 +73,11 @@ const TabNavigator = () => {
             />
           );
         })}
+
+
       </Tab.Navigator>
 
-
+      
 
       <Animated.View
         style={[
@@ -90,6 +96,7 @@ const TabNavigator = () => {
 };
 
 const styles = StyleSheet.create({
+ 
   indicator: {
     position: 'absolute',
     width: 20,
@@ -99,6 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     zIndex: 100,
   },
+  
 });
 
 export default TabNavigator;

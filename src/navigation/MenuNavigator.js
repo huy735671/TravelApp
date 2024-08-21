@@ -3,6 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import TabNavigator from './TabNavigator';
 import SettingsScreen from '../screens/SettingsScreen';
 import CustomMenuContent from '../components/CustomMenuContent';
+import FavoriteScreen from '../screens/FavoriteScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -18,6 +19,11 @@ const MenuNavigator = () => {
           drawerLabel: 'Home',
           headerShown: false,
         }}
+      />
+      <Drawer.Screen
+        name="Favorite"
+        component={FavoriteScreen}
+        options={{ drawerLabel: 'Favorite' }}
       />
       <Drawer.Screen
         name="Settings"

@@ -262,6 +262,35 @@ export const PLACES = [
   },
 ];
 
+export const OFFERSBANNER =[
+  {
+    id: '1',
+    title: '',
+    description: '',
+    image: require('../../assets/images/code/bannercode.jpg'),
+    expiryDate: '',
+  },
+]
+
+export const OFFERS = [
+  
+  {
+    id: '1',
+    title: 'Giảm giá 40% cho đặt phòng trong tháng này',
+    description: 'Nhận giảm giá 40% cho tất cả các đặt phòng khách sạn trong tháng này.',
+    image: require('../../assets/images/code/uudai1.jpg'),
+    expiryDate: '30/08/2024',
+  },
+  {
+    id: '2',
+    title: 'Giảm giá 50k cho chặng bay',
+    description: 'Nhận giảm giá 50k cho tất cả các tour du lịch.',
+    image: require('../../assets/images/code/vietnamairlines.jpg'),
+    expiryDate: '15/09/2024',
+  },
+];
+
+
 export const SEARCH_PLACES = [...PLACES, ...TOP_PLACES].map(item => ({
   ...item,
   id: Math.random().toString(),

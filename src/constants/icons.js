@@ -9,6 +9,9 @@ const Location = require('../../assets/icons/Location.png');
 const User = require('../../assets/icons/User.png')
 const Back = require('../../assets/icons/Back.png');
 const Filter = require('../../assets/icons/Filter.png');
+const Add = require('../../assets/icons/Add.png');
+const Graph = require('../../assets/icons/Graph.png');
+
 
 
 
@@ -25,4 +28,6 @@ export default {
   User,
   Back,
   Filter,
+  Add,
+  Graph,
 };
