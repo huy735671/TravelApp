@@ -19,7 +19,7 @@ const BannerCode = ({ page, setPage, setShowCodeEntry }) => {
           }}
           disabled={page === 'CODE_ENTRY'}
         >
-          <Text style={styles.tabText}>Nhập Code</Text>
+          <Text style={styles.tabText}>Nhập mã</Text>
           {page === 'CODE_ENTRY' && <View style={styles.tabUnderline} />}
         </TouchableOpacity>
         <TouchableOpacity
@@ -30,7 +30,7 @@ const BannerCode = ({ page, setPage, setShowCodeEntry }) => {
           }}
           disabled={page === 'CODE_SEARCH'}
         >
-          <Text style={styles.tabText}>Của tôi</Text>
+          <Text style={styles.tabText}>Quà của tôi</Text>
           {page === 'CODE_SEARCH' && <View style={styles.tabUnderline} />}
         </TouchableOpacity>
       </View>
