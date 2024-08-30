@@ -5,6 +5,7 @@ import {createSharedElementStackNavigator} from 'react-navigation-shared-element
 import TripDetailsScreen from '../screens/TripDetailsScreen';
 import LoginScreen from '../screens/LoginScreen';
 import MenuNavigator from './MenuNavigator'; 
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -45,6 +46,22 @@ const MainNavigator = () => {
             }),
           }}
         />
+
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

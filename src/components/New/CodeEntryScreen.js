@@ -53,7 +53,7 @@ const CodeEntryScreen = () => {
 
       <View style={styles.footerContainer}>
         <Text style={styles.footerTitleText}>
-          {' '}
+        
           Ưu đãi đặc biệt từ TravelNest
         </Text>
         <View style={styles.footerImageBox}>

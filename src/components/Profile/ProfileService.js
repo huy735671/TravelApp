@@ -1,11 +1,18 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
+
 const ProfileService = () => {
+const navigation = useNavigation();
+const handlerProfile =()=>{
+  navigation.navigate('Profile')
+} 
+
   return (
     <View style={styles.serviceContainer}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handlerProfile}>
         <View style={styles.footerContainer}>
           <Icons
             name={'edit'}
