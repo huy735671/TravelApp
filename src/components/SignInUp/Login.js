@@ -11,28 +11,70 @@ import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
 import {colors, sizes} from '../../constants/theme';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('huynew@gmail.com');
+  const [password, setPassword] = useState('123456Huy');
   const [pwdHidden, setPwdHidden] = useState(true);
-  
+  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+
   const navigation = useNavigation();
 
-  const handlerLogin= ()=>{
-    navigation.replace('Root');
-  }
+  const validateEmail = email => {
+    // Regex để kiểm tra định dạng email
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handlerLogin = async () => {
+    setErrorMessage(''); // Reset error message
+  
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+  
+    // Kiểm tra email hợp lệ
+    if (!validateEmail(trimmedEmail)) {
+      setErrorMessage('Địa chỉ email không hợp lệ.');
+      return;
+    }
+  
+    try {
+      // Đăng nhập bằng email và mật khẩu đã được cắt bỏ khoảng trắng
+      await auth().signInWithEmailAndPassword(trimmedEmail, trimmedPassword);
+      navigation.replace('Root'); // Chuyển hướng sau khi đăng nhập thành công
+    } catch (error) {
+      console.error('Đăng nhập thất bại: ', error);
+      // Xử lý lỗi từ Firebase
+      if (error.code === 'auth/user-not-found') {
+        setErrorMessage('Không tìm thấy tài khoản với địa chỉ email này.');
+      } else if (error.code === 'auth/wrong-password') {
+        setErrorMessage('Sai mật khẩu. Vui lòng thử lại.');
+      } else if (error.code === 'auth/too-many-requests') {
+        setErrorMessage(
+          'Tài khoản đã bị khóa do nhiều lần thử đăng nhập không thành công. Vui lòng thử lại sau.',
+        );
+      } else if (error.code === 'auth/invalid-credential') {
+        setErrorMessage('Thông tin xác thực không hợp lệ, hãy thử lại.');
+      } else {
+        setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại sau.');
+      }
+    }
+  };
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.titleHeader}>Login your account.</Text>
+
       <View style={styles.bodyContainer}>
         <Icons name="email" size={30} style={styles.LoginIcon} />
         <TextInput
           placeholder="E-mail"
-          autoCapitalize={false}
+          autoCapitalize="none"
           style={styles.textInput}
-          onChange={setEmail}
+          onChangeText={setEmail}
           value={email}
         />
       </View>
@@ -41,12 +83,13 @@ const Login = () => {
         <Ionicons name="lock-closed" size={30} style={styles.LoginIcon} />
         <TextInput
           placeholder="Password"
-          autoCapitalize={false}
+          autoCapitalize="none" // Sử dụng "none" để tránh tự động viết hoa
           style={styles.textInput}
           secureTextEntry={pwdHidden}
-          onChange={setPassword}
+          onChangeText={setPassword} // Sử dụng onChangeText thay cho onChange
           value={password}
         />
+       
         <TouchableOpacity
           style={{
             height: '100%',
@@ -61,7 +104,12 @@ const Login = () => {
             style={{width: 24, height: 24, color: 'gray'}}
           />
         </TouchableOpacity>
+
+       
       </View>
+      {errorMessage ? (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        ) : null}
       <View style={styles.forgetPassContainer}>
         <TouchableOpacity style={{position: 'absolute', right: 0}}>
           <Text style={styles.forgetPassText}>Forget password ?</Text>
@@ -72,9 +120,7 @@ const Login = () => {
         <Text style={styles.buttonLoginText}>Login</Text>
       </TouchableOpacity>
 
-      <View>
-        
-      </View>
+      <View></View>
     </View>
   );
 };
@@ -83,7 +129,7 @@ export default Login;
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
+    flex: 1,
     justifyContent: 'center',
   },
   titleHeader: {
@@ -128,11 +174,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#4c8d6e',
     marginTop: 20,
-    marginLeft:30,
+    marginLeft: 30,
     borderRadius: 100,
   },
-  buttonLoginText:{
+  buttonLoginText: {
     color: colors.white,
     fontSize: sizes.h3,
+  },
+  errorText: {
+    color: 'red', // Màu sắc cho thông báo lỗi
+    textAlign: 'center',
+    marginBottom: 10, // Khoảng cách dưới thông báo lỗi
   },
 });

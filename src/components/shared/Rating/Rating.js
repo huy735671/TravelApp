@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {Rating} from 'react-native-ratings'; // Thay thế AirbnbRating bằng Rating
-import {colors} from '../../../constants/theme';
+import { View, StyleSheet, Text } from 'react-native';
+import { Rating } from 'react-native-ratings'; // Sử dụng Rating thay vì AirbnbRating
+import { colors } from '../../../constants/theme';
 import {
   getCorrectRating,
   getFractionDigitsRating,
@@ -16,7 +16,10 @@ const StarRating = ({
   disabled = true,
   size = 12,
 }) => {
+  // Lấy giá trị rating chính xác
   const _rating = getCorrectRating(rating);
+  const formattedRating = getFractionDigitsRating(_rating);
+
   return (
     <View
       style={[
@@ -26,7 +29,7 @@ const StarRating = ({
       ]}>
       {showLabelTop && (
         <Text style={styles.label}>
-          {getRatingLabel(_rating)} {getFractionDigitsRating(rating)}
+          {getRatingLabel(_rating)} {formattedRating}
         </Text>
       )}
       <Rating
@@ -37,22 +40,15 @@ const StarRating = ({
         ratingColor={colors.primary}
         ratingBackgroundColor={colors.lightGray}
       />
-
-      {/* <AirbnbRating
-        defaultRating={_rating}
-        count={5}
-        showRating={false}
-        selectedColor={colors.primary}
-        isDisabled={disabled}
-        size={size}
-      /> */}
       {showLabelInline && (
-        <Text style={styles.label}>{getFractionDigitsRating(rating)}</Text>
+        <Text style={styles.label}>{formattedRating}</Text>
       )}
     </View>
   );
 };
 
+
+// Thêm một số kiểu dáng
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-start',

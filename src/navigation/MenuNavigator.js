@@ -4,6 +4,7 @@ import TabNavigator from './TabNavigator';
 import SettingsScreen from '../screens/SettingsScreen';
 import CustomMenuContent from '../components/CustomMenuContent';
 import FavoriteScreen from '../screens/FavoriteScreen';
+import AllHotelsScreen from '../screens/AllHotelsScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -20,6 +21,17 @@ const MenuNavigator = () => {
           headerShown: false,
         }}
       />
+       <Drawer.Screen
+          name="AllHotels"
+          component={AllHotelsScreen}
+          options={{ drawerLabel: 'All Hotels',
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+          }
+        }
+   
+        />
       <Drawer.Screen
         name="Favorite"
         component={FavoriteScreen}

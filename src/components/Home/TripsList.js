@@ -1,42 +1,67 @@
-import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {colors, sizes, spacing} from '../../constants/theme';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import { colors, sizes, spacing } from '../../constants/theme';
 import FavoriteButton from '../shared/FavoriteButton';
-import {useNavigation} from '@react-navigation/native';
-import {SharedElement} from 'react-navigation-shared-element';
+import { useNavigation } from '@react-navigation/native';
+import { SharedElement } from 'react-navigation-shared-element';
 import Card from '../shared/Card/card';
 import CardMedia from '../shared/Card/CardMedia';
 import CardContent from '../shared/Card/CardContent';
-
+import firestore from '@react-native-firebase/firestore'; // Thêm Firestore SDK
 
 const CARD_WIDTH = sizes.width / 2 - (spacing.l + spacing.l / 2);
 const CARD_HEIGHT = 220;
 
-const TripsList = ({list}) => {
+const TripsList = () => {
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const tripsList = [];
+        const querySnapshot = await firestore().collection('places').get(); 
+        querySnapshot.forEach(doc => {
+          tripsList.push({ id: doc.id, ...doc.data() });
+        });
+        setList(tripsList);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching trips:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchTrips();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={colors.primary} />;
+  }
+
   return (
     <View style={styles.container}>
-      {list.map((item, index) => {
-        return (
-          <Card
-            key={item.id}
-            style={styles.card}
-            onPress={() => {
-              navigation.navigate('TripDetails', {trip: item});
-            }}>
-            <SharedElement id={`trip.${item.id}.image`} style={styles.media}>
-              <CardMedia source={item.image} />
-            </SharedElement>
-            <CardContent style={styles.content}>
-              <View style={styles.titleBox}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.location}>{item.location}</Text>
-              </View>
-              <FavoriteButton />
-            </CardContent>
-          </Card>
-        );
-      })}
+      {list.map((item) => (
+        <Card
+          key={item.id}
+          style={styles.card}
+          onPress={() => {
+            navigation.navigate('TripDetails', { trip: item });
+          }}
+        >
+          <SharedElement id={`trip.${item.id}.image`} style={styles.media}>
+            <CardMedia source={{ uri: item.image }} />
+          </SharedElement>
+          <CardContent style={styles.content}>
+            <View style={styles.titleBox}>
+              <Text style={styles.title}>{item.title}</Text> 
+              <Text style={styles.location}>{item.location}</Text> 
+            </View>
+            <FavoriteButton />
+          </CardContent>
+        </Card>
+      ))}
     </View>
   );
 };

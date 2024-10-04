@@ -4,15 +4,20 @@ import {StatusBar} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import TripDetailsScreen from '../screens/TripDetailsScreen';
 import LoginScreen from '../screens/LoginScreen';
-import MenuNavigator from './MenuNavigator'; 
+import MenuNavigator from './MenuNavigator';
 import ProfileScreen from '../screens/ProfileScreen';
+import HotelDetailsScreen from '../screens/HotelDetailsScreen';
 
 const Stack = createSharedElementStackNavigator();
 
 const MainNavigator = () => {
   return (
     <NavigationContainer>
-      <StatusBar hidden />
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Stack.Navigator>
         <Stack.Screen
           name="Login"
@@ -25,7 +30,7 @@ const MainNavigator = () => {
         />
         <Stack.Screen
           name="Root"
-          component={MenuNavigator} 
+          component={MenuNavigator}
           options={{
             headerShown: false,
             useNativeDriver: true,
@@ -62,6 +67,22 @@ const MainNavigator = () => {
           }}
         />
 
+        <Stack.Screen
+          name="HotelDetails"
+          component={HotelDetailsScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

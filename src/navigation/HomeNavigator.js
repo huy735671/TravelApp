@@ -16,6 +16,8 @@ const HomeNavigator = () => {
           gestureEnabled:false,
         }}
       />
+
+      
     </Stack.Navigator>
   );
 };

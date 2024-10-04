@@ -1,16 +1,19 @@
 import React, {useRef} from 'react';
-import {View, StyleSheet, Image, Animated} from 'react-native';
+import {View, StyleSheet, Image, Animated, Text} from 'react-native';
 import {SharedElement} from 'react-navigation-shared-element';
 import * as Animatable from 'react-native-animatable';
 import CarouselIndicators from '../shared/CarouselIndicators';
-import { sizes } from '../../constants/theme';
+import {sizes} from '../../constants/theme';
 
 const TripDetailsCarousel = ({slides, id}) => {
   const scrollAnimated = useRef(new Animated.Value(0)).current;
+
+  const validSlides = slides.filter(slide => slide); // Lọc bỏ hình ảnh không hợp lệ
+
   return (
     <>
       <Animated.FlatList
-        data={slides}
+        data={validSlides}
         horizontal
         pagingEnabled
         bounces={false}
@@ -18,24 +21,19 @@ const TripDetailsCarousel = ({slides, id}) => {
           [{nativeEvent: {contentOffset: {x: scrollAnimated}}}],
           {useNativeDriver: false},
         )}
-        renderItem={({item: image, index}) => {
-          if (!index) {
-            return (
-              <View style={styles.slide}>
-                <SharedElement id={`trip.${id}.image`} style={styles.slide}>
-                  <Image source={image} style={styles.image} />
-                </SharedElement>
-              </View>
-            );
-          }
-          return (
-            <View style={styles.slide}>
-              <Image source={image} style={styles.image} />
-            </View>
-          );
-        }}
+        renderItem={({item: image, index}) => (
+          <View style={styles.slide}>
+            {index === 0 ? (
+              <SharedElement id={`trip.${id}.image`} style={styles.slide}>
+                <Image source={{uri: image}} style={styles.image} />
+              </SharedElement>
+            ) : (
+              <Image source={{uri: image}} style={styles.image} />
+            )}
+          </View>
+        )}
       />
-      {slides.length > 1 && (
+      {validSlides.length > 1 && (
         <Animatable.View
           style={styles.indicators}
           animation="fadeInUp"
@@ -43,7 +41,7 @@ const TripDetailsCarousel = ({slides, id}) => {
           duration={400}
           easing="ease-in-out">
           <CarouselIndicators
-            slidesCount={slides.length}
+            slidesCount={validSlides.length}
             slideWidth={sizes.width}
             dotSize={12}
             dotSpacing={8}

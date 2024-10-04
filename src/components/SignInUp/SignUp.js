@@ -17,7 +17,7 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [pwdHidden, setPwdHidden] = useState(true);
-    
+
   return (
     <View style={styles.container}>
       <Text style={styles.titleHeader}>...</Text>
@@ -119,7 +119,7 @@ const SignUp = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity  style={styles.buttonLogin}>
+      <TouchableOpacity style={styles.buttonLogin}>
         <Text style={styles.buttonLoginText}>Sign Up</Text>
       </TouchableOpacity>
 

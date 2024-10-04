@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "791369914872",
+    "firebase_url": "https://travelnest-264f8-default-rtdb.firebaseio.com",
+    "project_id": "travelnest-264f8",
+    "storage_bucket": "travelnest-264f8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791369914872:android:fcb322c3af760e8dea5e0d",
+        "android_client_info": {
+          "package_name": "com.travelhotel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBwGEUSg1Nw292GodQtr18qeBOwDhJkxg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
