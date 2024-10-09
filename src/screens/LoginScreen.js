@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, StatusBar} from 'react-native';
 import LoginHome from '../components/SignInUp/LoginHeader';
 import Login from '../components/SignInUp/Login';
 import FooterLogin from '../components/SignInUp/FooterLogin';
@@ -11,6 +11,11 @@ export default LoginScreen = ({navigation}) => {
 
   return (
     <View style={{width: '100%', height: '100%'}}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <View style={{width: '100%', height: '25%'}}>
         <LoginHome page={page} setPage={setPage} />
       </View>

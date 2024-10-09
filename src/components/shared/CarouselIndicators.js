@@ -61,12 +61,14 @@ const CarouselIndicators = ({
                 translateX: scrollAnimated.interpolate({
                   inputRange,
                   outputRange: translateOutputRange,
+                  
                 }),
               },
             ],
             width: scrollAnimated.interpolate({
               inputRange,
               outputRange: widthOutputRange,
+              
             }),
           },
         ]}
@@ -78,7 +80,7 @@ const CarouselIndicators = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
+    backgroundColor: 'transparent',
     paddingHorizontal: 2,
     paddingVertical: 4,
     borderRadius: sizes.radius,

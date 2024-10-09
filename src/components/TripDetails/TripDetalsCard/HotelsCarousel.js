@@ -23,11 +23,13 @@ const HotelsCarousel = ({ location }) => {
       try {
         const snapshot = await firestore().collection('hotels').get();
         const hotelsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log(hotelsData); // Thêm dòng này để kiểm tra dữ liệu
         setHotels(hotelsData);
       } catch (error) {
         console.error('Error fetching hotels: ', error);
       }
     };
+    
 
     fetchHotels();
   }, []);
@@ -63,8 +65,8 @@ const HotelsCarousel = ({ location }) => {
                   />
                 </View>
                 <View style={styles.priceBox}>
-                  <Text style={styles.price}>{item.pricePeerDay} VND</Text>
-                  <Text style={styles.priceCaption}>per day</Text>
+                  <Text style={styles.price}>{item.pricePerNight} VND</Text>
+                  <Text style={styles.priceCaption}>per Night</Text>
                 </View>
               </CardContent>
             </Card>

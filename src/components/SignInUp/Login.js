@@ -13,6 +13,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const Login = () => {
   const [email, setEmail] = useState('huynew@gmail.com');
@@ -30,39 +31,50 @@ const Login = () => {
 
   const handlerLogin = async () => {
     setErrorMessage(''); // Reset error message
-  
+
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
-  
-    // Kiểm tra email hợp lệ
+
     if (!validateEmail(trimmedEmail)) {
       setErrorMessage('Địa chỉ email không hợp lệ.');
       return;
     }
-  
+
     try {
-      // Đăng nhập bằng email và mật khẩu đã được cắt bỏ khoảng trắng
+      // Đăng nhập với Firebase Auth
       await auth().signInWithEmailAndPassword(trimmedEmail, trimmedPassword);
+
+      console.log('Đăng nhập thành công với email:', trimmedEmail);
+
+      // Truy xuất dữ liệu người dùng dựa trên email trong Firestore
+      const querySnapshot = await firestore()
+        .collection('users')
+        .where('email', '==', trimmedEmail) // Truy vấn dựa trên email
+        .get();
+
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach(doc => {
+          const userData = doc.data();
+          console.log('Thông tin người dùng từ Firestore:', userData);
+        });
+      } else {
+        console.log(
+          'Không tìm thấy tài liệu người dùng với email này trong Firestore.',
+        );
+      }
+
       navigation.replace('Root'); // Chuyển hướng sau khi đăng nhập thành công
     } catch (error) {
-      console.error('Đăng nhập thất bại: ', error);
-      // Xử lý lỗi từ Firebase
+      console.error('Đăng nhập thất bại:', error);
       if (error.code === 'auth/user-not-found') {
         setErrorMessage('Không tìm thấy tài khoản với địa chỉ email này.');
       } else if (error.code === 'auth/wrong-password') {
         setErrorMessage('Sai mật khẩu. Vui lòng thử lại.');
-      } else if (error.code === 'auth/too-many-requests') {
-        setErrorMessage(
-          'Tài khoản đã bị khóa do nhiều lần thử đăng nhập không thành công. Vui lòng thử lại sau.',
-        );
-      } else if (error.code === 'auth/invalid-credential') {
-        setErrorMessage('Thông tin xác thực không hợp lệ, hãy thử lại.');
       } else {
         setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại sau.');
       }
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -89,7 +101,7 @@ const Login = () => {
           onChangeText={setPassword} // Sử dụng onChangeText thay cho onChange
           value={password}
         />
-       
+
         <TouchableOpacity
           style={{
             height: '100%',
@@ -104,12 +116,10 @@ const Login = () => {
             style={{width: 24, height: 24, color: 'gray'}}
           />
         </TouchableOpacity>
-
-       
       </View>
       {errorMessage ? (
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        ) : null}
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      ) : null}
       <View style={styles.forgetPassContainer}>
         <TouchableOpacity style={{position: 'absolute', right: 0}}>
           <Text style={styles.forgetPassText}>Forget password ?</Text>

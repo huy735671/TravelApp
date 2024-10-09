@@ -1,4 +1,4 @@
-import {Text, View, StyleSheet, Image, ScrollView, TouchableOpacity} from 'react-native';
+import {Text, View, StyleSheet, Image, ScrollView, TouchableOpacity, StatusBar} from 'react-native';
 import {colors, sizes, spacing} from '../../constants/theme';
 import Icon from '../shared/Icon';
 import StarRating from '../shared/Rating/Rating';
@@ -14,6 +14,11 @@ const HotelDetailsCarousel = ({hotel}) => {
 
   return (
     <ScrollView style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Image source={{uri: hotel.imageUrl}} style={styles.image} />
 
       <View style={styles.content}>
@@ -35,10 +40,10 @@ const HotelDetailsCarousel = ({hotel}) => {
           <Text style={styles.description}>{hotel.description}</Text>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.priceText}>Per day</Text>
+          <Text style={styles.priceText}>Per Night</Text>
           <View style={styles.priceTag}>
             <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: 5}}>
-              {hotel.pricePeerDay} Vnd
+            {hotel.pricePerNight} VND
             </Text>
           </View>
         </View>

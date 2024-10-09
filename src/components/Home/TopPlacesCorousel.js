@@ -55,7 +55,7 @@ const TopPlacesCarousel = () => {
             id={`trip.${item.id}.image`}
             style={StyleSheet.absoluteFillObject}
           >
-            <CardMedia source={{ uri: item.image }} borderBottomRadius />
+            <CardMedia source={{ uri: item.imageUrl }} borderBottomRadius />
           </SharedElement>
           <View style={styles.titleBox}>
             <Text style={styles.title}>{item.title}</Text>

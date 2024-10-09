@@ -9,11 +9,15 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ScrollView,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { colors, shadow } from '../constants/theme';
+import auth from '@react-native-firebase/auth';
+import { colors, shadow, sizes } from '../constants/theme';
 import MainHeader from '../components/shared/MainHeader';
 import Icon from '../components/shared/Icon';
+import HotelsList from '../components/Hotels/hotelsList';
+import LocationsScreen from '../components/Hotels/LocationsScreen';
 
 const { width } = Dimensions.get('screen');
 const cardWidth = width * 0.85;
@@ -23,9 +27,39 @@ const AllHotelsScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredHotels, setFilteredHotels] = useState([]);
+  const [userAddress, setUserAddress] = useState('');
 
   const categories = ['All', 'Popular', 'Top Rated', 'Luxury'];
 
+  // Hàm để lấy địa chỉ của người dùng
+  const fetchUserAddress = async () => {
+    const user = auth().currentUser;
+    if (user) {
+      const email = user.email; // Lấy email của người dùng hiện tại
+      await getAddressFromFirestore(email); // Gọi hàm để lấy địa chỉ từ Firestore
+    } else {
+      console.log('No user is currently signed in.');
+    }
+  };
+
+  // Hàm để tìm địa chỉ trong Firestore
+  const getAddressFromFirestore = async (email) => {
+    try {
+      const userDoc = await firestore().collection('users').where('email', '==', email).get();
+      if (!userDoc.empty) {
+        const userData = userDoc.docs[0].data(); // Lấy dữ liệu từ tài liệu đầu tiên
+        const address = userData.address; // Giả sử địa chỉ nằm trong trường 'address'
+        setUserAddress(address); // Lưu địa chỉ vào state
+        console.log('User Address:', address); // Kiểm tra giá trị của địa chỉ
+      } else {
+        console.log('User document not found'); // Nếu không tìm thấy tài liệu người dùng
+      }
+    } catch (error) {
+      console.error('Error fetching user address:', error);
+    }
+  };
+
+  // Hàm để lấy danh sách khách sạn
   const fetchHotels = async () => {
     try {
       const snapshot = await firestore().collection('hotels').get();
@@ -33,8 +67,10 @@ const AllHotelsScreen = ({ navigation }) => {
         id: doc.id,
         ...doc.data(),
       }));
+      // Lọc khách sạn theo địa chỉ của người dùng
+      const filteredByAddress = hotelsList.filter(hotel => hotel.location === userAddress);
       setHotels(hotelsList);
-      setFilteredHotels(hotelsList); // Initialize filtered hotels
+      setFilteredHotels(filteredByAddress); 
     } catch (error) {
       console.error('Error fetching hotels:', error);
     } finally {
@@ -43,18 +79,24 @@ const AllHotelsScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchHotels();
+    fetchUserAddress(); // Gọi hàm để lấy địa chỉ người dùng
   }, []);
+
+  useEffect(() => {
+    if (userAddress) {
+      fetchHotels(); // Gọi hàm để lấy danh sách khách sạn khi có địa chỉ người dùng
+    }
+  }, [userAddress]);
 
   const handleSearch = text => {
     setSearchQuery(text);
     if (text) {
-      const filtered = hotels.filter(hotel =>
+      const filtered = filteredHotels.filter(hotel =>
         hotel.hotelName.toLowerCase().includes(text.toLowerCase()),
       );
       setFilteredHotels(filtered);
     } else {
-      setFilteredHotels(hotels);
+      fetchHotels(); // Lấy lại danh sách khách sạn nếu không có từ khóa tìm kiếm
     }
   };
 
@@ -75,7 +117,7 @@ const AllHotelsScreen = ({ navigation }) => {
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{hotel.hotelName}</Text>
         <Text style={styles.hotelLocation}>{hotel.location}</Text>
-        <Text style={styles.priceText}>{hotel.pricePeerDay} Vnd/day</Text>
+        <Text style={styles.priceText}>{hotel.pricePerNight} Vnd/Night</Text>
       </View>
     </TouchableOpacity>
   );
@@ -89,11 +131,10 @@ const AllHotelsScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      
+    <ScrollView style={styles.container}>
       <MainHeader title="Travel app" />
+
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>All Hotels</Text>
         <View style={styles.inner}>
           <TextInput
             style={styles.searchInput}
@@ -116,7 +157,7 @@ const AllHotelsScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-
+      <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
       {/* Hotels List */}
       <FlatList
         data={filteredHotels}
@@ -127,7 +168,14 @@ const AllHotelsScreen = ({ navigation }) => {
         contentContainerStyle={styles.flatListContainer}
         snapToInterval={cardWidth}
       />
-    </SafeAreaView>
+
+      <Text style={styles.headerTitle}>Bạn cần gợi ý?</Text>
+      <HotelsList />
+
+      <Text style={styles.headerTitle}>Lên kế hoạch dễ dàng và nhanh chóng?</Text>
+        <LocationsScreen />
+
+    </ScrollView>
   );
 };
 
@@ -135,7 +183,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    
   },
   loadingText: {
     fontSize: 18,
@@ -146,34 +193,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerTitle: {
-    fontSize: 30,
+    fontSize: sizes.h2,
     fontWeight: 'bold',
     color: colors.primary,
+    paddingLeft: 20,
+    paddingVertical: 10,
   },
   searchInput: {
     borderColor: colors.grey,
     borderWidth: 1,
-    borderColor:'#ddd',
-    borderWidth:1,
+    borderColor: '#ddd',
+    borderWidth: 1,
     borderRadius: 10,
     padding: 10,
-    paddingLeft: 50, 
+    paddingLeft: 50,
     marginTop: 10,
     backgroundColor: colors.light,
-    flex: 1, 
+    flex: 1,
     elevation: 5,
     ...shadow.light,
   },
   searchIcon: {
     position: 'absolute',
     top: 15,
-    left: 15, 
+    left: 15,
     zIndex: 1,
   },
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-
   },
   categoriesContainer: {
     flexDirection: 'row',
@@ -193,6 +241,7 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   card: {
     width: cardWidth,

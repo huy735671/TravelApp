@@ -2,11 +2,11 @@ import React from 'react';
 import {Image, TouchableOpacity} from 'react-native';
 import icons from '../../constants/icons';
 
-const Icon = ({onPress, icon, style, size = 32}) => {
+const Icon = ({onPress, icon, style, size = 32 , color = '#000'}) => {
   const image = (
     <Image
       source={icons[icon]}
-      style={[{width: size, height: size, resizeMode: 'cover'}, style]}
+      style={[{width: size, height: size, resizeMode: 'cover' , tintColor: color}, style]}
     />
   );
 

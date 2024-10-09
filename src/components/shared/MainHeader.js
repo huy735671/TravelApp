@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from './Icon';
-import {sizes, spacing} from '../../constants/theme';
+import {colors, sizes, spacing} from '../../constants/theme';
 import {useNavigation} from '@react-navigation/native';
 
 const MainHeader = ({title}) => {
@@ -13,12 +13,19 @@ const MainHeader = ({title}) => {
     <View style={[styles.container, {marginTop: insets.top}]}>
       <Icon
         icon="Hamburger"
+        size={40}
+        color={colors.light}
         onPress={() => {
-          navigation.openDrawer(); 
+          navigation.openDrawer();
         }}
       />
       <Text style={styles.title}>{title}</Text>
-      <Icon icon="Notification" onPress={() => {}} />
+      <Icon
+        icon="Notification"
+        size={40}
+        color={colors.light}
+        onPress={() => {}}
+      />
     </View>
   );
 };
@@ -31,10 +38,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: spacing.l,
+    backgroundColor: '#4c8d6e',
   },
   title: {
-    fontSize: sizes.h3,
+    fontSize: sizes.h2,
     fontWeight: 'bold',
-    color: 'black',
+    color: colors.light,
   },
 });

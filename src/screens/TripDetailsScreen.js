@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, StatusBar} from 'react-native';
 import {colors, shadow, sizes, spacing} from '../constants/theme';
 
 import Icon from '../components/shared/Icon';
@@ -13,12 +13,23 @@ import TripDetailsCarousel from '../components/TripDetails/TripDetailsCarousel';
 const TripDetailsScreen = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const {trip} = route.params;
-  const slides = [trip.image, ...trip.gallery];
 
+  if (!trip) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.red }}>No trip data available.</Text>
+      </View>
+    );
+  }
+  const slides = [trip.imageUrl, ...trip.gallery];
 
-  
   return (
     <View style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
       <Animatable.View
         style={[styles.backButton, {marginTop: insets.top}]}
         animation="fadeIn"
@@ -37,6 +48,7 @@ const TripDetailsScreen = ({navigation, route}) => {
         <FavoriteButton onPress={() => {}} 
           />
       </Animatable.View>
+
 
       <TripDetailsCarousel slides={slides} id={trip.id} />
 

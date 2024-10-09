@@ -51,7 +51,7 @@ const TripsList = () => {
           }}
         >
           <SharedElement id={`trip.${item.id}.image`} style={styles.media}>
-            <CardMedia source={{ uri: item.image }} />
+            <CardMedia source={{ uri: item.imageUrl }} />
           </SharedElement>
           <CardContent style={styles.content}>
             <View style={styles.titleBox}>

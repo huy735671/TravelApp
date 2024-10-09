@@ -16,7 +16,7 @@ export default ScreenHeader;
 const styles = StyleSheet.create({
     container:{
         paddingHorizontal: spacing.l,
-        paddingVertical: spacing.l,
+        paddingVertical: spacing.l ,
     },
     mainTitle:{
         fontSize: sizes.title,

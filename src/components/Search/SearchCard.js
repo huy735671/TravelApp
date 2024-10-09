@@ -12,6 +12,12 @@ import CardContent from '../shared/Card/CardContent';
 const SearchCard = ({item, index}) => {
   const navigation = useNavigation();
   const even = index % 2 === 0;
+
+  // Chọn nguồn hình ảnh dựa trên loại item
+  const imageSource = item.type === 'places' ? item.image : item.imageUrl || 'https://via.placeholder.com/150'; // Hình ảnh dự phòng
+  console.log('Item:', item); // In item ra console
+  console.log('Image Source:', imageSource); // In nguồn hình ảnh ra console
+
   return (
     <Animated.View
       entering={FadeInDown.delay(index < 6 ? index * 80 : 0)}
@@ -23,8 +29,8 @@ const SearchCard = ({item, index}) => {
       }}>
       <Card
         onPress={() => {
-          item.type === 'PLACE'
-            ? navigation.navigate('TripDetails', {trip: item})
+          item.type === 'places'
+            ? navigation.navigate('TripDetails', { trip: item })
             : null;
         }}
         style={{
@@ -33,14 +39,16 @@ const SearchCard = ({item, index}) => {
         }}>
         <CardFavoriteIcon onPress={() => {}} />
         <SharedElement id={`trip.${item.id}.image`} style={styles.media}>
-          <CardMedia source={item.image} borderBottomRadius />
+          <CardMedia source={{ uri: imageSource || 'https://via.placeholder.com/150' }} borderBottomRadius />
         </SharedElement>
         <CardContent>
           <View style={styles.titleBox}>
             <Text style={styles.title} numberOfLines={1}>
-              {item.title}
+              {item.title || 'Tiêu đề không có'}
             </Text>
-            <Text style={styles.location}>{item.location}</Text>
+            <Text style={styles.location}>
+              {item.location || 'Vị trí không có'}
+            </Text>
           </View>
         </CardContent>
       </Card>

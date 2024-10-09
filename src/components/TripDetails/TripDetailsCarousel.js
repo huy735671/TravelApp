@@ -8,7 +8,7 @@ import {sizes} from '../../constants/theme';
 const TripDetailsCarousel = ({slides, id}) => {
   const scrollAnimated = useRef(new Animated.Value(0)).current;
 
-  const validSlides = slides.filter(slide => slide); // Lọc bỏ hình ảnh không hợp lệ
+  const validSlides = Array.isArray(slides) ? slides.filter(slide => slide) : [];
 
   return (
     <>
@@ -17,18 +17,19 @@ const TripDetailsCarousel = ({slides, id}) => {
         horizontal
         pagingEnabled
         bounces={false}
+        showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollAnimated}}}],
           {useNativeDriver: false},
         )}
-        renderItem={({item: image, index}) => (
+        renderItem={({item: imageUrl, index}) => (
           <View style={styles.slide}>
             {index === 0 ? (
               <SharedElement id={`trip.${id}.image`} style={styles.slide}>
-                <Image source={{uri: image}} style={styles.image} />
+                <Image source={{uri: imageUrl}} style={styles.image} />
               </SharedElement>
             ) : (
-              <Image source={{uri: image}} style={styles.image} />
+              <Image source={{uri: imageUrl}} style={styles.image} />
             )}
           </View>
         )}
@@ -53,20 +54,22 @@ const TripDetailsCarousel = ({slides, id}) => {
   );
 };
 
+
+
 const styles = StyleSheet.create({
   slide: {
     width: sizes.width,
-    height: sizes.height,
+    height: sizes.width * 0.6,  
   },
   image: {
     width: sizes.width,
-    height: sizes.height,
+    height: sizes.width * 1, 
     resizeMode: 'cover',
   },
   indicators: {
     position: 'absolute',
     width: sizes.width,
-    bottom: 60,
+    top: 370,
     alignItems: 'center',
   },
 });

@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {colors} from '../constants/theme';
 import MainHeader from '../components/shared/MainHeader';
@@ -11,7 +11,12 @@ import TripsList from '../components/Home/TripsList';
 const HomeScreen = () => {
   return (
     <View style={styles.container}>
-      <MainHeader title="Travel app" />
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <MainHeader title="TravelNest" />
       <ScreenHeader mainTitle="Find Your" secondTitle="Dream Trip" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <TopPlacesCorousel list={TOP_PLACES} />

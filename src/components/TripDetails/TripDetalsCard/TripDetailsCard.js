@@ -1,174 +1,85 @@
-import React, {useMemo} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import * as Animatable from 'react-native-animatable';
-import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import CustomHandler from './CustomHandler';
-import CustomBackground from './CustomBackground';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  interpolateColor,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
+import React from 'react';
+import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import HotelsCarousel from './HotelsCarousel';
 import Icon from '../../shared/Icon';
 import Divider from '../../shared/Divider';
 import SectionHeader from '../../shared/SectionHeader';
 import RatingOverall from '../../shared/Rating/RatingOverall';
 import Reviews from '../../Reviews/Reviews';
-import {colors, sizes, spacing} from '../../../constants/theme';
-import {useNavigation} from '@react-navigation/native';
+import { colors, sizes, spacing } from '../../../constants/theme';
+import { useNavigation } from '@react-navigation/native';
 
-const AnimatedDivider = Animated.createAnimatedComponent(Divider);
-
-const TripDetailsCard = ({trip}) => {
-  const snapPoints = useMemo(() => ['30%', '80%'], []);
-  const animatedIndex = useSharedValue(0);
+const TripDetailsCard = ({ trip }) => {
   const navigation = useNavigation();
 
-  const titleStyle = useAnimatedStyle(() => ({
-    color: interpolateColor(
-      animatedIndex.value,
-      [0, 0.08],
-      [colors.white, colors.primary],
-    ),
-    marginBottom: interpolate(
-      animatedIndex.value,
-      [0, 0.08],
-      [0, 10],
-      Extrapolation.CLAMP,
-    ),
-  }));
-
-  const locationStyle = useAnimatedStyle(() => ({
-    color: interpolateColor(
-      animatedIndex.value,
-      [0, 0.08],
-      [colors.white, colors.lightGray],
-    ),
-    fontSize: interpolate(
-      animatedIndex.value,
-      [0, 0.08],
-      [sizes.title, sizes.body],
-      Extrapolation.CLAMP,
-    ),
-  }));
-
-  const contentStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: interpolate(
-          animatedIndex.value,
-          [0, 0.08],
-          [40, 0],
-          Extrapolation.CLAMP,
-        ),
-      },
-    ],
-    opacity: interpolate(
-      animatedIndex.value,
-      [0, 0.08],
-      [0, 1],
-      Extrapolation.CLAMP,
-    ),
-  }));
-
-  const locationIonStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        scale: interpolate(
-          animatedIndex.value,
-          [0, 0.08],
-          [0, 1],
-          Extrapolation.CLAMP,
-        ),
-      },
-    ],
-  }));
-
   return (
-    <BottomSheet
-      index={0}
-      animatedIndex={animatedIndex}
-      snapPoints={snapPoints}
-      handleComponent={CustomHandler}
-      backgroundComponent={CustomBackground}>
-      <Animatable.View
-        style={styles.header}
-        animation="fadeInUp"
-        delay={500}
-        easing="ease-in-out"
-        duration={400}>
-        <Animated.Text style={[styles.title, titleStyle]}>
-          {trip.title}
-        </Animated.Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>{trip.title}</Text>
 
         <View style={styles.location}>
-          <Animated.Text style={[styles.locationText, locationStyle]}>
-            {trip.location}
-          </Animated.Text>
-
-          <Animated.View style={locationIonStyle}>
-            <Icon icon="Location" size={24} style={styles.locationIcon} />
-          </Animated.View>
+          <Text style={styles.locationText}>{trip.location}</Text>
+          <Icon icon="Location" size={24} style={styles.locationIcon} />
         </View>
-      </Animatable.View>
+      </View>
 
-      <AnimatedDivider style={contentStyle} />
+      <Divider style={styles.divider} />
 
-      <BottomSheetScrollView
-        style={styles.scrollBox}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}>
-        <Animated.View style={contentStyle}>
-          <RatingOverall rating={trip.rating} containerStyle={styles.rating} />
+      <ScrollView style={styles.scrollBox} showsVerticalScrollIndicator={false}>
+        <RatingOverall rating={trip.rating} containerStyle={styles.rating} />
 
-          <SectionHeader
-            title="Summary"
-            containerStyle={styles.SectionHeader}
-            titleStyle={styles.sectionTitle}
-            onPress={() => {}}
-            buttonTitle="See All"
-          />
+        <SectionHeader
+          title="Summary"
+          containerStyle={styles.SectionHeader}
+          titleStyle={styles.sectionTitle}
+          onPress={() => {}}
+          buttonTitle="See All"
+        />
 
-          <View style={styles.summary}>
-            <Text style={styles.summaryText}>{trip.description}</Text>
-          </View>
+        <View style={styles.summary}>
+          <Text style={styles.summaryText}>{trip.description}</Text>
+        </View>
 
-          <SectionHeader
-            title="Hotels"
-            containerStyle={styles.SectionHeader}
-            titleStyle={styles.sectionTitle}
-            onPress={() => navigation.navigate('AllHotels')}
-            buttonTitle="See All"
-          />
+        <SectionHeader
+          title="Hotels"
+          containerStyle={styles.SectionHeader}
+          titleStyle={styles.sectionTitle}
+          onPress={() => navigation.navigate('AllHotels')}
+          buttonTitle="See All"
+        />
 
-          <HotelsCarousel hotels={trip.hotels || []} location={trip.location} />
+        <HotelsCarousel hotels={trip.hotels || []} location={trip.location} />
 
-          <SectionHeader
-            title="Reviews"
-            containerStyle={styles.sectionHeader}
-            titleStyle={styles.sectionTitle}
-            onPress={() => {}}
-            buttonTitle="See All"
-          />
-          <Reviews reviews={trip.reviews} />
-        </Animated.View>
-      </BottomSheetScrollView>
-    </BottomSheet>
+        <SectionHeader
+          title="Reviews"
+          containerStyle={styles.sectionHeader}
+          titleStyle={styles.sectionTitle}
+          onPress={() => {}}
+          buttonTitle="See All"
+        />
+        <Reviews reviews={trip.reviews} />
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 2.7,
+    backgroundColor: colors.light, 
+    borderTopLeftRadius: 20, 
+    borderTopRightRadius: 20, 
+    top: -20,
+    
+  },
   header: {
-    paddingVertical: spacing.l,
+    paddingVertical: spacing.l -30,
     paddingHorizontal: spacing.l,
   },
   title: {
     fontSize: sizes.title,
     fontWeight: 'bold',
-    color: colors.white,
+    color: colors.primary, 
   },
   location: {
     flexDirection: 'row',
@@ -176,10 +87,13 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: sizes.title,
-    color: colors.white,
+    color: colors.primary,
   },
   locationIcon: {
     tintColor: colors.gray,
+  },
+  divider: {
+    marginVertical: spacing.m,
   },
   scrollBox: {
     marginTop: spacing.s,

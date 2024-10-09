@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, View, StyleSheet} from 'react-native';
 import {sizes} from '../../../constants/theme';
 
-const CardMedia = ({source, borderBottomRadius = false}) => {
+const CardMedia = ({ source, borderBottomRadius = false }) => {
   return (
     <View
       style={[styles.media].concat(
@@ -12,6 +12,7 @@ const CardMedia = ({source, borderBottomRadius = false}) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   media: {
