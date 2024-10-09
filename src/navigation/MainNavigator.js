@@ -8,13 +8,13 @@ import MenuNavigator from './MenuNavigator';
 import ProfileScreen from '../screens/ProfileScreen';
 import HotelDetailsScreen from '../screens/HotelDetailsScreen';
 import ListHotelDetails from '../components/Hotels/ListHotelDetails';
+import HotelListType from '../components/Hotels/HotelListType';
 
 const Stack = createSharedElementStackNavigator();
 
 const MainNavigator = () => {
   return (
     <NavigationContainer>
-      
       <Stack.Navigator>
         <Stack.Screen
           name="Login"
@@ -82,6 +82,21 @@ const MainNavigator = () => {
         <Stack.Screen
           name="ListHotelDetails"
           component={ListHotelDetails}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+
+        <Stack.Screen
+          name="HotelListType"
+          component={HotelListType}
           options={{
             headerShown: false,
             useNativeDriver: true,

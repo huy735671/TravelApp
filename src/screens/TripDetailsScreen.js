@@ -1,9 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Image, StatusBar} from 'react-native';
 import {colors, shadow, sizes, spacing} from '../constants/theme';
-
 import Icon from '../components/shared/Icon';
-
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import * as Animatable from 'react-native-animatable';
 import TripDetailsCard from '../components/TripDetails/TripDetalsCard/TripDetailsCard';

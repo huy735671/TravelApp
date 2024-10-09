@@ -49,7 +49,6 @@ const HotelDetailsScreen = ({ navigation, route }) => {
         <FavoriteButton onPress={() => {}} />
       </Animatable.View>
 
-      {/* Truyền dữ liệu khách sạn vào HotelDetailsCarousel */}
       {hotel && <HotelDetailsCarousel hotel={hotel} />}
     </View>
   );

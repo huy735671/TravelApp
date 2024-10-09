@@ -29,8 +29,6 @@ const AllHotelsScreen = ({ navigation }) => {
   const [filteredHotels, setFilteredHotels] = useState([]);
   const [userAddress, setUserAddress] = useState('');
 
-  const categories = ['All', 'Popular', 'Top Rated', 'Luxury'];
-
   // Hàm để lấy địa chỉ của người dùng
   const fetchUserAddress = async () => {
     const user = auth().currentUser;
@@ -100,22 +98,13 @@ const AllHotelsScreen = ({ navigation }) => {
     }
   };
 
-  const handleCategorySelect = category => {
-    if (category === 'All') {
-      setFilteredHotels(hotels);
-    } else {
-      const filtered = hotels.filter(hotel => hotel.category === category);
-      setFilteredHotels(filtered);
-    }
-  };
-
   const Card = ({ hotel }) => (
     <TouchableOpacity
       style={styles.card}
       onPress={() => navigation.navigate('HotelDetails', { hotelId: hotel.id })}>
       <Image source={{ uri: hotel.imageUrl }} style={styles.cardImage} />
       <View style={styles.cardDetails}>
-        <Text style={styles.hotelName}>{hotel.hotelName}</Text>
+        <Text style={styles.hotelName}>{hotel.title}</Text>
         <Text style={styles.hotelLocation}>{hotel.location}</Text>
         <Text style={styles.priceText}>{hotel.pricePerNight} Vnd/Night</Text>
       </View>
@@ -146,17 +135,6 @@ const AllHotelsScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Categories Section */}
-      <View style={styles.categoriesContainer}>
-        {categories.map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.categoryButton}
-            onPress={() => handleCategorySelect(category)}>
-            <Text style={styles.categoryText}>{category}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
       <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
       {/* Hotels List */}
       <FlatList
@@ -172,9 +150,11 @@ const AllHotelsScreen = ({ navigation }) => {
       <Text style={styles.headerTitle}>Bạn cần gợi ý?</Text>
       <HotelsList />
 
-      <Text style={styles.headerTitle}>Lên kế hoạch dễ dàng và nhanh chóng?</Text>
-        <LocationsScreen />
+      <Text style={styles.headerTitle}>Tìm theo chỗ nghỉ</Text>
+      <LocationsScreen />
 
+      <Text style={styles.headerTitle}>Lên kế hoạch dễ dàng và nhanh chóng </Text>
+          
     </ScrollView>
   );
 };
@@ -222,22 +202,6 @@ const styles = StyleSheet.create({
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  categoriesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-  },
-  categoryButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: colors.primary,
-    borderRadius: 20,
-    alignItems: 'center',
-  },
-  categoryText: {
-    color: colors.white,
-    fontWeight: 'bold',
   },
   flatListContainer: {
     paddingHorizontal: 20,

@@ -16,7 +16,6 @@ const TripDetailsCard = ({ trip }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{trip.title}</Text>
-
         <View style={styles.location}>
           <Text style={styles.locationText}>{trip.location}</Text>
           <Icon icon="Location" size={24} style={styles.locationIcon} />
@@ -29,11 +28,11 @@ const TripDetailsCard = ({ trip }) => {
         <RatingOverall rating={trip.rating} containerStyle={styles.rating} />
 
         <SectionHeader
-          title="Summary"
+          title="Giới thiệu"
           containerStyle={styles.SectionHeader}
           titleStyle={styles.sectionTitle}
           onPress={() => {}}
-          buttonTitle="See All"
+          buttonTitle="Tất cả"
         />
 
         <View style={styles.summary}>
@@ -41,21 +40,21 @@ const TripDetailsCard = ({ trip }) => {
         </View>
 
         <SectionHeader
-          title="Hotels"
+          title="Khách sạn liên quan"
           containerStyle={styles.SectionHeader}
           titleStyle={styles.sectionTitle}
           onPress={() => navigation.navigate('AllHotels')}
-          buttonTitle="See All"
+          buttonTitle="Tất cả"
         />
 
         <HotelsCarousel hotels={trip.hotels || []} location={trip.location} />
 
         <SectionHeader
-          title="Reviews"
+          title="Đánh giá"
           containerStyle={styles.sectionHeader}
           titleStyle={styles.sectionTitle}
           onPress={() => {}}
-          buttonTitle="See All"
+          buttonTitle="Tất cả"
         />
         <Reviews reviews={trip.reviews} />
       </ScrollView>

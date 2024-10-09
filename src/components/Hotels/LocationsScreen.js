@@ -1,71 +1,77 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
-  Dimensions,
-  FlatList,
   SafeAreaView,
+  FlatList,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
+  Image,
+  Dimensions,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-import SearchCard from '../Search/SearchCard';
+import {useNavigation} from '@react-navigation/native';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
+const cardWidth = width * 0.5; // Chiều rộng card được điều chỉnh theo màn hình
 
 const LocationsScreen = () => {
-  const [locations, setLocations] = useState([]); // Mảng khách sạn từ Firestore
-  const [filterType, setFilterType] = useState('All'); // 'All', 'Business', 'Apartment'
+  const navigation = useNavigation();
 
-  // Lấy dữ liệu khách sạn từ Firestore
-  useEffect(() => {
-    const unsubscribe = firestore()
-      .collection('hotels') // Thay 'hotels' bằng tên collection của bạn
-      .onSnapshot(querySnapshot => {
-        const hotels = [];
-        querySnapshot.forEach(doc => {
-          hotels.push({ id: doc.id, ...doc.data() });
-        });
-        setLocations(hotels);
-      });
+  const stayType = [
+    {
+      id: '1',
+      name: 'Khách sạn ',
+      type: 'business',
+      image:
+        'https://r-xx.bstatic.com/xdata/images/xphoto/263x210/57584488.jpeg?k=d8d4706fc72ee789d870eb6b05c0e546fd4ad85d72a3af3e30fb80ca72f0ba57&o=',
+    },
+    {
+      id: '2',
+      name: 'Căn hộ ',
+      type: 'apartment',
+      image:
+        'https://q-xx.bstatic.com/xdata/images/hotel/263x210/119467716.jpeg?k=f3c2c6271ab71513e044e48dfde378fcd6bb80cb893e39b9b78b33a60c0131c9&o=',
+    },
+    {
+      id: '3',
+      name: 'Resort ',
+      type: 'resort',
+      image:
+        'https://r-xx.bstatic.com/xdata/images/xphoto/263x210/45450084.jpeg?k=f8c2954e867a1dd4b479909c49528531dcfb676d8fbc0d60f51d7b51bb32d1d9&o=',
+    },
+    {
+      id: '4',
+      name: 'Biệt thự ',
+      type: 'Villa',
+      image:
+        'https://r-xx.bstatic.com/xdata/images/hotel/263x210/100235855.jpeg?k=5b6e6cff16cfd290e953768d63ee15f633b56348238a705c45759aa3a81ba82b&o=',
+    },
+  ];
 
-    return () => unsubscribe(); // Dọn dẹp khi component unmount
-  }, []);
-
-  // Hàm để lọc địa điểm dựa trên loại khách sạn
-  const filteredLocations = locations.filter(location => {
-    if (filterType === 'All') return true; // Hiển thị tất cả
-    return location.hotelType === filterType; // Hiển thị theo loại đã chọn
-  });
+  const LocationCard = ({hotelType}) => (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate('HotelListType', { hotelType: hotelType.type })} 
+>
+      <Image
+        source={{uri: hotelType.image}}
+        style={styles.cardImage}
+        resizeMode="cover"
+      />
+      <Text style={styles.locationName}>{hotelType.name}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerTitle}>Chọn địa điểm</Text>
-
-      <View style={styles.filtersContainer}>
-        <TouchableOpacity style={styles.filterButton} onPress={() => setFilterType('All')}>
-          <Text style={styles.filterButtonText}>Tất cả</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton} onPress={() => setFilterType('Business')}>
-          <Text style={styles.filterButtonText}>Business</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton} onPress={() => setFilterType('Apartment')}>
-          <Text style={styles.filterButtonText}>Apartment</Text>
-        </TouchableOpacity>
-      </View>
-
-      {filteredLocations.length === 0 ? ( // Kiểm tra xem có địa điểm nào không
-        <Text style={styles.noLocationText}>Không có địa điểm nào phù hợp.</Text>
-      ) : (
-        <FlatList
-          data={filteredLocations}
-          keyExtractor={item => item.id}
-          renderItem={({ item, index }) => <SearchCard item={item} index={index} />}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.locationsList}
-        />
-      )}
+      <FlatList
+        data={stayType}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => <LocationCard hotelType={item} />}
+        contentContainerStyle={styles.stayTypeList}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
     </SafeAreaView>
   );
 };
@@ -73,37 +79,28 @@ const LocationsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8f8f8',
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    padding: 20,
+  
+  stayTypeList: {
+    paddingHorizontal: 10,
+    paddingBottom: 20,
   },
-  filtersContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
+  card: {
+    width: cardWidth,
+    marginHorizontal: 10,
   },
-  filterButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: '#007BFF',
-    borderRadius: 20,
+  cardImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
   },
-  filterButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  noLocationText: {
-    textAlign: 'center',
-    marginTop: 20,
+  locationName: {
     fontSize: 16,
-    color: 'red',
-  },
-  locationsList: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingVertical: 5,
+    textAlign: 'left', // Căn chữ sang trái
   },
 });
 

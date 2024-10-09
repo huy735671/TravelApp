@@ -1,7 +1,8 @@
 export const getCorrectRating = rating => {
-  // Trả về 0 nếu rating không phải là số hoặc là số âm
-  return typeof rating === 'number' && rating >= 0 ? Math.floor(rating >= 2 ? rating / 2 : rating) : 0;
+  // Trả về giá trị rating gốc nếu rating hợp lệ
+  return typeof rating === 'number' && rating >= 0 ? rating : 0;
 };
+
 
 
 export const getFractionDigitsRating = rating => {

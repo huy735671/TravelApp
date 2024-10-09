@@ -14,7 +14,6 @@ import * as Animatable from 'react-native-animatable';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from '../shared/Icon';
 import {useNavigation} from '@react-navigation/native';
-import FavoriteButton from '../shared/FavoriteButton';
 import StarRating from '../shared/Rating/Rating';
 
 const ListHotelDetails = ({route}) => {
@@ -23,6 +22,7 @@ const ListHotelDetails = ({route}) => {
   const [loading, setLoading] = useState(true);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+
   useEffect(() => {
     const fetchHotels = async () => {
       try {
@@ -65,18 +65,21 @@ const ListHotelDetails = ({route}) => {
         backgroundColor="#4c8d6e"
       />
       <Image source={{uri: item.imageUrl}} style={styles.cardImage} />
-      <View style={{flexDirection: 'column', marginHorizontal: 10}}>
-        <Text style={styles.hotelName}>{item.hotelName}</Text>
+      <View style={styles.cardDetails}>
+        <Text style={styles.hotelName}>{item.title}</Text>
         <StarRating
           showLabelInline
-          rating={item.rating}
-          size={12}
+          rating={Number(item.starRating)}
+          size={20}
           containerStyle={styles.rating}
         />
-        <Text style={styles.bodyText}>
-          Giá một đêm: {item.pricePerNight} VND
-        </Text>
-        <Text>Đã bao gồm thuế và phí</Text>
+        <Text>{item.address}</Text>
+        <View style={styles.priceContainer}>
+          <Text style={styles.bodyText}>
+            Giá một đêm: {item.pricePerNight} VND
+          </Text>
+          <Text>Đã bao gồm thuế và phí</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -96,18 +99,16 @@ const ListHotelDetails = ({route}) => {
           onPress={navigation.goBack}
         />
       </Animatable.View>
-      
-      <View style={{flex: 1, alignItems: 'center', paddingVertical: 10}}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Khách sạn ở {location}</Text>
-        </View>
-        <FlatList
-          data={hotels}
-          keyExtractor={item => item.id}
-          renderItem={renderHotelItem}
-          contentContainerStyle={styles.flatListContainer}
-        />
+
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Khách sạn ở {location}</Text>
       </View>
+      <FlatList
+        data={hotels}
+        keyExtractor={item => item.id}
+        renderItem={renderHotelItem}
+        contentContainerStyle={styles.flatListContainer}
+      />
     </View>
   );
 };
@@ -127,14 +128,14 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingVertical: 10,
-    width: '80%',
-    borderWidth: 2,
+    alignItems: 'center',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
+    color: colors.primary,
   },
   flatListContainer: {
     paddingBottom: 20,
@@ -145,13 +146,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
     backgroundColor: colors.white,
-    padding: 10,
     flexDirection: 'row',
+    padding: 10,
   },
   cardImage: {
     height: 150,
     width: '30%',
     borderRadius: 10,
+  },
+  cardDetails: {
+    flexDirection: 'column',
+    marginHorizontal: 10,
+    flex: 1,
   },
   hotelName: {
     fontWeight: 'bold',
@@ -162,6 +168,12 @@ const styles = StyleSheet.create({
   bodyText: {
     fontSize: sizes.h3,
     color: colors.black,
+  },
+  priceContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    alignItems: 'flex-end',
   },
 });
 

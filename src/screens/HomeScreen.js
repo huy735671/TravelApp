@@ -17,11 +17,11 @@ const HomeScreen = () => {
         backgroundColor="rgba(0,0,0,0)"
       />
       <MainHeader title="TravelNest" />
-      <ScreenHeader mainTitle="Find Your" secondTitle="Dream Trip" />
+      <ScreenHeader mainTitle="Nơi Khởi Đầu " secondTitle="Chuyến Đi Của Bạn" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <TopPlacesCorousel list={TOP_PLACES} />
         <SectionHeader
-          title="Popular Trips"
+          title="Địa điểm khác"
           buttonTitle="See All"
           onPress={() => {}}
         />
