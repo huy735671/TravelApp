@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,20 +9,21 @@ import {
   StatusBar,
   TextInput,
 } from 'react-native';
-import {colors, shadow, sizes, spacing} from '../../constants/theme';
+import { colors, shadow, sizes, spacing } from '../../constants/theme';
 import firestore from '@react-native-firebase/firestore';
 import * as Animatable from 'react-native-animatable';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../shared/Icon';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import StarRating from '../shared/Rating/Rating';
 
-const ListHotelDetails = ({route}) => {
-  const {location} = route.params;
+const ListHotelDetails = ({ route }) => {
+  const { location } = route.params;
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterVisible, setFilterVisible] = useState(false); // State to control filter visibility
+  const [selectedStarRating, setSelectedStarRating] = useState(null); // State for star rating filter
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
@@ -54,12 +55,20 @@ const ListHotelDetails = ({route}) => {
     setSearch(text);
   };
 
-  // Function to filter hotels based on search query
-  const filteredHotels = hotels.filter(
-    hotel =>
-      hotel.title.toLowerCase().includes(search.toLowerCase()) ||
-      hotel.address.toLowerCase().includes(search.toLowerCase()),
-  );
+  // Function to filter hotels based on search query and star rating
+  // Function to filter hotels based on search query and star rating
+const filteredHotels = hotels.filter(hotel => {
+  const matchesSearch =
+    hotel.title.toLowerCase().includes(search.toLowerCase()) ||
+    hotel.address.toLowerCase().includes(search.toLowerCase());
+
+  const matchesStarRating = selectedStarRating
+    ? Number(hotel.starRating) === selectedStarRating // Chuyển đổi hotel.starRating thành số
+    : true;
+
+  return matchesSearch && matchesStarRating;
+});
+
 
   if (loading) {
     return (
@@ -69,16 +78,16 @@ const ListHotelDetails = ({route}) => {
     );
   }
 
-  const renderHotelItem = ({item}) => (
+  const renderHotelItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('HotelDetails', {hotelId: item.id})}>
+      onPress={() => navigation.navigate('HotelDetails', { hotelId: item.id })}>
       <StatusBar
         barStyle="light-content"
         translucent
         backgroundColor="#4c8d6e"
       />
-      <Image source={{uri: item.imageUrl}} style={styles.cardImage} />
+      <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{item.title}</Text>
         <StarRating
@@ -98,10 +107,38 @@ const ListHotelDetails = ({route}) => {
     </TouchableOpacity>
   );
 
+  const renderStarRatingFilter = () => (
+    <View style={styles.ratingFilterContainer}>
+      {[1, 2, 3, 4, 5].map(star => (
+        <TouchableOpacity
+          key={star}
+          style={[
+            styles.starButton,
+            selectedStarRating === star && styles.selectedStarButton // Thêm lớp chọn cho sao đã chọn
+          ]}
+          onPress={() => {
+            if (selectedStarRating === star) {
+              // Nếu đã chọn sao này, xóa bộ lọc
+              setSelectedStarRating(null);
+            } else {
+              // Nếu chưa chọn, thiết lập sao đã chọn
+              setSelectedStarRating(star);
+            }
+          }}
+        >
+          <Text style={styles.starText}>{star} ⭐</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+  
+ 
+  
+
   return (
     <View style={styles.container}>
       <Animatable.View
-        style={[styles.backButton, {marginTop: insets.top}]}
+        style={[styles.backButton, { marginTop: insets.top }]}
         animation="fadeIn"
         delay={500}
         duration={400}
@@ -138,6 +175,9 @@ const ListHotelDetails = ({route}) => {
         </View>
       </View>
 
+      {/* Filtered star rating */}
+      {filterVisible && renderStarRatingFilter()}
+
       <FlatList
         data={filteredHotels}
         keyExtractor={item => item.id}
@@ -161,11 +201,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 50,
   },
+  selectedStarButton:{
+   
+      backgroundColor: '#4c8d6e', // Thay đổi màu nền của nút đã chọn
+      borderRadius: 5,
+      elevation: 5,
+  },
   headerContainer: {
-    paddingTop:10,
+    paddingTop: 10,
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent:'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 22,
@@ -241,6 +287,22 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
     zIndex: 1,
+  },
+  ratingFilterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  starButton: {
+    marginHorizontal: 5,
+    padding: 10,
+    backgroundColor: colors.white,
+    borderRadius: 5,
+    elevation: 3,
+  },
+  starText: {
+    fontSize: 16,
+    color: colors.primary,
   },
 });
 

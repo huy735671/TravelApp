@@ -106,7 +106,7 @@ const AllHotelsScreen = ({ navigation }) => {
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{hotel.title}</Text>
         <Text style={styles.hotelLocation}>{hotel.location}</Text>
-        <Text style={styles.priceText}>{hotel.pricePerNight} Vnd/Night</Text>
+        <Text style={styles.priceText}>{hotel.pricePerNight} Vnd/đêm</Text>
       </View>
     </TouchableOpacity>
   );
@@ -123,17 +123,6 @@ const AllHotelsScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <MainHeader title="Travel app" />
 
-      <View style={styles.header}>
-        <View style={styles.inner}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search hotels..."
-            value={searchQuery}
-            onChangeText={handleSearch}
-          />
-          <Icon icon="Search" style={styles.searchIcon} />
-        </View>
-      </View>
 
       <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
       {/* Hotels List */}
@@ -169,9 +158,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 50,
   },
-  header: {
-    paddingHorizontal: 20,
-  },
+  
   headerTitle: {
     fontSize: sizes.h2,
     fontWeight: 'bold',
@@ -179,30 +166,9 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingVertical: 10,
   },
-  searchInput: {
-    borderColor: colors.grey,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    paddingLeft: 50,
-    marginTop: 10,
-    backgroundColor: colors.light,
-    flex: 1,
-    elevation: 5,
-    ...shadow.light,
-  },
-  searchIcon: {
-    position: 'absolute',
-    top: 15,
-    left: 15,
-    zIndex: 1,
-  },
-  inner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  
+  
+  
   flatListContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
