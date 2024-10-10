@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   View,
   StatusBar,
+  TextInput,
 } from 'react-native';
-import {colors, sizes} from '../../constants/theme';
+import {colors, shadow, sizes, spacing} from '../../constants/theme';
 import firestore from '@react-native-firebase/firestore';
 import * as Animatable from 'react-native-animatable';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -20,6 +21,8 @@ const ListHotelDetails = ({route}) => {
   const {location} = route.params;
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filterVisible, setFilterVisible] = useState(false); // State to control filter visibility
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
@@ -46,6 +49,17 @@ const ListHotelDetails = ({route}) => {
 
     fetchHotels();
   }, [location]);
+
+  const handleSearch = text => {
+    setSearch(text);
+  };
+
+  // Function to filter hotels based on search query
+  const filteredHotels = hotels.filter(
+    hotel =>
+      hotel.title.toLowerCase().includes(search.toLowerCase()) ||
+      hotel.address.toLowerCase().includes(search.toLowerCase()),
+  );
 
   if (loading) {
     return (
@@ -99,12 +113,33 @@ const ListHotelDetails = ({route}) => {
           onPress={navigation.goBack}
         />
       </Animatable.View>
-
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Khách sạn ở {location}</Text>
       </View>
+
+      {/* Search Input */}
+      <View style={styles.searchContainer}>
+        <View style={styles.inner}>
+          <View style={styles.search}>
+            <Icon icon="Search" />
+          </View>
+          <TextInput
+            style={styles.field}
+            placeholder="Tìm kiếm"
+            value={search}
+            onChangeText={handleSearch}
+          />
+          <View style={styles.filter}>
+            <Icon
+              icon="Filter"
+              onPress={() => setFilterVisible(!filterVisible)}
+            />
+          </View>
+        </View>
+      </View>
+
       <FlatList
-        data={hotels}
+        data={filteredHotels}
         keyExtractor={item => item.id}
         renderItem={renderHotelItem}
         contentContainerStyle={styles.flatListContainer}
@@ -127,8 +162,10 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   headerContainer: {
-    paddingVertical: 10,
+    paddingTop:10,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent:'center',
   },
   title: {
     fontSize: 22,
@@ -174,6 +211,36 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
     alignItems: 'flex-end',
+  },
+  searchContainer: {
+    marginVertical: 10,
+    paddingHorizontal: spacing.l,
+  },
+  inner: {
+    flexDirection: 'row',
+  },
+  search: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+  },
+  field: {
+    backgroundColor: colors.white,
+    paddingLeft: spacing.xl + spacing.s,
+    paddingRight: spacing.m,
+    paddingVertical: spacing.m,
+    borderRadius: sizes.radius,
+    height: 54,
+    flex: 1,
+    elevation: 5,
+    ...shadow.light,
+  },
+  filter: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
   },
 });
 

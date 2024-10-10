@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Image, StatusBar} from 'react-native';
+import {View, StyleSheet, Text, StatusBar} from 'react-native';
 import {colors, shadow, sizes, spacing} from '../constants/theme';
 import Icon from '../components/shared/Icon';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -12,13 +12,17 @@ const TripDetailsScreen = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const {trip} = route.params;
 
+  // Log thông tin trip để kiểm tra
+  console.log('Trip data:', trip);
+
   if (!trip) {
     return (
       <View style={styles.container}>
-        <Text style={{ color: colors.red }}>No trip data available.</Text>
+        <Text style={{color: colors.red}}>No trip data available.</Text>
       </View>
     );
   }
+
   const slides = [trip.imageUrl, ...trip.gallery];
 
   return (
@@ -43,10 +47,8 @@ const TripDetailsScreen = ({navigation, route}) => {
         delay={500}
         duration={400}
         easing="ease-in-out">
-        <FavoriteButton onPress={() => {}} 
-          />
+        <FavoriteButton onPress={() => {}} />
       </Animatable.View>
-
 
       <TripDetailsCarousel slides={slides} id={trip.id} />
 
@@ -67,15 +69,6 @@ TripDetailsScreen.sharedElements = route => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  imageBox: {
-    borderRadius: sizes.radius,
-    overflow: 'hidden',
-  },
-  image: {
-    width: sizes.width,
-    height: sizes.height,
-    resizeMode: 'cover',
   },
   backButton: {
     position: 'absolute',

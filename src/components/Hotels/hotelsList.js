@@ -33,7 +33,7 @@ const HotelsList = () => {
   const navigation = useNavigation();
 
   const handleLocationPress = (location) => {
-    navigation.navigate('ListHotelDetails', { location }); // Điều hướng tới ListHotelDetails
+    navigation.navigate('ListHotelDetails', { location }); 
   };
 
   const LocationCard = ({ location }) => (
