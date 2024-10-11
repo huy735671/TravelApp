@@ -76,7 +76,14 @@ const TripDetailsCard = ({trip}) => {
           onPress={() => {}}
           buttonTitle="Tất cả"
         />
-        <Reviews reviews={trip.reviews} />
+        <Reviews tripId={trip.id} />
+
+        <TouchableOpacity
+          style={styles.addReviewButton}
+          onPress={() => navigation.navigate('AddReview', {tripId: trip.id})}>
+          <Text style={styles.addReviewButtonText}>Thêm Đánh Giá</Text>
+        </TouchableOpacity>
+
         <SectionHeader
           title="Địa điểm liên quan"
           containerStyle={styles.sectionHeader}
@@ -152,6 +159,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   toggleButtonText: {
+    color: colors.light,
+    fontWeight: 'bold',
+  },
+  addReviewButton: {
+    paddingVertical: spacing.s,
+    paddingHorizontal: spacing.m,
+    backgroundColor: colors.green,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: spacing.m,
+    marginHorizontal:20,
+  },
+  addReviewButtonText: {
     color: colors.light,
     fontWeight: 'bold',
   },

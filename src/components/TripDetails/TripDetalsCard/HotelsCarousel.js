@@ -26,7 +26,6 @@ const HotelsCarousel = ({location}) => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log(hotelsData); // Thêm dòng này để kiểm tra dữ liệu
         setHotels(hotelsData);
       } catch (error) {
         console.error('Error fetching hotels: ', error);

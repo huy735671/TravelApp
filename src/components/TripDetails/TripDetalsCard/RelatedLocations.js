@@ -25,7 +25,6 @@ const RelatedLocations = ({ location }) => {
           .where('location', '==', location)
           .get();
 
-        console.log('Places Snapshot:', placesSnapshot);
 
         const placesData = placesSnapshot.docs.map(doc => ({
           id: doc.id,
@@ -37,7 +36,6 @@ const RelatedLocations = ({ location }) => {
           .where('location', '==', location)
           .get();
 
-        console.log('Top Places Snapshot:', topPlacesSnapshot);
 
         const topPlacesData = topPlacesSnapshot.docs.map(doc => ({
           id: doc.id,
@@ -45,7 +43,6 @@ const RelatedLocations = ({ location }) => {
         }));
 
         const combinedData = [...placesData, ...topPlacesData];
-        console.log('Combined Data:', combinedData); // Log combined data
         setLocations(combinedData);
       } catch (error) {
         console.error('Error fetching locations: ', error);

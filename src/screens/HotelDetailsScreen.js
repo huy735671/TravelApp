@@ -19,7 +19,6 @@ const HotelDetailsScreen = ({ navigation, route }) => {
         if (hotelDoc.exists) {
           setHotel({ id: hotelDoc.id, ...hotelDoc.data() });
         } else {
-          console.log('No such document!');
         }
       } catch (error) {
         console.error('Error fetching hotel details: ', error);

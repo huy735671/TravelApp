@@ -7,6 +7,7 @@ import TopPlacesCorousel from '../components/Home/TopPlacesCorousel';
 import {PLACES, TOP_PLACES} from '../data';
 import SectionHeader from '../components/shared/SectionHeader';
 import TripsList from '../components/Home/TripsList';
+import ViewPlacesByRegion from '../components/Places/ViewPlacesByRegion';
 
 const HomeScreen = () => {
   return (
@@ -20,14 +21,14 @@ const HomeScreen = () => {
       <ScreenHeader mainTitle="Nơi Khởi Đầu " secondTitle="Chuyến Đi Của Bạn" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <TopPlacesCorousel list={TOP_PLACES} />
-        
+
         <SectionHeader
           title="Địa điểm khác"
           buttonTitle="See All"
           onPress={() => {}}
         />
-        <TripsList list={PLACES}/>
-
+        <TripsList list={PLACES} />
+        <ViewPlacesByRegion  />
       </ScrollView>
     </View>
   );

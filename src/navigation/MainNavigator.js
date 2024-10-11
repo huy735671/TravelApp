@@ -9,6 +9,9 @@ import ProfileScreen from '../screens/ProfileScreen';
 import HotelDetailsScreen from '../screens/HotelDetailsScreen';
 import ListHotelDetails from '../components/Hotels/ListHotelDetails';
 import HotelListType from '../components/Hotels/HotelListType';
+import RegionListScreen from '../components/Places/RegionListScreen';
+import AddReviewScreen from '../components/Reviews/AddReviewScreen';
+import AllReviews from '../components/Reviews/AllReviews';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -97,6 +100,50 @@ const MainNavigator = () => {
         <Stack.Screen
           name="HotelListType"
           component={HotelListType}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="RegionListScreen"
+          component={RegionListScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+
+        <Stack.Screen
+          name="AddReview"
+          component={AddReviewScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+
+        <Stack.Screen
+          name="AllReviews"
+          component={AllReviews}
           options={{
             headerShown: false,
             useNativeDriver: true,

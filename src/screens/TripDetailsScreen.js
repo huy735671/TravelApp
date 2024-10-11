@@ -12,8 +12,6 @@ const TripDetailsScreen = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
   const {trip} = route.params;
 
-  // Log thông tin trip để kiểm tra
-  console.log('Trip data:', trip);
 
   if (!trip) {
     return (
