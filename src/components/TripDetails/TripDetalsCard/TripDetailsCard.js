@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import HotelsCarousel from './HotelsCarousel';
-import Icon from '../../shared/Icon';
 import Divider from '../../shared/Divider';
 import SectionHeader from '../../shared/SectionHeader';
 import RatingOverall from '../../shared/Rating/RatingOverall';

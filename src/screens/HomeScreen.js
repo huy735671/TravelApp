@@ -20,6 +20,7 @@ const HomeScreen = () => {
       <ScreenHeader mainTitle="Nơi Khởi Đầu " secondTitle="Chuyến Đi Của Bạn" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <TopPlacesCorousel list={TOP_PLACES} />
+        
         <SectionHeader
           title="Địa điểm khác"
           buttonTitle="See All"

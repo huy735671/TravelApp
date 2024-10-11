@@ -15,7 +15,7 @@ const MenuNavigator = () => {
         name="HomeTabs"
         component={TabNavigator}
         options={{
-          drawerLabel: 'Home',
+          drawerLabel: 'Trang chủ địa điểm',
           headerShown: false,
         }}
       />
@@ -23,7 +23,7 @@ const MenuNavigator = () => {
         name="AllHotels"
         component={AllHotelsScreen}
         options={{
-          drawerLabel: 'All Hotels',
+          drawerLabel: 'Trang chủ khách sạn',
           headerShown: false,
           useNativeDriver: true,
           gestureEnabled: false,
@@ -32,12 +32,12 @@ const MenuNavigator = () => {
       <Drawer.Screen
         name="Favorite"
         component={FavoriteScreen}
-        options={{drawerLabel: 'Favorite'}}
+        options={{drawerLabel: 'Danh sách yêu thích'}}
       />
       <Drawer.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{drawerLabel: 'Settings'}}
+        options={{drawerLabel: 'Cài đặt'}}
       />
     </Drawer.Navigator>
   );

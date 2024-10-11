@@ -15,7 +15,6 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { colors, shadow, sizes } from '../constants/theme';
 import MainHeader from '../components/shared/MainHeader';
-import Icon from '../components/shared/Icon';
 import HotelsList from '../components/Hotels/hotelsList';
 import LocationsScreen from '../components/Hotels/LocationsScreen';
 
@@ -28,6 +27,7 @@ const AllHotelsScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredHotels, setFilteredHotels] = useState([]);
   const [userAddress, setUserAddress] = useState('');
+
 
   // Hàm để lấy địa chỉ của người dùng
   const fetchUserAddress = async () => {
@@ -123,6 +123,8 @@ const AllHotelsScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <MainHeader title="Travel app" />
 
+      
+      
 
       <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
       {/* Hotels List */}
