@@ -6,12 +6,13 @@ export const getCorrectRating = rating => {
 
 
 export const getFractionDigitsRating = rating => {
+
   // Kiểm tra nếu rating là số và không phải là NaN
   return typeof rating === 'number' ? rating.toFixed(1) : '0.0';
 };
 
 export const getRatingLabel = rating => {
-  const reviews = ['Bad', 'Okay', 'Good', 'Very Good', 'Amazing'];
+  const reviews = ['Xấu', 'Được', 'Tốt', 'Rất tốt', 'Tuyệt vời'];
   // Kiểm tra xem rating có trong khoảng từ 1 đến 5 không
   return (rating >= 1 && rating <= 5) ? reviews[rating - 1] : 'No Rating';
 };

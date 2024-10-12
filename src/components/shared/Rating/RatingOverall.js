@@ -9,7 +9,7 @@ const RatingOverall = ({ rating, containerStyle = {} }) => {
     <View style={[styles.container, containerStyle]}>
       <Text style={styles.rating}>{getFractionDigitsRating(rating)}</Text>
       <View>
-        <Text style={styles.caption}>Overall Rating</Text>
+        <Text style={styles.caption}>Đánh giá chung</Text>
         <Rating rating={rating} />
       </View>
     </View>

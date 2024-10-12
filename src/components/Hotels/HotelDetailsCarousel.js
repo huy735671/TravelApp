@@ -12,6 +12,7 @@ import {
 import { colors, sizes, spacing } from '../../constants/theme';
 import StarRating from '../shared/Rating/Rating';
 import RatingOverall from '../shared/Rating/RatingOverall';
+import Icon from '../shared/Icon';
 
 const HotelDetailsCarousel = ({ hotel }) => {
   const scrollY = useRef(new Animated.Value(0)).current; // Khởi tạo giá trị Animated
@@ -35,7 +36,7 @@ const HotelDetailsCarousel = ({ hotel }) => {
 
   // Tính toán chiều cao hình ảnh dựa trên scrollY
   const imageHeight = scrollY.interpolate({
-    inputRange: [0, 200], // Giới hạn cho animation
+    inputRange: [0, 400], // Giới hạn cho animation
     outputRange: [300, 100], // Chiều cao ban đầu và chiều cao khi thu nhỏ
     extrapolate: 'clamp', // Giới hạn giá trị đầu ra
   });
@@ -62,12 +63,15 @@ const HotelDetailsCarousel = ({ hotel }) => {
       >
         <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
           <Text style={styles.title}>{hotel.title}</Text>
+
+          <View style={{flexDirection:'row', alignItems:'center'}}>
+          <Icon icon="Location" size={30}/>
           <Text style={styles.location}>
             {hotel.address}
             {'\n'}
             {hotel.location}
           </Text>
-
+          </View>
           <View style={{ marginTop: 5 }}>
             <StarRating
               showLabelInline

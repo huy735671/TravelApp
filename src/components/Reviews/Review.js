@@ -24,7 +24,9 @@ const Review = ({ review }) => {
           </View>
           <Rating rating={review.rating} showLabelTop />
         </View>
-        <Text style={styles.text}>{review.text}</Text>
+        <Text style={styles.titletext}>{review.title}</Text>
+
+        <Text style={styles.text}>{review.reviewDescription}</Text>
       </View>
     </>
   );
@@ -61,8 +63,15 @@ const styles = StyleSheet.create({
     fontSize: sizes.caption,
     color: colors.lightGray,
   },
+  titletext:{
+    fontWeight:'bold',
+    color:colors.primary,
+    fontSize:sizes.body+3,
+  },
   text: {
+    marginTop:10,
     color: colors.gray,
+    fontSize:sizes.body,
   },
 });
 
