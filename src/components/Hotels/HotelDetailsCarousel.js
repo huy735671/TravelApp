@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Text,
   View,
@@ -13,9 +13,11 @@ import { colors, sizes, spacing } from '../../constants/theme';
 import StarRating from '../shared/Rating/Rating';
 import RatingOverall from '../shared/Rating/RatingOverall';
 import Icon from '../shared/Icon';
+import RoomsBottomSheet from './RoomsBottomSheet'; // Import the BottomSheet component
 
 const HotelDetailsCarousel = ({ hotel }) => {
   const scrollY = useRef(new Animated.Value(0)).current; // Khởi tạo giá trị Animated
+  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false); // State to control BottomSheet
 
   if (!hotel) {
     return (
@@ -65,12 +67,12 @@ const HotelDetailsCarousel = ({ hotel }) => {
           <Text style={styles.title}>{hotel.title}</Text>
 
           <View style={{flexDirection:'row', alignItems:'center'}}>
-          <Icon icon="Location" size={30}/>
-          <Text style={styles.location}>
-            {hotel.address}
-            {'\n'}
-            {hotel.location}
-          </Text>
+            <Icon icon="Location" size={30} />
+            <Text style={styles.location}>
+              {hotel.address}
+              {'\n'}
+              {hotel.location}
+            </Text>
           </View>
           <View style={{ marginTop: 5 }}>
             <StarRating
@@ -84,7 +86,7 @@ const HotelDetailsCarousel = ({ hotel }) => {
           <Text style={styles.description}>{hotel.description}</Text>
         </View>
 
-        {/* Cực kỳ phù hợp cho kỳ lưu trú của bạn */}
+        {/* Amenities Section */}
         <View style={styles.amenitiesHeader}>
           <Text style={styles.amenitiesHeaderText}>
             Cực kỳ phù hợp cho kỳ lưu trú của bạn
@@ -126,9 +128,21 @@ const HotelDetailsCarousel = ({ hotel }) => {
           </View>
         </View>
       </Animated.ScrollView>
-      <TouchableOpacity style={styles.btnContainer}>
+
+      <TouchableOpacity
+        style={styles.btnContainer}
+        onPress={() => setBottomSheetVisible(true)} // Open bottom sheet
+      >
         <Text style={styles.btnText}>Chọn phòng</Text>
       </TouchableOpacity>
+
+      {/* Rooms Bottom Sheet */}
+      {isBottomSheetVisible && (
+        <RoomsBottomSheet
+          hotelId={hotel.id} // Pass the hotel ID
+          onClose={() => setBottomSheetVisible(false)} // Close function
+        />
+      )}
     </View>
   );
 };

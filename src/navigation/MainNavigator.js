@@ -12,6 +12,7 @@ import HotelListType from '../components/Hotels/HotelListType';
 import RegionListScreen from '../components/Places/RegionListScreen';
 import AddReviewScreen from '../components/Reviews/AddReviewScreen';
 import AllReviews from '../components/Reviews/AllReviews';
+import BookingScreen from '../components/Hotels/BookingScreen';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -51,7 +52,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
@@ -66,7 +66,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-
         <Stack.Screen
           name="HotelDetails"
           component={HotelDetailsScreen}
@@ -81,7 +80,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-
         <Stack.Screen
           name="ListHotelDetails"
           component={ListHotelDetails}
@@ -96,7 +94,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-
         <Stack.Screen
           name="HotelListType"
           component={HotelListType}
@@ -125,7 +122,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-
         <Stack.Screen
           name="AddReview"
           component={AddReviewScreen}
@@ -140,10 +136,23 @@ const MainNavigator = () => {
             }),
           }}
         />
-
         <Stack.Screen
           name="AllReviews"
           component={AllReviews}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="BookingScreen"
+          component={BookingScreen}
           options={{
             headerShown: false,
             useNativeDriver: true,
