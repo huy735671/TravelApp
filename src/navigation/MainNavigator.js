@@ -13,6 +13,8 @@ import RegionListScreen from '../components/Places/RegionListScreen';
 import AddReviewScreen from '../components/Reviews/AddReviewScreen';
 import AllReviews from '../components/Reviews/AllReviews';
 import BookingScreen from '../components/Hotels/BookingScreen';
+import ReviewSection from '../components/Reviews/Hotels/ReviewSection';
+import AllReviewHotel from '../components/Reviews/Hotels/AllReviewHotel';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -153,6 +155,35 @@ const MainNavigator = () => {
         <Stack.Screen
           name="BookingScreen"
           component={BookingScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+        <Stack.Screen
+          name="ReviewSection"
+          component={ReviewSection}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+            }),
+          }}
+        />
+
+        <Stack.Screen
+          name="AllReviewHotel"
+          component={AllReviewHotel}
           options={{
             headerShown: false,
             useNativeDriver: true,

@@ -1,10 +1,11 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import TabNavigator from './TabNavigator';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/FavouriteScreen';
 import CustomMenuContent from '../components/CustomMenuContent';
-import FavoriteScreen from '../screens/FavoriteScreen';
 import AllHotelsScreen from '../screens/AllHotelsScreen';
+import BookingHistoryScreen from '../screens/BookingHistoryScreen ';
+import FavouriteScreen from '../screens/FavouriteScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -30,14 +31,37 @@ const MenuNavigator = () => {
         }}
       />
       <Drawer.Screen
-        name="Favorite"
-        component={FavoriteScreen}
-        options={{drawerLabel: 'Danh sách yêu thích'}}
+        name="BookingHistoryScreen"
+        component={BookingHistoryScreen}
+        options={{
+          drawerLabel: 'Danh sách phòng đặt',
+          headerTitle:'Lịch sử đặt phòng',
+          headerTitleAlign:'center',
+          // headerShown: false,
+          useNativeDriver: true,
+          gestureEnabled: false,
+          headerStyle: {
+            backgroundColor: '#4c8d6e', 
+          },
+          headerTintColor: '#fff',
+        }}
       />
-      <Drawer.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{drawerLabel: 'Cài đặt'}}
+
+<Drawer.Screen
+        name="Favourite"
+        component={FavouriteScreen}
+        options={{
+          drawerLabel: 'Danh sách yêu thích',
+          headerTitle:'Danh sách yêu thích',
+          headerTitleAlign:'center',
+          // headerShown: false,
+          useNativeDriver: true,
+          gestureEnabled: false,
+          headerStyle: {
+            backgroundColor: '#4c8d6e', 
+          },
+          headerTintColor: '#fff',
+        }}
       />
     </Drawer.Navigator>
   );

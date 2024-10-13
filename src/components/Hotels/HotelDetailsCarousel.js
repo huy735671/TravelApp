@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useRef, useState} from 'react';
 import {
   Text,
   View,
@@ -9,13 +9,15 @@ import {
   StatusBar,
   Animated,
 } from 'react-native';
-import { colors, sizes, spacing } from '../../constants/theme';
+import {colors, sizes, spacing} from '../../constants/theme';
 import StarRating from '../shared/Rating/Rating';
 import RatingOverall from '../shared/Rating/RatingOverall';
 import Icon from '../shared/Icon';
 import RoomsBottomSheet from './RoomsBottomSheet'; // Import the BottomSheet component
+import HotelReviews from '../Reviews/Hotels/HotelReviews';
+import SectionHeader from '../shared/SectionHeader';
 
-const HotelDetailsCarousel = ({ hotel }) => {
+const HotelDetailsCarousel = ({hotel}) => {
   const scrollY = useRef(new Animated.Value(0)).current; // Khởi tạo giá trị Animated
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false); // State to control BottomSheet
 
@@ -51,22 +53,22 @@ const HotelDetailsCarousel = ({ hotel }) => {
         backgroundColor="rgba(0,0,0,0)"
       />
       <Animated.Image // Sử dụng Animated.Image
-        source={{ uri: hotel.imageUrl }}
-        style={[styles.image, { height: imageHeight }]} // Áp dụng chiều cao đã tính toán
+        source={{uri: hotel.imageUrl}}
+        style={[styles.image, {height: imageHeight}]} // Áp dụng chiều cao đã tính toán
       />
 
       <Animated.ScrollView // Sử dụng Animated.ScrollView
         style={styles.content}
         onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          {useNativeDriver: false},
         )}
         scrollEventThrottle={16} // Tối ưu hiệu suất
       >
-        <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
+        <View style={{marginTop: 20, paddingHorizontal: 20}}>
           <Text style={styles.title}>{hotel.title}</Text>
 
-          <View style={{flexDirection:'row', alignItems:'center'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon icon="Location" size={30} />
             <Text style={styles.location}>
               {hotel.address}
@@ -74,7 +76,8 @@ const HotelDetailsCarousel = ({ hotel }) => {
               {hotel.location}
             </Text>
           </View>
-          <View style={{ marginTop: 5 }}>
+          <View style={{marginTop: 5}}>
+            
             <StarRating
               showLabelInline
               rating={Number(hotel.starRating)}
@@ -99,7 +102,7 @@ const HotelDetailsCarousel = ({ hotel }) => {
         <View style={styles.priceContainer}>
           <Text style={styles.priceText}>Giá cho 1 đêm {'\n'}2 người</Text>
           <View style={styles.priceTag}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 5 }}>
+            <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: 5}}>
               {hotel.pricePerNight} VND
             </Text>
           </View>
@@ -109,23 +112,9 @@ const HotelDetailsCarousel = ({ hotel }) => {
           <Text style={styles.reviewContainerText}>
             Đánh giá của khách hàng
           </Text>
-          <RatingOverall
-            rating={Number(hotel.starRating)}
-            containerStyle={styles.rating}
-          />
-          <View style={{ borderBottomWidth: 1, paddingBottom: 10, borderColor: '#ddd' }}>
-            <View style={styles.reviewdetals}>
-              <Image
-                source={require('../../../assets/images/users/35.jpeg')}
-                style={styles.imageUserReview}
-              />
-              <Text style={styles.reviewUserName}>Hehe - 2 người</Text>
-            </View>
-            <Text style={styles.description}>
-              Nhân viên thân thiện, luôn niềm nở, khách sạn sạch sẽ, dịch vụ
-              tuyệt vời
-            </Text>
-          </View>
+         
+          
+          <HotelReviews hotelId={hotel.id} />
         </View>
       </Animated.ScrollView>
 
@@ -184,7 +173,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderTopWidth: 1,
     paddingVertical: 10,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
   },
   priceText: {
     fontSize: sizes.h2,
@@ -229,7 +218,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     borderTopWidth: 1,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
   },
   amenitiesHeaderText: {
     fontSize: sizes.h2,
@@ -260,7 +249,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
     borderTopWidth: 1,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
   },
   reviewContainerText: {
     fontSize: sizes.h2,

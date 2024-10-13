@@ -75,7 +75,7 @@ const AllReviews = ({route}) => {
   const calculateAverageRating = () => {
     if (reviews.length === 0) return {averageRating: 0, totalReviews: 0};
 
-    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0); // Giả sử mỗi review có thuộc tính rating
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0); 
     const averageRating = (totalRating / reviews.length).toFixed(1); // Lấy 1 chữ số thập phân
     return {averageRating, totalReviews: reviews.length};
   };

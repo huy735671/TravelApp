@@ -1,6 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import FavoriteScreen from '../screens/FavoriteScreen';
+import FavoriteScreen from '../screens/BookingHistoryScreen ';
 import Icon from '../components/shared/Icon';
 import {colors, sizes} from '../constants/theme';
 import {StyleSheet, Animated, View, TouchableOpacity} from 'react-native';

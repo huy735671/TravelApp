@@ -1,3 +1,4 @@
+// Import thêm useEffect từ react
 import React, { useRef, useState, useEffect} from 'react';
 import { View, StyleSheet, Text, ScrollView, ActivityIndicator, Animated, TouchableOpacity } from 'react-native';
 import HotelsCarousel from './HotelsCarousel';
@@ -47,6 +48,11 @@ const TripDetailsCard = ({ trip }) => {
 
           const avgRating = totalRating / snapshot.size; // Tính rating trung bình
           setAverageRating(avgRating); // Cập nhật state
+          
+          // Cập nhật starRating trong trip
+          await firestore().collection('places').doc(trip.id).update({
+            starRating: avgRating, // Cập nhật starRating
+          });
         }
       } catch (error) {
         console.error('Error fetching ratings:', error);
