@@ -1,7 +1,6 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import TabNavigator from './TabNavigator';
-import SettingsScreen from '../screens/FavouriteScreen';
 import CustomMenuContent from '../components/CustomMenuContent';
 import AllHotelsScreen from '../screens/AllHotelsScreen';
 import BookingHistoryScreen from '../screens/BookingHistoryScreen ';
@@ -35,30 +34,30 @@ const MenuNavigator = () => {
         component={BookingHistoryScreen}
         options={{
           drawerLabel: 'Danh sách phòng đặt',
-          headerTitle:'Lịch sử đặt phòng',
-          headerTitleAlign:'center',
+          headerTitle: 'Lịch sử đặt phòng',
+          headerTitleAlign: 'center',
           // headerShown: false,
           useNativeDriver: true,
           gestureEnabled: false,
           headerStyle: {
-            backgroundColor: '#4c8d6e', 
+            backgroundColor: '#4c8d6e',
           },
           headerTintColor: '#fff',
         }}
       />
 
-<Drawer.Screen
+      <Drawer.Screen
         name="Favourite"
         component={FavouriteScreen}
         options={{
           drawerLabel: 'Danh sách yêu thích',
-          headerTitle:'Danh sách yêu thích',
-          headerTitleAlign:'center',
+          headerTitle: 'Danh sách yêu thích',
+          headerTitleAlign: 'center',
           // headerShown: false,
           useNativeDriver: true,
           gestureEnabled: false,
           headerStyle: {
-            backgroundColor: '#4c8d6e', 
+            backgroundColor: '#4c8d6e',
           },
           headerTintColor: '#fff',
         }}

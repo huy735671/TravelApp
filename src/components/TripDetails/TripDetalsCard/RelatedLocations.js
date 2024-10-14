@@ -15,7 +15,7 @@ const CARD_HEIGHT = 200;
 
 const RelatedLocations = ({ location }) => {
   const navigation = useNavigation();
-  const [locations, setLocations] = useState([]); // State to store places and topPlaces
+  const [locations, setLocations] = useState([]); 
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -53,7 +53,6 @@ const RelatedLocations = ({ location }) => {
   }, [location]);
 
   const handleLocationDetails = (locationData) => {
-    console.log("Navigating to TripDetails with data: ", locationData);
     navigation.navigate('TripDetails', { trip: locationData });
   };
 

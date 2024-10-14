@@ -38,21 +38,36 @@ const TripDetailsCard = ({ trip }) => {
           .collection('reviews')
           .where('tripId', '==', trip.id) // Lấy các đánh giá theo tripId
           .get();
-
+  
         if (!snapshot.empty) {
           let totalRating = 0;
           snapshot.forEach(doc => {
             const data = doc.data();
             totalRating += data.rating; // Cộng dồn rating từ các đánh giá
           });
-
+  
           const avgRating = totalRating / snapshot.size; // Tính rating trung bình
           setAverageRating(avgRating); // Cập nhật state
-          
-          // Cập nhật starRating trong trip
-          await firestore().collection('places').doc(trip.id).update({
-            starRating: avgRating, // Cập nhật starRating
-          });
+  
+          // Cập nhật starRating trong collection places
+          const placesDoc = await firestore().collection('places').doc(trip.id).get();
+          if (placesDoc.exists) {
+            await firestore().collection('places').doc(trip.id).update({
+              starRating: avgRating,
+            });
+          } else {
+            // Bỏ qua không thông báo khi không tìm thấy trong places
+            
+            // Kiểm tra trong topPlaces
+            const topPlacesDoc = await firestore().collection('topPlaces').doc(trip.id).get();
+            if (topPlacesDoc.exists) {
+              await firestore().collection('topPlaces').doc(trip.id).update({
+                starRating: avgRating,
+              });
+            }
+          }
+        } else {
+          console.warn('No reviews found for this trip');
         }
       } catch (error) {
         console.error('Error fetching ratings:', error);
@@ -60,12 +75,15 @@ const TripDetailsCard = ({ trip }) => {
         setLoading(false); // Kết thúc loading
       }
     };
-
+  
     fetchRatings();
   }, [trip.id]);
+  
+  
+  
 
   return (
-    <Animated.View style={[styles.container, { height: heightAnim }]}>
+    <Animated.View style={[styles.container, { height: heightAnim }]} >
       <View style={styles.header}>
         <Text style={styles.title}>{trip.title}</Text>
         <View style={styles.location}>
@@ -82,7 +100,7 @@ const TripDetailsCard = ({ trip }) => {
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <RatingOverall rating={averageRating} containerStyle={styles.rating} /> // Hiển thị rating trung bình
+          <RatingOverall rating={averageRating} containerStyle={styles.rating} />
         )}
 
         <SectionHeader
@@ -116,8 +134,7 @@ const TripDetailsCard = ({ trip }) => {
 
         <TouchableOpacity
           style={styles.addReviewButton}
-          onPress={() => navigation.navigate('AddReview', { tripId: trip.id })}
-        >
+          onPress={() => navigation.navigate('AddReview', { tripId: trip.id })}>
           <Text style={styles.addReviewButtonText}>Viết Đánh Giá</Text>
         </TouchableOpacity>
 
@@ -128,7 +145,7 @@ const TripDetailsCard = ({ trip }) => {
           onPress={() => {}}
           buttonTitle="Tất cả"
         />
-        <RelatedLocations location={trip.location} />
+        <RelatedLocations location={trip.location}  />
       </ScrollView>
     </Animated.View>
   );

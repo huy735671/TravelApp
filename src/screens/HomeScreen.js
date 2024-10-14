@@ -24,7 +24,7 @@ const HomeScreen = () => {
 
         <SectionHeader
           title="Địa điểm khác"
-          buttonTitle="See All"
+          buttonTitle="Tất cả"
           onPress={() => {}}
         />
         <TripsList list={PLACES} />
@@ -41,4 +41,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light,
   },
+  
 });

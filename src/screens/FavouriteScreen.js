@@ -11,12 +11,15 @@ import React, {useEffect, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Import biểu tượng
+import { colors, sizes } from '../constants/theme';
 
 const FavouriteScreen = () => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState('hotels');
   const navigation = useNavigation();
+
   useEffect(() => {
     const user = auth().currentUser;
     if (user) {
@@ -87,13 +90,40 @@ const FavouriteScreen = () => {
       });
   };
 
-  const handleDetails = (id, type) => {
-    if (type === 'hotel') {
-      navigation.navigate('HotelDetails', {hotelId: id});
-    } else if (type === 'place' || type === 'topPlace') {
-      navigation.navigate('TripDetails', {trip: id});
+  const handleDetails = async (id, type) => {
+    try {
+      // Lấy collection tương ứng dựa trên type
+      const collectionName = type === 'hotel' ? 'hotels' : 'places';
+      
+      // Lấy dữ liệu từ Firestore
+      const doc = await firestore().collection(collectionName).doc(id).get();
+      
+      if (doc.exists) {
+        // Lấy dữ liệu từ document
+        const tripData = { id: doc.id, ...doc.data() };
+        console.log('Navigating to details:', tripData);
+        
+        // Điều hướng tới màn hình tương ứng
+        if (type === 'hotel') {
+          // Điều hướng tới màn hình chi tiết khách sạn
+          navigation.navigate('HotelDetails', { hotelId: id, hotelData: tripData });
+        } else if (type === 'place' || type === 'topPlace') {
+          // Điều hướng tới màn hình chi tiết địa điểm
+          navigation.navigate('TripDetails', { trip: tripData });
+        }
+        
+      } else {
+        console.error('Document not found!');
+      }
+      
+    } catch (error) {
+      console.error("Error fetching document: ", error);
     }
   };
+  
+  
+  
+  
   
 
   if (loading) {
@@ -106,21 +136,14 @@ const FavouriteScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Danh Sách Yêu Thích</Text>
       <View style={styles.segmentContainer}>
         <TouchableOpacity
-          style={[
-            styles.segmentButton,
-            selectedType === 'places' && styles.activeSegment,
-          ]}
+          style={[styles.segmentButton, selectedType === 'places' && styles.activeSegment]}
           onPress={() => setSelectedType('places')}>
           <Text style={styles.segmentText}>Địa Điểm</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[
-            styles.segmentButton,
-            selectedType === 'hotels' && styles.activeSegment,
-          ]}
+          style={[styles.segmentButton, selectedType === 'hotels' && styles.activeSegment]}
           onPress={() => setSelectedType('hotels')}>
           <Text style={styles.segmentText}>Khách Sạn</Text>
         </TouchableOpacity>
@@ -152,9 +175,10 @@ const FavouriteScreen = () => {
                   
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
-                      style={styles.button}
+                      style={styles.deleteButton}
                       onPress={() => handleDelete(item.id)}>
-                      <Text style={styles.buttonText}>Xóa</Text>
+                      <Icon name="trash" size={20} color={colors.primary} />
+                      <Text style={styles.deleteButtonText}>Xóa</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.button}
@@ -199,7 +223,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activeSegment: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#4c8d6e',
   },
   segmentText: {
     fontSize: 16,
@@ -240,18 +264,30 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginTop: 8,
   },
-  button: {
-    backgroundColor: '#007bff',
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 8,
-    borderRadius: 4,
-    flex: 1,
-    marginHorizontal: 4,
+    borderRadius: 10, // Không bo góc
+    borderWidth:1,
+    borderColor:'#ddd',
+    marginRight:5,
+  },
+  deleteButtonText: {
+    color: colors.primary, // Màu văn bản (màu đỏ)
+    marginLeft: 8, // Khoảng cách giữa biểu tượng và văn bản
+    fontSize:sizes.body,
+  },
+  button: {
+    padding: 8,
+    backgroundColor: '#4c8d6e',
+    borderRadius: 8,
   },
   buttonText: {
     color: '#fff',
-    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });

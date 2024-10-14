@@ -120,12 +120,12 @@ const AllHotelsScreen = ({ navigation }) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={{flex:1}}>
       <MainHeader title="Travel app" />
 
       
       
-
+    <ScrollView style={styles.container}>
       <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
       {/* Hotels List */}
       <FlatList
@@ -147,6 +147,7 @@ const AllHotelsScreen = ({ navigation }) => {
       <Text style={styles.headerTitle}>Lên kế hoạch dễ dàng và nhanh chóng </Text>
           
     </ScrollView>
+    </View>
   );
 };
 

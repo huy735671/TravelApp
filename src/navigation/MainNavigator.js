@@ -1,6 +1,5 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {StatusBar} from 'react-native';
 import {createSharedElementStackNavigator} from 'react-navigation-shared-element';
 import TripDetailsScreen from '../screens/TripDetailsScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -15,6 +14,7 @@ import AllReviews from '../components/Reviews/AllReviews';
 import BookingScreen from '../components/Hotels/BookingScreen';
 import ReviewSection from '../components/Reviews/Hotels/ReviewSection';
 import AllReviewHotel from '../components/Reviews/Hotels/AllReviewHotel';
+import {CardStyleInterpolators} from '@react-navigation/stack';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -54,6 +54,7 @@ const MainNavigator = () => {
             }),
           }}
         />
+
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
@@ -74,12 +75,22 @@ const MainNavigator = () => {
           options={{
             headerShown: false,
             useNativeDriver: true,
-            gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Thời gian hiệu ứng
+                },
               },
-            }),
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 500,
+                },
+              },
+            },
           }}
         />
         <Stack.Screen
@@ -89,11 +100,21 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Thời gian hiệu ứng
+                },
               },
-            }),
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 500,
+                },
+              },
+            },
           }}
         />
         <Stack.Screen
@@ -103,11 +124,21 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Thời gian hiệu ứng
+                },
               },
-            }),
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 500,
+                },
+              },
+            },
           }}
         />
         <Stack.Screen
@@ -124,20 +155,19 @@ const MainNavigator = () => {
             }),
           }}
         />
+      
+
         <Stack.Screen
           name="AddReview"
           component={AddReviewScreen}
           options={{
             headerShown: false,
             useNativeDriver: true,
-            gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
-              },
-            }),
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, // Hiệu ứng trượt từ phải qua trái
           }}
         />
+
         <Stack.Screen
           name="AllReviews"
           component={AllReviews}
@@ -159,25 +189,33 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Thời gian hiệu ứng
+                },
               },
-            }),
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 500,
+                },
+              },
+            },
           }}
         />
+      
+
         <Stack.Screen
           name="ReviewSection"
           component={ReviewSection}
           options={{
             headerShown: false,
             useNativeDriver: true,
-            gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
-              },
-            }),
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, // Hiệu ứng trượt từ phải qua trái
           }}
         />
 
@@ -188,11 +226,7 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
-              },
-            }),
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
         />
       </Stack.Navigator>

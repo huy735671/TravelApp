@@ -161,23 +161,7 @@ const ReviewSection = () => {
         <TouchableOpacity style={styles.submitButton} onPress={handleAddReview}>
           <Text style={styles.submitButtonText}>Gửi Đánh Giá</Text>
         </TouchableOpacity>
-        {reviews.length > 0 && (
-          <View style={styles.reviewsContainer}>
-            <Text style={styles.reviewsHeader}>Đánh Giá:</Text>
-            {reviews.map(review => (
-              <View key={review.id} style={styles.reviewItem}>
-                <Text style={styles.reviewTitle}>{review.title}</Text>
-                <Text>{review.reviewDescription}</Text>
-                <Text style={styles.reviewRating}>
-                  Đánh giá: {review.rating} sao
-                </Text>
-                <Text style={styles.reviewAuthor}>
-                  Đánh giá bởi: {review.author?.username} ({review.author?.email})
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
+        
       </View>
     </View>
   );

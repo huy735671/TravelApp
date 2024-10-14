@@ -15,8 +15,7 @@ import StarRating from '../../shared/Rating/Rating';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from '../../shared/Icon';
-import { colors } from 'react-native-elements';
-import { sizes, spacing } from '../../../constants/theme';
+import { colors, sizes, spacing } from '../../../constants/theme';
 import * as Animatable from 'react-native-animatable';
 
 const AllReviewHotel = ({ route }) => {
