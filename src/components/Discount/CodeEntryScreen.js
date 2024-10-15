@@ -13,11 +13,11 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { sizes, spacing } from '../../constants/theme';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import Toast from 'react-native-toast-message'; 
 
 const CodeEntryScreen = () => {
   const [code, setCode] = useState('');
   const [enteredCodes, setEnteredCodes] = useState(new Set());
+  const [message, setMessage] = useState(''); // State để lưu thông báo
 
   const handleCodeSubmit = async () => {
     const user = auth().currentUser;
@@ -25,74 +25,50 @@ const CodeEntryScreen = () => {
       alert('Vui lòng đăng nhập để áp dụng mã.');
       return;
     }
-
+  
     if (enteredCodes.has(code)) {
-      Toast.show({
-        text1: 'Thông báo',
-        text2: 'Bạn đã nhập mã này rồi.',
-        type: 'info',
-        position: 'top',
-      });
+      setMessage('Bạn đã nhập mã này rồi.'); // Cập nhật thông báo
       return;
     }
-
+  
     try {
       const discountSnapshot = await firestore()
         .collection('discounts')
         .where('code', '==', code)
         .get();
-
+  
       if (!discountSnapshot.empty) {
         const userDiscountsSnapshot = await firestore()
           .collection('userDiscounts')
           .where('userId', '==', user.email)
           .where('discountId', '==', discountSnapshot.docs[0].id)
           .get();
-
+  
         if (!userDiscountsSnapshot.empty) {
-          Toast.show({
-            text1: 'Thông báo',
-            text2: 'Bạn đã nhập mã này rồi.',
-            type: 'info',
-            position: 'top',
-          });
+          setMessage('Bạn đã nhập mã này rồi.'); // Cập nhật thông báo
           return;
         }
-
+  
         const userDiscountsRef = firestore().collection('userDiscounts');
         await userDiscountsRef.add({
           discountId: discountSnapshot.docs[0].id,
           userId: user.email,
+          usedBy: false, // Thêm thuộc tính usedBy ở đây
         });
-
+  
         setEnteredCodes((prevCodes) => new Set(prevCodes).add(code));
         setCode('');
-
-        Toast.show({
-          text1: 'Thành công',
-          text2: 'Mã đã được áp dụng thành công!',
-          type: 'success',
-          position: 'top',
-        });
+  
+        setMessage('Mã đã được áp dụng thành công!'); // Cập nhật thông báo
       } else {
-        Toast.show({
-          text1: 'Thông báo',
-          text2: 'Mã không hợp lệ.',
-          type: 'error',
-          position: 'top',
-        });
+        setMessage('Mã không hợp lệ.'); // Cập nhật thông báo
       }
     } catch (error) {
       console.error('Error applying discount code: ', error);
-      Toast.show({
-        text1: 'Lỗi',
-        text2: 'Đã xảy ra lỗi khi áp dụng mã. Vui lòng thử lại.',
-        type: 'error',
-        position: 'top',
-      });
+      setMessage('Đã xảy ra lỗi khi áp dụng mã. Vui lòng thử lại.'); // Cập nhật thông báo
     }
   };
-
+  
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -100,7 +76,7 @@ const CodeEntryScreen = () => {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Nhập mã code của bạn"
+            placeholder="Nhập mã khuyến mãi"
             placeholderTextColor="#888"
             value={code}
             onChangeText={setCode}
@@ -111,6 +87,10 @@ const CodeEntryScreen = () => {
             <Text style={styles.buttonText}>Áp dụng</Text>
           </TouchableOpacity>
         </View>
+
+        {message ? ( // Hiển thị thông báo nếu có
+          <Text style={styles.message}>{message}</Text>
+        ) : null}
 
         <View style={styles.describeContainer}>
           <View style={styles.describeItem}>
@@ -148,12 +128,9 @@ const CodeEntryScreen = () => {
           <Button title="Xem ngay" color='#4c8d6e' />
         </View>
       </View>
-
-      <Toast /> 
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -201,6 +178,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  message: {
+    marginTop: 10,
+    color: 'red', // Hoặc màu khác tùy thuộc vào thông báo
   },
   describeContainer: {
     marginTop: 20,

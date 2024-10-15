@@ -10,6 +10,7 @@ import { colors, sizes, spacing } from '../../../constants/theme';
 import { useNavigation } from '@react-navigation/native';
 import RelatedLocations from './RelatedLocations';
 import firestore from '@react-native-firebase/firestore'; // Import Firestore
+import WeatherInfo from './WeatherInfo';
 
 const TripDetailsCard = ({ trip }) => {
   const navigation = useNavigation();
@@ -113,6 +114,8 @@ const TripDetailsCard = ({ trip }) => {
         <View style={styles.summary}>
           <Text style={styles.summaryText}>{trip.description}</Text>
         </View>
+
+        <WeatherInfo location={trip.location} />
         
         <SectionHeader
           title="Khách sạn liên quan"

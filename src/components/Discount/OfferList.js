@@ -12,51 +12,52 @@ const OfferList = () => {
     const fetchUserOffers = async () => {
       try {
         const user = auth().currentUser;
-
+    
         if (!user) {
           alert('Vui lòng đăng nhập để xem ưu đãi.');
           setLoading(false);
           return;
         }
-
-        // Bước 2: Lấy mã giảm giá của người dùng
+    
+        // Bước 2: Lấy mã giảm giá của người dùng, chỉ lấy những mã chưa được sử dụng
         const userDiscountsSnapshot = await firestore()
           .collection('userDiscounts')
           .where('userId', '==', user.email)
+          .where('usedBy', '==', false) // Thêm điều kiện này
           .get();
-
+    
         if (userDiscountsSnapshot.empty) {
           setOffers([]); // Không có mã giảm giá
           setLoading(false);
           return;
         }
-
+    
         const discountIds = userDiscountsSnapshot.docs.map(doc => doc.data().discountId);
-
+    
         // Bước 3: Lấy thông tin chi tiết của các mã giảm giá
         const discountPromises = discountIds.map(id =>
           firestore().collection('discounts').doc(id).get()
         );
-
+    
         const discountSnapshots = await Promise.all(discountPromises);
         const offersData = discountSnapshots.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
-
+    
         // Bước 4: Kiểm tra và xóa mã giảm giá không tồn tại
         const userDiscountsToDelete = [];
-
+    
         userDiscountsSnapshot.docs.forEach((doc, index) => {
           const discountId = doc.data().discountId;
           const discountDoc = discountSnapshots[index];
-
+    
           if (!discountDoc.exists) {
             // Nếu mã giảm giá không tồn tại, lưu lại id của userDiscounts để xóa
             userDiscountsToDelete.push(doc.id); // Sử dụng doc.id để xóa
           }
         });
-
+    
         // Bước 5: Xóa các mã giảm giá không tồn tại
         if (userDiscountsToDelete.length > 0) {
           const batch = firestore().batch();
@@ -71,7 +72,7 @@ const OfferList = () => {
           
           console.log("User discounts deleted successfully.");
         }
-
+    
         setOffers(offersData); // Cập nhật danh sách mã giảm giá
       } catch (error) {
         console.error('Error fetching user offers: ', error);
@@ -79,6 +80,7 @@ const OfferList = () => {
         setLoading(false);
       }
     };
+    
 
     fetchUserOffers();
   }, []);

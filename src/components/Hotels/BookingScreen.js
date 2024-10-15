@@ -16,7 +16,7 @@ import auth from '@react-native-firebase/auth';
 import * as Animatable from 'react-native-animatable';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from '../shared/Icon';
-import {colors, sizes} from '../../constants/theme';
+import {colors, shadow, sizes} from '../../constants/theme';
 import Divider from '../shared/Divider';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -28,7 +28,7 @@ const BookingScreen = ({route, navigation}) => {
   const [userDiscounts, setUserDiscounts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
-  const [discountValue, setDiscountValue] = useState(0); // State để lưu giá trị giảm giá
+  const [discountValue, setDiscountValue] = useState(0);
 
   const insets = useSafeAreaInsets();
 
@@ -74,7 +74,7 @@ const BookingScreen = ({route, navigation}) => {
       alert('Bạn cần đăng nhập để đặt phòng.');
       return;
     }
-
+  
     const bookingData = {
       hotelId: room.hotelId,
       roomNumber: room.roomNumber,
@@ -88,12 +88,22 @@ const BookingScreen = ({route, navigation}) => {
         uid: user.uid,
         email: user.email,
       },
-      discountId: selectedDiscount,
+      discountId: selectedDiscount ? selectedDiscount.discountId : null, // Cập nhật discountId nếu có
       status: 'pending',
     };
-
+  
     try {
+      // Thêm đặt phòng
       await firestore().collection('bookings').add(bookingData);
+  
+      // Cập nhật mã giảm giá nếu có
+      if (selectedDiscount) {
+        await firestore()
+          .collection('userDiscounts')
+          .doc(selectedDiscount.id) // Sử dụng ID của mã giảm giá
+          .update({ usedBy: true }); // Cập nhật trường usedBy
+      }
+  
       alert('Đặt phòng thành công!');
       navigation.goBack();
     } catch (error) {
@@ -101,6 +111,7 @@ const BookingScreen = ({route, navigation}) => {
       alert('Có lỗi xảy ra trong quá trình đặt phòng.');
     }
   };
+  
 
   const increaseAdults = () => {
     setAdults(prev => Number(prev) + 1);
@@ -128,13 +139,14 @@ const BookingScreen = ({route, navigation}) => {
       alert('Bạn cần đăng nhập để xem mã giảm giá.');
       return;
     }
-
+  
     try {
       const discountsSnapshot = await firestore()
         .collection('userDiscounts')
         .where('userId', '==', user.email)
+        .where('usedBy', '==', false) // Lọc chỉ lấy mã chưa sử dụng
         .get();
-
+  
       const discounts = await Promise.all(
         discountsSnapshot.docs.map(async doc => {
           const discountData = doc.data();
@@ -151,38 +163,21 @@ const BookingScreen = ({route, navigation}) => {
           };
         }),
       );
-
+  
       setUserDiscounts(discounts);
       setModalVisible(true);
     } catch (error) {
       console.error('Error fetching user discounts: ', error);
     }
   };
-
-  const fetchDiscountValue = async discountId => {
-    try {
-      const discountSnapshot = await firestore()
-        .collection('discounts')
-        .doc(discountId)
-        .get();
-
-      if (discountSnapshot.exists) {
-        const discountData = discountSnapshot.data();
-        setDiscountValue(discountData.discount); // Lưu giá trị discount từ bảng discounts
-      } else {
-        console.log('Discount not found!');
-      }
-    } catch (error) {
-      console.error('Error fetching discount value: ', error);
-    }
-  };
+  
 
   return (
     <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
         translucent
-        backgroundColor="#4c8d6e"
+        backgroundColor="rgba(0,0,0,0)"
       />
       <Animatable.View
         style={[styles.backButton, {marginTop: insets.top}]}
@@ -193,17 +188,27 @@ const BookingScreen = ({route, navigation}) => {
         <Icon
           icon="Back"
           style={styles.backIcon}
-          size={40}
           onPress={navigation.goBack}
         />
       </Animatable.View>
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>
-          {room.roomType} - {room.view}
-        </Text>
+        {/* <Text style={styles.title}></Text> */}
         {room.image && (
           <Image source={{uri: room.image}} style={styles.roomImage} />
         )}
+        <View style={{padding:10}}>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: sizes.title,
+              color: colors.primary,
+            }}>
+            {room.roomType}
+          </Text>
+          <Text style={{fontSize:sizes.h3}}>Phòng sang trọng với view {room.view}</Text>
+        </View>
+
         <View style={styles.bodyContainer}>
           <View style={styles.inputBodyContainer}>
             <View style={styles.guestsContainer}>
@@ -377,7 +382,6 @@ const BookingScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContainer: {
     paddingBottom: 20,
@@ -386,7 +390,6 @@ const styles = StyleSheet.create({
     fontSize: sizes.h2,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginVertical: 10,
   },
   bodyContainer: {
     marginHorizontal: 10,
@@ -407,7 +410,8 @@ const styles = StyleSheet.create({
   roomImage: {
     width: '100%',
     height: 200,
-    borderRadius: 10,
+    borderBottomLeftRadius:20,
+    borderBottomRightRadius:20,
     marginBottom: 20,
   },
   inputBodyContainer: {
@@ -495,12 +499,15 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 20,
+    top: 10,
     left: 20,
     zIndex: 1,
   },
   backIcon: {
-    color: '#fff',
+    backgroundColor: colors.white,
+    padding: 4,
+    borderRadius: sizes.radius,
+    ...shadow.light,
   },
   priceContainer: {
     marginVertical: 20,

@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const OfferItem = ({ offer }) => {
   const [hotelName, setHotelName] = useState('');
-  const navigation = useNavigation(); // Khởi tạo navigation
+  const navigation = useNavigation();
 
-  // Hàm chuyển đổi timestamp thành định dạng chuỗi
   const formatTimestamp = (timestamp) => {
     if (timestamp && timestamp._seconds) {
-      const date = new Date(timestamp._seconds * 1000); // Chuyển đổi giây thành milliseconds
-      return date.toLocaleDateString('vi-VN'); // Định dạng ngày theo kiểu Việt Nam
+      const date = new Date(timestamp._seconds * 1000);
+      return date.toLocaleDateString('vi-VN');
     }
-    return ''; // Nếu không có timestamp hợp lệ, trả về chuỗi rỗng
+    return '';
   };
 
-  // Lấy tên khách sạn từ Firestore
   useEffect(() => {
     const fetchHotelName = async () => {
       try {
         const hotelDoc = await firestore()
           .collection('hotels')
-          .doc(offer.hotelId) // Sử dụng hotelId từ offer
+          .doc(offer.hotelId)
           .get();
 
         if (hotelDoc.exists) {
-          setHotelName(hotelDoc.data().title); 
+          setHotelName(hotelDoc.data().title);
         }
       } catch (error) {
         console.error("Error fetching hotel name: ", error);
@@ -38,20 +37,32 @@ const OfferItem = ({ offer }) => {
 
   const formatCurrency = (amount) => {
     if (amount !== undefined && amount !== null) {
-      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Thay thế mỗi nhóm ba chữ số bằng dấu chấm
+      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
-    return '0'; // Trả về '0' nếu không có giá trị
+    return '0';
   };
 
-  // Xử lý khi nhấn vào nút 'Dùng ngay'
   const handlePress = () => {
-    navigation.navigate('HotelDetails', { hotelId: offer.hotelId }); // Điều hướng sang HotelDetails và truyền hotelId
+    navigation.navigate('HotelDetails', { hotelId: offer.hotelId });
+  };
+
+  const handleDelete = async () => {
+    try {
+      await firestore()
+        .collection('offers')
+        .doc(offer.id)
+        .update({ usedBy: false });
+    } catch (error) {
+      console.error("Error deleting offer: ", error);
+    }
   };
 
   return (
     <View style={styles.offerContainer}>
       <View style={styles.offerDetails}>
-        <Text style={styles.offerTitle}>Áp dụng cho khách sạn {hotelName || "Đang tải..."}</Text>
+        <Text style={styles.offerTitle}>
+          Áp dụng cho khách sạn: {hotelName || "Đang tải..."}
+        </Text>
         <Text style={styles.offerExpiryDate}>
           Hạn sử dụng: {formatTimestamp(offer.expirationDate)}
         </Text>
@@ -65,6 +76,9 @@ const OfferItem = ({ offer }) => {
           <Text style={styles.detailsButtonText}>Dùng ngay</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+        <Icon name="trash-outline" size={24} color="black" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -72,50 +86,54 @@ const OfferItem = ({ offer }) => {
 const styles = StyleSheet.create({
   offerContainer: {
     marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    overflow: 'hidden',
-    elevation: 10,
-    padding: 10, // Thêm padding cho container
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    elevation: 5,
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   offerDetails: {
-    justifyContent: 'center',
+    flex: 1,
+    paddingRight: 10,
   },
   offerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  offerDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginVertical: 5,
+    color: '#2c3e50',
+    marginBottom: 5,
   },
   offerExpiryDate: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: 14,
+    color: '#7f8c8d',
   },
   offerMinAmount: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: 14,
+    color: '#7f8c8d',
   },
   offerMaxUsage: {
-    fontSize: 12,
-    color: '#999',
+    fontSize: 14,
+    color: '#7f8c8d',
+    marginBottom: 10,
   },
   detailsButton: {
-    marginTop: 10,
     padding: 10,
-    backgroundColor: '#007BFF',
+    backgroundColor: '#4c8d6e',
     borderRadius: 5,
+    alignItems: 'center',
   },
   detailsButtonText: {
     color: '#fff',
-    textAlign: 'center',
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
   },
 });
 

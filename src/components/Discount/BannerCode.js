@@ -7,7 +7,7 @@ const BannerCode = ({ page, setPage, setShowCodeEntry }) => {
 
   return (
     <View style={{ flex: 1, marginBottom: 20 }}>
-      <View style={{ width: '100%', height: 200 }}>
+      <View style={{ width: '100%', height: 160 }}>
         <Image source={bannerImage} style={styles.bannerImage} />
       </View>
       <View style={styles.tabContainer}>

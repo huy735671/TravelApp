@@ -13,7 +13,7 @@ const OffersScreen = () => {
   return (
     <View style={styles.container}>
       <MainHeader title="Khuyến mãi của tôi"/>
-      <View style={{width: '100%', height: '30%'}}>
+      <View style={{width: '100%', height: '25%'}}>
         <BannerCode
           page={page}
           setPage={setPage}
