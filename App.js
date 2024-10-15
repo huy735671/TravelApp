@@ -8,7 +8,7 @@ const App = () => {
     
     <SafeAreaView style={styles.container}>
       <MainNavigator />
-      <Toast ref={Toast.setRef} />
+      <Toast/>
 
     </SafeAreaView>
   );

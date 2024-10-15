@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,93 @@ import {
   Button,
   Image,
 } from 'react-native';
-import {colors} from 'react-native-elements';
+import { colors } from 'react-native-elements';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import {sizes, spacing} from '../../constants/theme';
+import { sizes, spacing } from '../../constants/theme';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message'; 
 
 const CodeEntryScreen = () => {
+  const [code, setCode] = useState('');
+  const [enteredCodes, setEnteredCodes] = useState(new Set());
+
+  const handleCodeSubmit = async () => {
+    const user = auth().currentUser;
+    if (!user) {
+      alert('Vui lòng đăng nhập để áp dụng mã.');
+      return;
+    }
+
+    if (enteredCodes.has(code)) {
+      Toast.show({
+        text1: 'Thông báo',
+        text2: 'Bạn đã nhập mã này rồi.',
+        type: 'info',
+        position: 'top',
+      });
+      return;
+    }
+
+    try {
+      const discountSnapshot = await firestore()
+        .collection('discounts')
+        .where('code', '==', code)
+        .get();
+
+      if (!discountSnapshot.empty) {
+        const userDiscountsSnapshot = await firestore()
+          .collection('userDiscounts')
+          .where('userId', '==', user.email)
+          .where('discountId', '==', discountSnapshot.docs[0].id)
+          .get();
+
+        if (!userDiscountsSnapshot.empty) {
+          Toast.show({
+            text1: 'Thông báo',
+            text2: 'Bạn đã nhập mã này rồi.',
+            type: 'info',
+            position: 'top',
+          });
+          return;
+        }
+
+        const userDiscountsRef = firestore().collection('userDiscounts');
+        await userDiscountsRef.add({
+          discountId: discountSnapshot.docs[0].id,
+          userId: user.email,
+        });
+
+        setEnteredCodes((prevCodes) => new Set(prevCodes).add(code));
+        setCode('');
+
+        Toast.show({
+          text1: 'Thành công',
+          text2: 'Mã đã được áp dụng thành công!',
+          type: 'success',
+          position: 'top',
+        });
+      } else {
+        Toast.show({
+          text1: 'Thông báo',
+          text2: 'Mã không hợp lệ.',
+          type: 'error',
+          position: 'top',
+        });
+      }
+    } catch (error) {
+      console.error('Error applying discount code: ', error);
+      Toast.show({
+        text1: 'Lỗi',
+        text2: 'Đã xảy ra lỗi khi áp dụng mã. Vui lòng thử lại.',
+        type: 'error',
+        position: 'top',
+      });
+    }
+  };
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <Text style={styles.title}>Nhập mã</Text>
         <View style={styles.inputContainer}>
@@ -22,17 +102,16 @@ const CodeEntryScreen = () => {
             style={styles.input}
             placeholder="Nhập mã code của bạn"
             placeholderTextColor="#888"
+            value={code}
+            onChangeText={setCode}
           />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => {
-              /* Xử lý gửi mã code */
-            }}>
+            onPress={handleCodeSubmit}>
             <Text style={styles.buttonText}>Áp dụng</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Phần này là mô tả */}
         <View style={styles.describeContainer}>
           <View style={styles.describeItem}>
             <Icons name="check-circle" size={20} color="#4CAF50" />
@@ -53,7 +132,6 @@ const CodeEntryScreen = () => {
 
       <View style={styles.footerContainer}>
         <Text style={styles.footerTitleText}>
-        
           Ưu đãi đặc biệt từ TravelNest
         </Text>
         <View style={styles.footerImageBox}>
@@ -67,12 +145,15 @@ const CodeEntryScreen = () => {
               Nhận quà đến 500k thanh toán mọi dịch vụ
             </Text>
           </View>
-          <Button title="Xem ngay" color='#4c8d6e'/>
+          <Button title="Xem ngay" color='#4c8d6e' />
         </View>
       </View>
+
+      <Toast /> 
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -83,7 +164,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#f9f9f9',
-    
   },
   title: {
     fontSize: 28,
@@ -104,7 +184,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
@@ -157,8 +237,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth:1,
-    borderColor:'#ddd',
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   imageBox: {
     height: '70%',

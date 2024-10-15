@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {OFFERS} from '../data';
-import BannerCode from '../components/New/BannerCode';
+import BannerCode from '../components/Discount/BannerCode';
 import MainHeader from '../components/shared/MainHeader';
-import CodeEntryScreen from '../components/New/CodeEntryScreen';
-import OfferList from '../components/New/OfferList';
+import CodeEntryScreen from '../components/Discount/CodeEntryScreen';
+import OfferList from '../components/Discount/OfferList';
 
 const OffersScreen = () => {
   const [page, setPage] = useState('CODE_SEARCH');
