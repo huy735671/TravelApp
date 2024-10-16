@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import Review from './Review';
 import firestore from '@react-native-firebase/firestore';
@@ -166,7 +167,7 @@ const AllReviews = ({route}) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      {/* <ScrollView contentContainerStyle={styles.scrollView}>
         {reviews.length > 0 ? (
           reviews.map(review => <Review review={review} key={review.id} />)
         ) : (
@@ -174,7 +175,15 @@ const AllReviews = ({route}) => {
             Không có bình luận cho địa điểm này.
           </Text>
         )}
-      </ScrollView>
+      </ScrollView> */}
+
+<FlatList
+  data={reviews}
+  renderItem={({ item }) => <Review review={item} />}
+  keyExtractor={(item) => item.id}
+  contentContainerStyle={styles.scrollView}
+  ListEmptyComponent={<Text style={styles.noReviewsText}>Không có bình luận cho địa điểm này.</Text>}
+/>
     </View>
   );
 };

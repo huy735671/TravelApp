@@ -1,23 +1,31 @@
 // Import thêm useEffect từ react
-import React, { useRef, useState, useEffect} from 'react';
-import { View, StyleSheet, Text, ScrollView, ActivityIndicator, Animated, TouchableOpacity } from 'react-native';
+import React, {useRef, useState, useEffect} from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  Animated,
+  TouchableOpacity,
+} from 'react-native';
 import HotelsCarousel from './HotelsCarousel';
 import Divider from '../../shared/Divider';
 import SectionHeader from '../../shared/SectionHeader';
 import RatingOverall from '../../shared/Rating/RatingOverall'; // Import component RatingOverall
 import Reviews from '../../Reviews/Reviews';
-import { colors, sizes, spacing } from '../../../constants/theme';
-import { useNavigation } from '@react-navigation/native';
+import {colors, sizes, spacing} from '../../../constants/theme';
+import {useNavigation} from '@react-navigation/native';
 import RelatedLocations from './RelatedLocations';
 import firestore from '@react-native-firebase/firestore'; // Import Firestore
 import WeatherInfo from './WeatherInfo';
 
-const TripDetailsCard = ({ trip }) => {
+const TripDetailsCard = ({trip}) => {
   const navigation = useNavigation();
-  
+
   const [expanded, setExpanded] = useState(false);
   const heightAnim = useRef(new Animated.Value(480)).current;
-  
+
   const [averageRating, setAverageRating] = useState(0); // State để lưu rating trung bình
   const [loading, setLoading] = useState(true);
 
@@ -39,28 +47,34 @@ const TripDetailsCard = ({ trip }) => {
           .collection('reviews')
           .where('tripId', '==', trip.id) // Lấy các đánh giá theo tripId
           .get();
-  
+
         if (!snapshot.empty) {
           let totalRating = 0;
           snapshot.forEach(doc => {
             const data = doc.data();
             totalRating += data.rating; // Cộng dồn rating từ các đánh giá
           });
-  
+
           const avgRating = totalRating / snapshot.size; // Tính rating trung bình
           setAverageRating(avgRating); // Cập nhật state
-  
+
           // Cập nhật starRating trong collection places
-          const placesDoc = await firestore().collection('places').doc(trip.id).get();
+          const placesDoc = await firestore()
+            .collection('places')
+            .doc(trip.id)
+            .get();
           if (placesDoc.exists) {
             await firestore().collection('places').doc(trip.id).update({
               starRating: avgRating,
             });
           } else {
             // Bỏ qua không thông báo khi không tìm thấy trong places
-            
+
             // Kiểm tra trong topPlaces
-            const topPlacesDoc = await firestore().collection('topPlaces').doc(trip.id).get();
+            const topPlacesDoc = await firestore()
+              .collection('topPlaces')
+              .doc(trip.id)
+              .get();
             if (topPlacesDoc.exists) {
               await firestore().collection('topPlaces').doc(trip.id).update({
                 starRating: avgRating,
@@ -76,21 +90,20 @@ const TripDetailsCard = ({ trip }) => {
         setLoading(false); // Kết thúc loading
       }
     };
-  
+
     fetchRatings();
   }, [trip.id]);
-  
-  
-  
 
   return (
-    <Animated.View style={[styles.container, { height: heightAnim }]} >
+    <Animated.View style={[styles.container, {height: heightAnim}]}>
       <View style={styles.header}>
         <Text style={styles.title}>{trip.title}</Text>
         <View style={styles.location}>
           <Text style={styles.locationText}>{trip.location}</Text>
           <TouchableOpacity style={styles.toggleButton} onPress={toggleExpand}>
-            <Text style={styles.toggleButtonText}>{expanded ? 'Thu gọn' : 'Mở rộng'}</Text>
+            <Text style={styles.toggleButtonText}>
+              {expanded ? 'Thu gọn' : 'Mở rộng'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -101,14 +114,17 @@ const TripDetailsCard = ({ trip }) => {
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <RatingOverall rating={averageRating} containerStyle={styles.rating} />
+          <RatingOverall
+            rating={averageRating}
+            containerStyle={styles.rating}
+          />
         )}
 
         <SectionHeader
           title="Giới thiệu"
           containerStyle={styles.SectionHeader}
           titleStyle={styles.sectionTitle}
-          onPress={() => {}}
+          onPress={() => navigation.navigate('PlaceDetail', {trip})}
           buttonTitle="Tất cả"
         />
         <View style={styles.summary}>
@@ -116,7 +132,7 @@ const TripDetailsCard = ({ trip }) => {
         </View>
 
         <WeatherInfo location={trip.location} />
-        
+
         <SectionHeader
           title="Khách sạn liên quan"
           containerStyle={styles.SectionHeader}
@@ -137,7 +153,7 @@ const TripDetailsCard = ({ trip }) => {
 
         <TouchableOpacity
           style={styles.addReviewButton}
-          onPress={() => navigation.navigate('AddReview', { tripId: trip.id })}>
+          onPress={() => navigation.navigate('AddReview', {tripId: trip.id})}>
           <Text style={styles.addReviewButtonText}>Viết Đánh Giá</Text>
         </TouchableOpacity>
 
@@ -148,7 +164,7 @@ const TripDetailsCard = ({ trip }) => {
           onPress={() => {}}
           buttonTitle="Tất cả"
         />
-        <RelatedLocations location={trip.location}  />
+        <RelatedLocations location={trip.location} />
       </ScrollView>
     </Animated.View>
   );

@@ -15,6 +15,7 @@ import BookingScreen from '../components/Hotels/BookingScreen';
 import ReviewSection from '../components/Reviews/Hotels/ReviewSection';
 import AllReviewHotel from '../components/Reviews/Hotels/AllReviewHotel';
 import {CardStyleInterpolators} from '@react-navigation/stack';
+import PlaceDetailScreen from '../screens/PlaceDetailScreen';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -72,6 +73,33 @@ const MainNavigator = () => {
         <Stack.Screen
           name="HotelDetails"
           component={HotelDetailsScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            transitionSpec: {
+              open: {
+                animation: 'timing',
+                config: {
+                  duration: 500, // Thời gian hiệu ứng
+                },
+              },
+              close: {
+                animation: 'timing',
+                config: {
+                  duration: 500,
+                },
+              },
+            },
+          }}
+        />
+
+
+
+<Stack.Screen
+          name="PlaceDetail"
+          component={PlaceDetailScreen}
           options={{
             headerShown: false,
             useNativeDriver: true,
