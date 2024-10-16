@@ -98,10 +98,22 @@ const BookingScreen = ({route, navigation}) => {
   
       // Cập nhật mã giảm giá nếu có
       if (selectedDiscount) {
-        await firestore()
-          .collection('userDiscounts')
-          .doc(selectedDiscount.id) // Sử dụng ID của mã giảm giá
-          .update({ usedBy: true }); // Cập nhật trường usedBy
+        const discountRef = firestore().collection('discounts').doc(selectedDiscount.discountId);
+        const discountDoc = await discountRef.get();
+        
+        if (discountDoc.exists) {
+          const discountData = discountDoc.data();
+          const newMaxUsage = discountData.maxUsage - 1;
+  
+          // Cập nhật maxUsage
+          await discountRef.update({ maxUsage: newMaxUsage });
+  
+          // Kiểm tra xem maxUsage có bằng 0 không
+          if (newMaxUsage <= 0) {
+            // Xóa mã giảm giá khỏi bảng discounts
+            await discountRef.delete();
+          }
+        }
       }
   
       alert('Đặt phòng thành công!');
@@ -139,14 +151,14 @@ const BookingScreen = ({route, navigation}) => {
       alert('Bạn cần đăng nhập để xem mã giảm giá.');
       return;
     }
-  
+
     try {
       const discountsSnapshot = await firestore()
         .collection('userDiscounts')
         .where('userId', '==', user.email)
         .where('usedBy', '==', false) // Lọc chỉ lấy mã chưa sử dụng
         .get();
-  
+
       const discounts = await Promise.all(
         discountsSnapshot.docs.map(async doc => {
           const discountData = doc.data();
@@ -163,14 +175,13 @@ const BookingScreen = ({route, navigation}) => {
           };
         }),
       );
-  
+
       setUserDiscounts(discounts);
       setModalVisible(true);
     } catch (error) {
       console.error('Error fetching user discounts: ', error);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -185,11 +196,7 @@ const BookingScreen = ({route, navigation}) => {
         delay={500}
         duration={400}
         easing="ease-in-out">
-        <Icon
-          icon="Back"
-          style={styles.backIcon}
-          onPress={navigation.goBack}
-        />
+        <Icon icon="Back" style={styles.backIcon} onPress={navigation.goBack} />
       </Animatable.View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -197,7 +204,7 @@ const BookingScreen = ({route, navigation}) => {
         {room.image && (
           <Image source={{uri: room.image}} style={styles.roomImage} />
         )}
-        <View style={{padding:10}}>
+        <View style={{padding: 10}}>
           <Text
             style={{
               fontWeight: 'bold',
@@ -206,7 +213,9 @@ const BookingScreen = ({route, navigation}) => {
             }}>
             {room.roomType}
           </Text>
-          <Text style={{fontSize:sizes.h3}}>Phòng sang trọng với view {room.view}</Text>
+          <Text style={{fontSize: sizes.h3}}>
+            Phòng sang trọng với view {room.view}
+          </Text>
         </View>
 
         <View style={styles.bodyContainer}>
@@ -410,8 +419,8 @@ const styles = StyleSheet.create({
   roomImage: {
     width: '100%',
     height: 200,
-    borderBottomLeftRadius:20,
-    borderBottomRightRadius:20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     marginBottom: 20,
   },
   inputBodyContainer: {

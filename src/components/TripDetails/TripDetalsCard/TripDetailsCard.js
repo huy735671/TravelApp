@@ -125,7 +125,7 @@ const TripDetailsCard = ({trip}) => {
           containerStyle={styles.SectionHeader}
           titleStyle={styles.sectionTitle}
           onPress={() => navigation.navigate('PlaceDetail', {trip})}
-          buttonTitle="Tất cả"
+          buttonTitle="Xem chi tiết"
         />
         <View style={styles.summary}>
           <Text style={styles.summaryText}>{trip.description}</Text>
@@ -146,8 +146,6 @@ const TripDetailsCard = ({trip}) => {
           title="Đánh giá"
           containerStyle={styles.sectionHeader}
           titleStyle={styles.sectionTitle}
-          onPress={() => {}}
-          buttonTitle="Tất cả"
         />
         <Reviews tripId={trip.id} />
 
@@ -211,6 +209,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     marginHorizontal: spacing.l,
+    paddingBottom: 20,
   },
   summaryText: {
     color: colors.primary,

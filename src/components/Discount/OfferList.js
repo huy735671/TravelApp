@@ -96,6 +96,7 @@ const OfferList = () => {
         <FlatList
           data={offers}
           renderItem={({ item }) => <OfferItem offer={item} />}
+          
           keyExtractor={item => item.id}
         />
       ) : (

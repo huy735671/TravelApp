@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: spacing.l,
     marginRight: spacing.m,
+   
   },
   title: {
     fontSize: sizes.h3,
