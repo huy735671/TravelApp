@@ -8,15 +8,45 @@ import Card from '../shared/Card/card';
 import CardMedia from '../shared/Card/CardMedia';
 import CardFavoriteIcon from '../shared/Card/CardFavoriteIcon';
 import CardContent from '../shared/Card/CardContent';
+import firestore from '@react-native-firebase/firestore';
 
 const SearchCard = ({item, index}) => {
   const navigation = useNavigation();
   const even = index % 2 === 0;
 
-  // Chọn nguồn hình ảnh dựa trên loại item
-  const imageSource = item.type === 'places' ? item.image : item.imageUrl || 'https://via.placeholder.com/150'; // Hình ảnh dự phòng
-  console.log('Item:', item); // In item ra console
-  console.log('Image Source:', imageSource); // In nguồn hình ảnh ra console
+  const imageSource = item.type === 'places' ? item.image : item.imageUrl || 'https://via.placeholder.com/150';
+
+  const handleDetails = async () => {
+    try {
+  
+      // Kiểm tra trong places trước, nếu không có thì kiểm tra hotels
+      let collectionName = 'places';
+      let doc = await firestore().collection(collectionName).doc(item.id).get();
+  
+      // Nếu không tìm thấy trong places, kiểm tra hotels
+      if (!doc.exists) {
+        collectionName = 'hotels';
+        doc = await firestore().collection(collectionName).doc(item.id).get();
+      }
+  
+      if (doc.exists) {
+        const tripData = { id: doc.id, ...doc.data() };
+        if (collectionName === 'hotels') {
+          navigation.navigate('HotelDetails', { hotelId: item.id, hotelData: tripData });
+        } else {
+          navigation.navigate('TripDetails', { trip: tripData });
+        }
+      } else {
+        console.error('Document not found in both collections!');
+      }
+    } catch (error) {
+      console.error("Error fetching document: ", error);
+    }
+  };
+  
+  
+  
+  
 
   return (
     <Animated.View
@@ -28,18 +58,14 @@ const SearchCard = ({item, index}) => {
         paddingBottom: spacing.l,
       }}>
       <Card
-        onPress={() => {
-          item.type === 'places'
-            ? navigation.navigate('TripDetails', { trip: item })
-            : null;
-        }}
+        onPress={handleDetails}  // Gọi hàm handleDetails khi nhấn vào Card
         style={{
           width: '100%',
           height: index % 3 === 0 ? 180 : 240,
         }}>
         <CardFavoriteIcon onPress={() => {}} />
         <SharedElement id={`trip.${item.id}.image`} style={styles.media}>
-          <CardMedia source={{ uri: imageSource || 'https://via.placeholder.com/150' }} borderBottomRadius />
+          <CardMedia source={{ uri: imageSource }} borderBottomRadius />
         </SharedElement>
         <CardContent>
           <View style={styles.titleBox}>

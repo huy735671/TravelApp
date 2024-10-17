@@ -1,4 +1,3 @@
-// Import thêm useEffect từ react
 import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
@@ -146,9 +145,11 @@ const TripDetailsCard = ({trip}) => {
           title="Đánh giá"
           containerStyle={styles.sectionHeader}
           titleStyle={styles.sectionTitle}
+         
+         
         />
         <Reviews tripId={trip.id} />
-
+          
         <TouchableOpacity
           style={styles.addReviewButton}
           onPress={() => navigation.navigate('AddReview', {tripId: trip.id})}>
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     marginHorizontal: spacing.l,
-    paddingBottom: 20,
+    paddingBottom:20,
   },
   summaryText: {
     color: colors.primary,

@@ -16,6 +16,7 @@ import ReviewSection from '../components/Reviews/Hotels/ReviewSection';
 import AllReviewHotel from '../components/Reviews/Hotels/AllReviewHotel';
 import {CardStyleInterpolators} from '@react-navigation/stack';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
+import BookingDetail from '../components/shared/BookingDetail';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -95,9 +96,7 @@ const MainNavigator = () => {
           }}
         />
 
-
-
-<Stack.Screen
+        <Stack.Screen
           name="PlaceDetail"
           component={PlaceDetailScreen}
           options={{
@@ -183,7 +182,6 @@ const MainNavigator = () => {
             }),
           }}
         />
-      
 
         <Stack.Screen
           name="AddReview"
@@ -192,7 +190,7 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: true,
-            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS, // Hiệu ứng trượt từ phải qua trái
+            cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
 
@@ -234,7 +232,6 @@ const MainNavigator = () => {
             },
           }}
         />
-      
 
         <Stack.Screen
           name="ReviewSection"
@@ -243,7 +240,7 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: true,
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, // Hiệu ứng trượt từ phải qua trái
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, 
           }}
         />
 
@@ -252,6 +249,18 @@ const MainNavigator = () => {
           component={AllReviewHotel}
           options={{
             headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          }}
+        />
+
+<Stack.Screen
+          name="BookingDetail"
+          component={BookingDetail}
+          options={{
+            headerTitle: 'Chi Tiết đặt phòng',
+            headerShown: true,
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

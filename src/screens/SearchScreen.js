@@ -11,6 +11,7 @@ const SearchScreen = () => {
   const [places, setPlaces] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [allData, setAllData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +19,7 @@ const SearchScreen = () => {
         // Lấy dữ liệu từ collection 'places'
         const placesSnapshot = await firestore().collection('places').get();
         const placesData = placesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
+
         // Lấy dữ liệu từ collection 'hotels'
         const hotelsSnapshot = await firestore().collection('hotels').get();
         const hotelsData = hotelsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -31,29 +32,37 @@ const SearchScreen = () => {
         console.error('Error fetching data: ', error);
       }
     };
-    
+
     fetchData();
   }, []);
+
+  const filteredData = allData.filter(item => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(searchLower) || // Tìm theo title
+      item.location.toLowerCase().includes(searchLower) // Tìm theo location
+    );
+  });
 
   const tabs = [
     {
       title: 'All',
-      content: () => <SearchMasonry key="all" list={allData} />,
+      content: () => <SearchMasonry key="all" list={filteredData} />, // Dùng filteredData cho tab 'All'
     },
     {
       title: 'Places',
-      content: () => <SearchMasonry key="places" list={places} />,
+      content: () => <SearchMasonry key="places" list={places.filter(place => place.title.toLowerCase().includes(searchTerm.toLowerCase()))} />, // Lọc theo tìm kiếm cho tab 'Places'
     },
     {
       title: 'Hotels',
-      content: () => <SearchMasonry key="hotels" list={hotels} />,
+      content: () => <SearchMasonry key="hotels" list={hotels.filter(hotel => hotel.title.toLowerCase().includes(searchTerm.toLowerCase()))} />, // Lọc theo tìm kiếm cho tab 'Hotels'
     },
   ];
 
   return (
     <View style={styles.container}>
       <MainHeader title="Search" />
-      <SearchInput />
+      <SearchInput onSearch={setSearchTerm} />
       <Tabs items={tabs} />
     </View>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,14 +11,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import WeatherInfo from '../components/TripDetails/TripDetalsCard/WeatherInfo';
-import { colors, sizes, spacing } from '../constants/theme';
+import {colors, sizes, spacing} from '../constants/theme';
 import StarRating from '../components/shared/Rating/Rating';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-
-const PlaceDetailScreen = ({ route }) => {
-  const { trip } = route.params;
+const PlaceDetailScreen = ({route}) => {
+  const {trip} = route.params;
   const [starRating, setStarRating] = useState(0);
   const [topPlaces, setTopPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +62,7 @@ const PlaceDetailScreen = ({ route }) => {
       await firestore()
         .collection('places')
         .doc(trip.id)
-        .update({ starRating: rating });
+        .update({starRating: rating});
       console.log('Star rating updated!');
     } catch (error) {
       console.error('Error updating star rating:', error);
@@ -72,7 +71,7 @@ const PlaceDetailScreen = ({ route }) => {
   };
 
   // Hàm để mở modal phóng to hình ảnh
-  const openImageModal = (image) => {
+  const openImageModal = image => {
     setSelectedImage(image);
   };
 
@@ -81,8 +80,7 @@ const PlaceDetailScreen = ({ route }) => {
     setSelectedImage(null);
   };
 
-
-  const getActivityIcon = (activity) => {
+  const getActivityIcon = activity => {
     switch (activity) {
       case 'Chụp hình':
         return 'camera'; // Icon camera từ FontAwesome
@@ -98,9 +96,9 @@ const PlaceDetailScreen = ({ route }) => {
   };
 
   return (
-    <ScrollView style={styles.container} >
+    <ScrollView style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: trip.imageUrl }} style={styles.image} />
+        <Image source={{uri: trip.imageUrl}} style={styles.image} />
         <View style={styles.overlay}>
           <Text style={styles.overlayTitle}>{trip.title}</Text>
           <Text style={styles.overlayLocation}>
@@ -116,15 +114,16 @@ const PlaceDetailScreen = ({ route }) => {
           <Text style={styles.errorText}>{error}</Text>
         ) : (
           <View style={styles.starRatingContainer}>
-            <Text style={{
-              fontSize: sizes.h3,
-              color: colors.primary,
-              fontWeight: 'bold',
-            }}>
+            <Text
+              style={{
+                fontSize: sizes.h3,
+                color: colors.primary,
+                fontWeight: 'bold',
+              }}>
               Giới thiệu về {trip.title}
             </Text>
 
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{flexDirection: 'row'}}>
               <StarRating
                 disabled={true}
                 maxStars={5}
@@ -166,33 +165,37 @@ const PlaceDetailScreen = ({ route }) => {
         </View>
 
         <View style={styles.section}>
-  <Text style={styles.sectionTitle}>Hoạt động</Text>
-  {Array.isArray(trip.activities) && trip.activities.length > 0 ? (
-    trip.activities.map((activity, index) => (
-      <View key={index} style={styles.activityItemContainer}>
-        <Icon name={getActivityIcon(activity)} size={30} color={colors.primary} style={styles.activityIcon} />
-        <Text style={styles.activityItem}>{activity}</Text>
-      </View>
-    ))
-  ) : (
-    <Text>Không có hoạt động nào</Text>
-  )}
-</View>
+          <Text style={styles.sectionTitle}>Hoạt động</Text>
+          {Array.isArray(trip.activities) && trip.activities.length > 0 ? (
+            trip.activities.map((activity, index) => (
+              <View key={index} style={styles.activityItemContainer}>
+                <Icon
+                  name={getActivityIcon(activity)}
+                  size={30}
+                  color={colors.primary}
+                  style={styles.activityIcon}
+                />
+                <Text style={styles.activityItem}>{activity}</Text>
+              </View>
+            ))
+          ) : (
+            <Text>Không có hoạt động nào</Text>
+          )}
+        </View>
 
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.sectionTitle}>Thời tiết</Text>
           <WeatherInfo location={trip.location} />
-        </View>
+        </View> */}
 
         <Text style={styles.galleryTitle}>Ảnh liên quan đến địa điểm</Text>
         <View style={styles.gallery}>
           {Array.isArray(trip.gallery) && trip.gallery.length > 0 ? (
             trip.gallery.map((image, index) => (
-              <TouchableOpacity key={index} onPress={() => openImageModal(image)}>
-                <Image
-                  source={{ uri: image }}
-                  style={styles.galleryImage}
-                />
+              <TouchableOpacity
+                key={index}
+                onPress={() => openImageModal(image)}>
+                <Image source={{uri: image}} style={styles.galleryImage} />
               </TouchableOpacity>
             ))
           ) : (
@@ -207,10 +210,11 @@ const PlaceDetailScreen = ({ route }) => {
           visible={true}
           transparent={true}
           animationType="fade"
-          onRequestClose={closeImageModal}
-        >
-          <TouchableOpacity style={styles.modalContainer} onPress={closeImageModal}>
-            <Image source={{ uri: selectedImage }} style={styles.modalImage} />
+          onRequestClose={closeImageModal}>
+          <TouchableOpacity
+            style={styles.modalContainer}
+            onPress={closeImageModal}>
+            <Image source={{uri: selectedImage}} style={styles.modalImage} />
           </TouchableOpacity>
         </Modal>
       )}
@@ -312,11 +316,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Background trong suốt
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   modalImage: {
-    width: '90%',
-    height: '90%',
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
   },
   errorText: {
@@ -344,7 +348,7 @@ const styles = StyleSheet.create({
   },
   activityIcon: {
     marginRight: 10,
-    fontSize: 28, 
+    fontSize: 28,
   },
   activityItem: {
     fontSize: sizes.body,

@@ -89,6 +89,7 @@ const BookingScreen = ({route, navigation}) => {
         email: user.email,
       },
       discountId: selectedDiscount ? selectedDiscount.discountId : null, // Cập nhật discountId nếu có
+      roomId: room.id, // Lưu roomId ở đây
       status: 'pending',
     };
   
@@ -98,21 +99,34 @@ const BookingScreen = ({route, navigation}) => {
   
       // Cập nhật mã giảm giá nếu có
       if (selectedDiscount) {
-        const discountRef = firestore().collection('discounts').doc(selectedDiscount.discountId);
-        const discountDoc = await discountRef.get();
-        
+        // Lấy thông tin mã giảm giá từ collection discounts
+        const discountDoc = await firestore()
+          .collection('discounts')
+          .doc(selectedDiscount.discountId)
+          .get();
+  
         if (discountDoc.exists) {
           const discountData = discountDoc.data();
-          const newMaxUsage = discountData.maxUsage - 1;
+          const currentMaxUsage = discountData.maxUsage;
   
-          // Cập nhật maxUsage
-          await discountRef.update({ maxUsage: newMaxUsage });
+          // Kiểm tra nếu maxUsage lớn hơn 0
+          if (currentMaxUsage > 0) {
+            // Giảm maxUsage đi 1
+            await firestore()
+              .collection('discounts')
+              .doc(selectedDiscount.discountId)
+              .update({maxUsage: currentMaxUsage - 1});
   
-          // Kiểm tra xem maxUsage có bằng 0 không
-          if (newMaxUsage <= 0) {
-            // Xóa mã giảm giá khỏi bảng discounts
-            await discountRef.delete();
+            // Cập nhật thông tin sử dụng mã giảm giá
+            await firestore()
+              .collection('userDiscounts')
+              .doc(selectedDiscount.id) // Sử dụng ID của mã giảm giá
+              .update({usedBy: true}); // Cập nhật trường usedBy
+          } else {
+            alert('Mã giảm giá đã hết lượt sử dụng.');
           }
+        } else {
+          console.log('Discount not found!');
         }
       }
   

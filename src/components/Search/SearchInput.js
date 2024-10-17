@@ -1,10 +1,16 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {StyleSheet, TextInput, View} from 'react-native';
 import React, {useState} from 'react';
 import Icon from '../shared/Icon';
 import {colors, shadow, sizes, spacing} from '../../constants/theme';
 
-const SearchInput = () => {
+const SearchInput = ({onSearch}) => {
   const [search, setSearch] = useState('');
+
+  const handleSearchChange = (text) => {
+    setSearch(text);
+    onSearch(text); // Gọi hàm onSearch mỗi khi người dùng nhập vào ô tìm kiếm
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inner}>
@@ -15,7 +21,7 @@ const SearchInput = () => {
           style={styles.field}
           placeholder="Search"
           value={search}
-          onChangeText={setSearch}
+          onChangeText={handleSearchChange}
         />
         <View style={styles.filter}>
           <Icon icon="Filter" onPress={() => {}} />
@@ -52,8 +58,6 @@ const styles = StyleSheet.create({
     flex: 1,
     elevation: 5,
     ...shadow.light,
-    
-
   },
   filter: {
     position: 'absolute',
