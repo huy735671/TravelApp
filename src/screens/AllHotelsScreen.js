@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -13,21 +13,22 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { colors, shadow, sizes } from '../constants/theme';
+import {colors, shadow, sizes} from '../constants/theme';
 import MainHeader from '../components/shared/MainHeader';
 import HotelsList from '../components/Hotels/hotelsList';
 import LocationsScreen from '../components/Hotels/LocationsScreen';
+import SearchBar from '../components/Search/Hotel/SearchBar';
+import SpecialOffer from '../components/Hotels/HotelHome/SpecialOffer';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 const cardWidth = width * 0.85;
 
-const AllHotelsScreen = ({ navigation }) => {
+const AllHotelsScreen = ({navigation}) => {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredHotels, setFilteredHotels] = useState([]);
   const [userAddress, setUserAddress] = useState('');
-
 
   // Hàm để lấy địa chỉ của người dùng
   const fetchUserAddress = async () => {
@@ -41,9 +42,12 @@ const AllHotelsScreen = ({ navigation }) => {
   };
 
   // Hàm để tìm địa chỉ trong Firestore
-  const getAddressFromFirestore = async (email) => {
+  const getAddressFromFirestore = async email => {
     try {
-      const userDoc = await firestore().collection('users').where('email', '==', email).get();
+      const userDoc = await firestore()
+        .collection('users')
+        .where('email', '==', email)
+        .get();
       if (!userDoc.empty) {
         const userData = userDoc.docs[0].data(); // Lấy dữ liệu từ tài liệu đầu tiên
         const address = userData.address; // Giả sử địa chỉ nằm trong trường 'address'
@@ -66,9 +70,11 @@ const AllHotelsScreen = ({ navigation }) => {
         ...doc.data(),
       }));
       // Lọc khách sạn theo địa chỉ của người dùng
-      const filteredByAddress = hotelsList.filter(hotel => hotel.location === userAddress);
+      const filteredByAddress = hotelsList.filter(
+        hotel => hotel.location === userAddress,
+      );
       setHotels(hotelsList);
-      setFilteredHotels(filteredByAddress); 
+      setFilteredHotels(filteredByAddress);
     } catch (error) {
       console.error('Error fetching hotels:', error);
     } finally {
@@ -98,11 +104,11 @@ const AllHotelsScreen = ({ navigation }) => {
     }
   };
 
-  const Card = ({ hotel }) => (
+  const Card = ({hotel}) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('HotelDetails', { hotelId: hotel.id })}>
-      <Image source={{ uri: hotel.imageUrl }} style={styles.cardImage} />
+      onPress={() => navigation.navigate('HotelDetails', {hotelId: hotel.id})}>
+      <Image source={{uri: hotel.imageUrl}} style={styles.cardImage} />
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{hotel.title}</Text>
         <Text style={styles.hotelLocation}>{hotel.location}</Text>
@@ -120,33 +126,38 @@ const AllHotelsScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={{flex:1}}>
+    <View style={{flex: 1}}>
       <MainHeader title="Travel app" />
 
-      
-      
-    <ScrollView style={styles.container}>
-      <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
-      {/* Hotels List */}
-      <FlatList
-        data={filteredHotels}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <Card hotel={item} />}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.flatListContainer}
-        snapToInterval={cardWidth}
-      />
+      <ScrollView style={styles.container}>
+        <SearchBar navigation={navigation} />
+        <View>
+        <Text style={styles.headerTitle}>Ưu đãi đặc biệt</Text>
+        <SpecialOffer navigation={navigation} />
+        </View>
 
-      <Text style={styles.headerTitle}>Bạn cần gợi ý?</Text>
-      <HotelsList />
+        <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
 
-      <Text style={styles.headerTitle}>Tìm theo chỗ nghỉ</Text>
-      <LocationsScreen />
+        <FlatList
+          data={filteredHotels}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => <Card hotel={item} />}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.flatListContainer}
+          snapToInterval={cardWidth}
+        />
 
-      <Text style={styles.headerTitle}>Lên kế hoạch dễ dàng và nhanh chóng </Text>
-          
-    </ScrollView>
+        <Text style={styles.headerTitle}>Bạn cần gợi ý?</Text>
+        <HotelsList />
+
+        <Text style={styles.headerTitle}>Tìm theo chỗ nghỉ</Text>
+        <LocationsScreen />
+
+        <Text style={styles.headerTitle}>
+          Lên kế hoạch dễ dàng và nhanh chóng{' '}
+        </Text>
+      </ScrollView>
     </View>
   );
 };
@@ -161,7 +172,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 50,
   },
-  
+
   headerTitle: {
     fontSize: sizes.h2,
     fontWeight: 'bold',
@@ -169,9 +180,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingVertical: 10,
   },
-  
-  
-  
+
   flatListContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,

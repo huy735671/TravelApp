@@ -22,7 +22,7 @@ const Carousel = ({renderItem, items = []}) => {
             index,
             style: {
               width: CARD_WIDTH,
-              marginLeft: spacing.l,
+              marginLeft: spacing.m,
               marginRight: index === items.length - 1 ? spacing.l : 0,
             },
           });

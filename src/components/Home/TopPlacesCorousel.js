@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   titleBox: {
     position: 'absolute',
-    top: CARD_HEIGHT - 80,
+    top: CARD_HEIGHT - 85,
     left: 16,
   },
   title: {

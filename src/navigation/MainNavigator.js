@@ -17,6 +17,10 @@ import AllReviewHotel from '../components/Reviews/Hotels/AllReviewHotel';
 import {CardStyleInterpolators} from '@react-navigation/stack';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
 import BookingDetail from '../components/shared/BookingDetail';
+import RegionFilter from '../components/Places/regions';
+import ExploreScreen from '../components/Places/ExploreScreen';
+import SearchResultsScreen from '../components/Search/Hotel/SearchResultsScreen';
+import SpecialOfferDetails from '../components/Hotels/HotelHome/SpecialOfferDetails';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -240,7 +244,7 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: true,
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS, 
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
         />
 
@@ -255,7 +259,7 @@ const MainNavigator = () => {
           }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="BookingDetail"
           component={BookingDetail}
           options={{
@@ -264,6 +268,54 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          }}
+        />
+
+        <Stack.Screen
+          name="RegionFilter"
+          component={RegionFilter}
+          options={{
+            headerShown: true,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            headerTitle: 'Khám phá Việt Nam',
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+
+        <Stack.Screen
+          name="SearchResults"
+          component={SearchResultsScreen}
+          options={{
+            headerShown: true,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            headerTitle: 'Tìm Khách Sạn',
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+
+<Stack.Screen
+          name="SpecialOfferDetails"
+          component={SpecialOfferDetails}
+          options={{
+            headerShown: true,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            headerTitle: 'Ưu đãi đặc biệt',
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
           }}
         />
       </Stack.Navigator>

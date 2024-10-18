@@ -39,7 +39,7 @@ const ViewPlacesByRegion = () => {
     const renderLocation = ({ item }) => (
         <TouchableOpacity
             style={styles.locationCard}
-            onPress={() => navigation.navigate('RegionListScreen', { title: item.title })} // Truyền title
+            onPress={() => navigation.navigate('RegionListScreen', { title: item.title })} 
         >
             <Image source={{ uri: item.image }} style={styles.image} />
             <Text style={styles.locationtitle}>{item.title}</Text>

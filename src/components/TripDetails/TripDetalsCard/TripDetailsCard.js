@@ -164,6 +164,7 @@ const TripDetailsCard = ({trip}) => {
           buttonTitle="Tất cả"
         />
         <RelatedLocations location={trip.location} />
+
       </ScrollView>
     </Animated.View>
   );
