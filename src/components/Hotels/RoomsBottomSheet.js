@@ -42,7 +42,38 @@ const RoomsBottomSheet = ({hotelId, onClose}) => {
         .collection('rooms')
         .where('hotelId', '==', hotelId)
         .get();
-      setRooms(roomsCollection.docs.map(doc => ({id: doc.id, ...doc.data()})));
+
+      const roomsData = roomsCollection.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Fetch discount data
+      const discountsCollection = await firestore()
+        .collection('hotelDiscount')
+        .where('hotelId', '==', hotelId)
+        .get();
+
+      const discountsData = {};
+      discountsCollection.docs.forEach(doc => {
+        const discount = doc.data();
+        discountsData[discount.roomId] = discount.discountPercentage; // Lưu trữ phần trăm giảm giá theo roomId
+      });
+
+      // Thêm phần trăm giảm giá vào từng phòng
+      const updatedRooms = roomsData.map(room => {
+        const discountPercentage = discountsData[room.id] || 0; // Lấy phần trăm giảm giá hoặc 0 nếu không có
+        const discountedPrice =
+          room.pricePerNight * (1 - discountPercentage / 100); // Tính giá phòng sau giảm giá
+
+        return {
+          ...room,
+          discountPercentage, // Thêm phần trăm giảm giá vào phòng
+          discountedPrice, // Giá sau khi giảm
+        };
+      });
+
+      setRooms(updatedRooms);
     };
 
     fetchRooms();
@@ -67,6 +98,7 @@ const RoomsBottomSheet = ({hotelId, onClose}) => {
       });
       return;
     }
+
     navigation.navigate('BookingScreen', {
       room,
       checkInDate: checkInDate.toISOString(),
@@ -190,13 +222,27 @@ const RoomsBottomSheet = ({hotelId, onClose}) => {
               <TouchableOpacity
                 style={styles.roomItem}
                 onPress={() => openBookingDetail(item)}>
-                {/* <Text style={styles.roomText}>Phòng: {item.roomNumber}</Text> */}
                 <Text style={styles.roomText}>Loại: {item.roomType}</Text>
                 <Text style={styles.roomText}>
                   Sức chứa: {item.capacity} người + trẻ em
                 </Text>
+
+                {item.discountPercentage > 0 && (
+                  <>
+                    <Text style={styles.roomText}>
+                      Giảm giá: {item.discountPercentage}%
+                    </Text>
+                    <Text
+                      style={[
+                        styles.roomText,
+                        {textDecorationLine: 'line-through', color: '#999'},
+                      ]}>
+                      Giá gốc: {formatCurrency(item.pricePerNight)}
+                    </Text>
+                  </>
+                )}
                 <Text style={styles.roomText}>
-                  Giá 1 đêm: {formatCurrency(item.pricePerNight)}
+                  Giá sau giảm: {formatCurrency(item.discountedPrice)}
                 </Text>
                 <Text style={styles.roomText}>Tầm nhìn: {item.view}</Text>
                 <Text style={styles.roomText}>Trạng thái: {item.status}</Text>

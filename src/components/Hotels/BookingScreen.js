@@ -29,8 +29,49 @@ const BookingScreen = ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [discountValue, setDiscountValue] = useState(0);
+  const [hotelDiscount, setHotelDiscount] = useState(null);
+  const [roomDiscount, setRoomDiscount] = useState(null);
 
   const insets = useSafeAreaInsets();
+
+  const fetchHotelDiscount = async () => {
+    try {
+      const discountSnapshot = await firestore()
+        .collection('hotelDiscount')
+        .where('roomId', '==', room.id)
+        .get();
+
+      if (!discountSnapshot.empty) {
+        const discountData = discountSnapshot.docs[0].data();
+        setHotelDiscount(discountData);
+      } else {
+        console.log('Không tìm thấy giảm giá cho phòng này.');
+      }
+    } catch (error) {
+      console.error('Error fetching hotel discount: ', error);
+    }
+  };
+
+  // Fetch hotel info và discount khi component mount
+  useEffect(() => {
+    const fetchRoomDiscount = async () => {
+      try {
+        const discountSnapshot = await firestore()
+          .collection('hotelDiscount')
+          .where('roomId', '==', room.id) // Kiểm tra roomId
+          .get();
+
+        if (!discountSnapshot.empty) {
+          const discountData = discountSnapshot.docs[0].data();
+          setRoomDiscount(discountData); // Lưu thông tin giảm giá
+        }
+      } catch (error) {
+        console.error('Error fetching room discount: ', error);
+      }
+    };
+
+    fetchRoomDiscount();
+  }, [room.id]);
 
   const calculateTotalPrice = () => {
     const dayCount = calculateTotalDays();
@@ -39,7 +80,17 @@ const BookingScreen = ({route, navigation}) => {
 
   const calculateDiscountedPrice = () => {
     const basePrice = calculateTotalPrice();
-    return basePrice - (basePrice * discountValue) / 100;
+
+    // Kiểm tra xem có giảm giá phòng hay không
+    let discountedPrice = basePrice;
+    if (roomDiscount) {
+      const discountAmount =
+        (basePrice * roomDiscount.discountPercentage) / 100; // Giảm giá theo phần trăm
+      discountedPrice -= discountAmount; // Trừ giá giảm
+    }
+
+    // Tiếp tục áp dụng mã giảm giá của người dùng nếu có
+    return discountedPrice - (discountedPrice * discountValue) / 100;
   };
 
   const calculateTotalDays = () => {
@@ -74,7 +125,7 @@ const BookingScreen = ({route, navigation}) => {
       alert('Bạn cần đăng nhập để đặt phòng.');
       return;
     }
-  
+
     const bookingData = {
       hotelId: room.hotelId,
       roomNumber: room.roomNumber,
@@ -92,11 +143,11 @@ const BookingScreen = ({route, navigation}) => {
       roomId: room.id, // Lưu roomId ở đây
       status: 'pending',
     };
-  
+
     try {
       // Thêm đặt phòng
       await firestore().collection('bookings').add(bookingData);
-  
+
       // Cập nhật mã giảm giá nếu có
       if (selectedDiscount) {
         // Lấy thông tin mã giảm giá từ collection discounts
@@ -104,11 +155,11 @@ const BookingScreen = ({route, navigation}) => {
           .collection('discounts')
           .doc(selectedDiscount.discountId)
           .get();
-  
+
         if (discountDoc.exists) {
           const discountData = discountDoc.data();
           const currentMaxUsage = discountData.maxUsage;
-  
+
           // Kiểm tra nếu maxUsage lớn hơn 0
           if (currentMaxUsage > 0) {
             // Giảm maxUsage đi 1
@@ -116,7 +167,7 @@ const BookingScreen = ({route, navigation}) => {
               .collection('discounts')
               .doc(selectedDiscount.discountId)
               .update({maxUsage: currentMaxUsage - 1});
-  
+
             // Cập nhật thông tin sử dụng mã giảm giá
             await firestore()
               .collection('userDiscounts')
@@ -129,7 +180,7 @@ const BookingScreen = ({route, navigation}) => {
           console.log('Discount not found!');
         }
       }
-  
+
       alert('Đặt phòng thành công!');
       navigation.goBack();
     } catch (error) {
@@ -137,7 +188,6 @@ const BookingScreen = ({route, navigation}) => {
       alert('Có lỗi xảy ra trong quá trình đặt phòng.');
     }
   };
-  
 
   const increaseAdults = () => {
     setAdults(prev => Number(prev) + 1);
@@ -314,32 +364,47 @@ const BookingScreen = ({route, navigation}) => {
 
             <View style={styles.priceContainer}>
               <View style={styles.priceWrapper}>
-                {selectedDiscount ? (
-                  <>
-                    <View style={styles.priceRow}>
-                      <Text style={styles.originalPriceLabel}>Giá gốc</Text>
-                      <Text style={styles.originalPrice}>
-                        {calculateTotalPrice().toLocaleString('vi-VN')} VNĐ
-                      </Text>
-                    </View>
+                <View style={styles.priceRow}>
+                  <Text style={styles.originalPriceLabel}>Giá gốc</Text>
+                  <Text
+                    style={[
+                      styles.originalPrice,
+                      roomDiscount || selectedDiscount // Kiểm tra có giảm giá không
+                        ? {textDecorationLine: 'line-through', color: 'red'} // Gạch ngang nếu có giảm giá
+                        : styles.boldBlack, // Không gạch nếu không có giảm giá
+                    ]}>
+                    {calculateTotalPrice().toLocaleString('vi-VN')} VNĐ
+                  </Text>
+                </View>
 
-                    <View style={styles.priceRow}>
-                      <Text style={styles.discountedPriceLabel}>
-                        Giá sau giảm
-                      </Text>
-                      <Text style={styles.discountedPrice}>
-                        {calculateDiscountedPrice().toLocaleString('vi-VN')} VNĐ
-                      </Text>
-                    </View>
-                  </>
-                ) : (
+                {/* Hiển thị giá giảm nếu có */}
+                {roomDiscount && (
                   <View style={styles.priceRow}>
-                    <Text style={styles.originalPriceLabel}>Giá gốc</Text>
-                    <Text style={styles.firstPrice}>
-                      {calculateTotalPrice().toLocaleString('vi-VN')} VNĐ
+                    <Text style={styles.discountedPriceLabel}>
+                      Giá sau giảm
+                    </Text>
+                    <Text style={styles.discountedPrice}>
+                      {(
+                        calculateTotalPrice() -
+                        (calculateTotalPrice() *
+                          roomDiscount.discountPercentage) /
+                          100
+                      ).toLocaleString('vi-VN')}{' '}
+                      VNĐ
                     </Text>
                   </View>
                 )}
+
+                {selectedDiscount ? (
+                  <View style={styles.priceRow}>
+                    <Text style={styles.discountedPriceLabel}>
+                      Số tiền phải trả
+                    </Text>
+                    <Text style={styles.discountedPrice}>
+                      {calculateDiscountedPrice().toLocaleString('vi-VN')} VNĐ
+                    </Text>
+                  </View>
+                ) : null}
               </View>
 
               <TouchableOpacity
@@ -554,7 +619,14 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+  boldBlack: {
+    fontWeight: 'bold',
+    fontSize: sizes.h3 + 2, // Tăng kích thước một chút
+    color: 'black', // Màu sắc
 
+  },
+
+  
   originalPriceLabel: {
     fontWeight: 'bold',
     fontSize: 15,
@@ -573,7 +645,6 @@ const styles = StyleSheet.create({
   },
   originalPrice: {
     fontSize: sizes.h3,
-    textDecorationLine: 'line-through',
     color: 'red',
     fontWeight: 'bold',
   },
