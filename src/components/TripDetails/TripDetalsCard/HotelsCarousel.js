@@ -39,6 +39,11 @@ const HotelsCarousel = ({location}) => {
     navigation.navigate('HotelDetails', {hotelId});
   };
 
+  const formatPrice = (price) => {
+    if (price === 0) return "0";
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+  
   // Lọc các khách sạn theo địa điểm
   const filteredHotels = hotels.filter(hotel => hotel.location === location);
 
@@ -77,7 +82,7 @@ const HotelsCarousel = ({location}) => {
                   />
                 </View>
                 <View style={styles.priceBox}>
-                  <Text style={styles.price}>{item.pricePerNight} VND</Text>
+                  <Text style={styles.price}>{formatPrice(item.pricePerNight)} VND</Text>
                   <Text style={styles.priceCaption}>Giá 1 đêm cho 2 người</Text>
                 </View>
               </CardContent>

@@ -61,6 +61,11 @@ const HotelListType = ({route}) => {
     }
   };
 
+  const formatPrice = price => {
+    if (price === 0) return '0';
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
   const renderHotelItem = ({item}) => (
     <TouchableOpacity
       style={styles.hotelCard}
@@ -87,7 +92,7 @@ const HotelListType = ({route}) => {
         
         <View style={styles.priceContainer}>
           <Text style={styles.priceText}>
-            Giá một đêm: {item.pricePerNight} VND
+            Giá một đêm: {formatPrice(item.pricePerNight)} VND
           </Text>
           <Text>Đã bao gồm thuế và phí</Text>
         </View>

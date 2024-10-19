@@ -30,6 +30,7 @@ const HotelsList = () => {
     }, 1000);
   }, []);
 
+  
   const navigation = useNavigation();
 
   const handleLocationPress = (location) => {

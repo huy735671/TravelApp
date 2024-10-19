@@ -103,6 +103,10 @@ const AllHotelsScreen = ({navigation}) => {
       fetchHotels(); // Lấy lại danh sách khách sạn nếu không có từ khóa tìm kiếm
     }
   };
+  const formatPrice = (price) => {
+    if (price === 0) return "0";
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
 
   const Card = ({hotel}) => (
     <TouchableOpacity
@@ -112,7 +116,7 @@ const AllHotelsScreen = ({navigation}) => {
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{hotel.title}</Text>
         <Text style={styles.hotelLocation}>{hotel.location}</Text>
-        <Text style={styles.priceText}>{hotel.pricePerNight} Vnd/đêm</Text>
+        <Text style={styles.priceText}>{formatPrice(hotel.pricePerNight)} Vnd/đêm</Text>
       </View>
     </TouchableOpacity>
   );

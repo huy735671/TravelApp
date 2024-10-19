@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -9,17 +9,73 @@ import {
   StatusBar,
   Animated,
 } from 'react-native';
-import {colors, sizes, spacing} from '../../constants/theme';
+import {colors, shadow, sizes, spacing} from '../../constants/theme';
 import StarRating from '../shared/Rating/Rating';
-import RatingOverall from '../shared/Rating/RatingOverall';
-import Icon from '../shared/Icon';
-import RoomsBottomSheet from './RoomsBottomSheet'; // Import the BottomSheet component
+// import Icon from '../shared/Icon';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import RoomsBottomSheet from './RoomsBottomSheet';
 import HotelReviews from '../Reviews/Hotels/HotelReviews';
-import SectionHeader from '../shared/SectionHeader';
+import firestore from '@react-native-firebase/firestore';
+import Divider from '../shared/Divider';
 
 const HotelDetailsCarousel = ({hotel}) => {
-  const scrollY = useRef(new Animated.Value(0)).current; // Khởi tạo giá trị Animated
-  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false); // State to control BottomSheet
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [cheapestRoom, setCheapestRoom] = useState(null);
+
+  const fetchCheapestRoom = async hotelId => {
+    try {
+      const roomsSnapshot = await firestore()
+        .collection('rooms')
+        .where('hotelId', '==', hotelId)
+        .where('roomType', '==', 'Phòng đôi')
+        .get();
+
+      const roomsList = roomsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const cheapestRoom = roomsList.reduce((prev, curr) => {
+        return prev.pricePerNight < curr.pricePerNight ? prev : curr;
+      }, roomsList[0]);
+
+      return cheapestRoom;
+    } catch (error) {
+      console.error('Error fetching cheapest room:', error);
+      return null;
+    }
+  };
+
+  const updateHotelPrice = async (hotelId, price) => {
+    try {
+      await firestore().collection('hotels').doc(hotelId).update({
+        pricePerNight: price,
+      });
+      console.log('Hotel price updated successfully');
+    } catch (error) {
+      console.error('Error updating hotel price:', error);
+    }
+  };
+
+  const formatPrice = price => {
+    if (price === 0) return '0';
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  useEffect(() => {
+    const loadCheapestRoom = async () => {
+      if (hotel) {
+        const room = await fetchCheapestRoom(hotel.id);
+        setCheapestRoom(room);
+        if (room) {
+          await updateHotelPrice(hotel.id, room.pricePerNight);
+        }
+      }
+    };
+
+    loadCheapestRoom();
+  }, [hotel]);
 
   if (!hotel) {
     return (
@@ -29,7 +85,6 @@ const HotelDetailsCarousel = ({hotel}) => {
     );
   }
 
-  // Render Amenities
   const renderAmenities = () => {
     return hotel.amenities.map((amenity, index) => (
       <View key={index} style={styles.amenityItem}>
@@ -38,11 +93,10 @@ const HotelDetailsCarousel = ({hotel}) => {
     ));
   };
 
-  // Tính toán chiều cao hình ảnh dựa trên scrollY
   const imageHeight = scrollY.interpolate({
-    inputRange: [0, 400], // Giới hạn cho animation
-    outputRange: [300, 100], // Chiều cao ban đầu và chiều cao khi thu nhỏ
-    extrapolate: 'clamp', // Giới hạn giá trị đầu ra
+    inputRange: [0, 400],
+    outputRange: [300, 100],
+    extrapolate: 'clamp',
   });
 
   return (
@@ -52,44 +106,51 @@ const HotelDetailsCarousel = ({hotel}) => {
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
-      <Animated.Image // Sử dụng Animated.Image
+      <Animated.Image
         source={{uri: hotel.imageUrl}}
-        style={[styles.image, {height: imageHeight}]} // Áp dụng chiều cao đã tính toán
+        style={[styles.image, {height: imageHeight}]}
       />
 
-      <Animated.ScrollView // Sử dụng Animated.ScrollView
+      <Animated.ScrollView
         style={styles.content}
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {y: scrollY}}}],
           {useNativeDriver: false},
         )}
-        scrollEventThrottle={16} // Tối ưu hiệu suất
-      >
-        <View style={{marginTop: 20, paddingHorizontal: 20}}>
-          <Text style={styles.title}>{hotel.title}</Text>
+        scrollEventThrottle={16}>
+        <View style={{marginTop: 20, paddingHorizontal: 16,}}>
+          <Text style={[styles.title,{marginBottom: 10}]}>{hotel.title}</Text>
 
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon icon="Location" size={30} />
-            <Text style={styles.location}>
+          <StarRating
+            showLabelInline
+            rating={Number(hotel.starRating)}
+            size={20}
+            containerStyle={styles.rating}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 10,
+            }}>
+            <Ionicons
+              name="location-outline"
+              size={25}
+              color={colors.primary}
+            />
+            <Text style={[styles.location,{marginTop:10}]}>
               {hotel.address}
               {'\n'}
               {hotel.location}
             </Text>
           </View>
-          <View style={{marginTop: 5}}>
-            
-            <StarRating
-              showLabelInline
-              rating={Number(hotel.starRating)}
-              size={20}
-              containerStyle={styles.rating}
-            />
-          </View>
+        </View>
 
+        <View style={{padding: 16}}>
+          <Text style={styles.amenitiesHeaderText}>Mô tả</Text>
           <Text style={styles.description}>{hotel.description}</Text>
         </View>
 
-        {/* Amenities Section */}
         <View style={styles.amenitiesHeader}>
           <Text style={styles.amenitiesHeaderText}>
             Cực kỳ phù hợp cho kỳ lưu trú của bạn
@@ -97,39 +158,35 @@ const HotelDetailsCarousel = ({hotel}) => {
         </View>
 
         <View style={styles.amenitiesContainer}>{renderAmenities()}</View>
-
-        {/* Price Section */}
+        <Divider />
         <View style={styles.priceContainer}>
           <Text style={styles.priceText}>Giá cho 1 đêm {'\n'}2 người</Text>
           <View style={styles.priceTag}>
             <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: 5}}>
-              {hotel.pricePerNight} VND
+              {cheapestRoom ? formatPrice(cheapestRoom.pricePerNight) : '0'} VND
             </Text>
           </View>
         </View>
 
+        <Divider />
         <View style={styles.reviewContainer}>
           <Text style={styles.reviewContainerText}>
             Đánh giá của khách hàng
           </Text>
-         
-          
           <HotelReviews hotelId={hotel.id} />
         </View>
       </Animated.ScrollView>
 
       <TouchableOpacity
         style={styles.btnContainer}
-        onPress={() => setBottomSheetVisible(true)} // Open bottom sheet
-      >
+        onPress={() => setBottomSheetVisible(true)}>
         <Text style={styles.btnText}>Chọn phòng</Text>
       </TouchableOpacity>
 
-      {/* Rooms Bottom Sheet */}
       {isBottomSheetVisible && (
         <RoomsBottomSheet
-          hotelId={hotel.id} // Pass the hotel ID
-          onClose={() => setBottomSheetVisible(false)} // Close function
+          hotelId={hotel.id}
+          onClose={() => setBottomSheetVisible(false)}
         />
       )}
     </View>
@@ -158,6 +215,7 @@ const styles = StyleSheet.create({
     fontSize: sizes.h2,
     fontWeight: 'bold',
     color: colors.primary,
+
   },
   location: {
     fontSize: sizes.body,
@@ -171,9 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 10,
-    borderTopWidth: 1,
     paddingVertical: 10,
-    borderColor: '#ddd',
   },
   priceText: {
     fontSize: sizes.h2,
@@ -204,73 +260,55 @@ const styles = StyleSheet.create({
     backgroundColor: '#4c8d6e',
     borderRadius: 10,
     marginHorizontal: 20,
-    marginVertical: 20,
+    marginVertical: 10,
   },
   btnText: {
-    color: colors.light,
-    fontSize: sizes.h3,
-    fontWeight: 'bold',
-  },
-  // Amenities styling
-  amenitiesHeader: {
-    marginTop: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
-  },
-  amenitiesHeaderText: {
-    fontSize: sizes.h2,
-    fontWeight: 'bold',
-    color: colors.primary,
-  },
-  amenitiesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    paddingHorizontal: 20,
-  },
-  amenityItem: {
-    backgroundColor: '#e6f7f5',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  amenityText: {
     fontSize: sizes.body,
-    color: colors.primary,
+    color: colors.white,
+    fontWeight: 'bold',
   },
   reviewContainer: {
-    marginTop: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderTopWidth: 1,
-    borderColor: '#ddd',
+    padding: 16,
   },
   reviewContainerText: {
     fontSize: sizes.h2,
     fontWeight: 'bold',
     color: colors.primary,
+    marginBottom: 15,
   },
-  reviewdetals: {
-    marginTop: 20,
+  amenitiesContainer: {
     flexDirection: 'row',
-    paddingVertical: 10,
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    marginHorizontal: 20,
   },
-  imageUserReview: {
-    height: 50,
-    width: 50,
-    borderRadius: 20,
+  amenitiesHeader: {
+    padding: 16,
   },
-  reviewUserName: {
-    fontSize: spacing.m,
+  amenitiesHeaderText: {
+    fontSize: sizes.h2,
     fontWeight: 'bold',
     color: colors.primary,
-    marginHorizontal: 20,
+    backgroundColor:colors.light,
+    elevation: 2,
+    ...shadow.light,
+    alignSelf:'flex-start',
+    paddingHorizontal:20,
+    borderRadius:10,
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  amenityItem: {
+    width: '48%',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 5,
+    alignItems: 'center',
+  },
+  amenityText: {
+    fontSize: sizes.body,
   },
 });
 

@@ -54,7 +54,10 @@ const ListHotelDetails = ({ route }) => {
   const handleSearch = text => {
     setSearch(text);
   };
-
+  const formatPrice = price => {
+    if (price === 0) return '0';
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
   // Function to filter hotels based on search query and star rating
   // Function to filter hotels based on search query and star rating
 const filteredHotels = hotels.filter(hotel => {
@@ -65,6 +68,7 @@ const filteredHotels = hotels.filter(hotel => {
   const matchesStarRating = selectedStarRating
     ? Number(hotel.starRating) === selectedStarRating // Chuyển đổi hotel.starRating thành số
     : true;
+
 
   return matchesSearch && matchesStarRating;
 });
@@ -77,6 +81,7 @@ const filteredHotels = hotels.filter(hotel => {
       </View>
     );
   }
+
 
   const renderHotelItem = ({ item }) => (
     <TouchableOpacity
@@ -99,7 +104,7 @@ const filteredHotels = hotels.filter(hotel => {
         <Text>{item.address}</Text>
         <View style={styles.priceContainer}>
           <Text style={styles.bodyText}>
-            Giá một đêm: {item.pricePerNight} VND
+            Giá một đêm: {formatPrice(item.pricePerNight)} VND
           </Text>
           <Text>Đã bao gồm thuế và phí</Text>
         </View>
