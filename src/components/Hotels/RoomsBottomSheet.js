@@ -130,7 +130,7 @@ const RoomsBottomSheet = ({hotelId, onClose}) => {
                 onPress={() => setShowCheckInPicker(true)}
                 style={styles.datePickerButton}>
                 <Text style={styles.datePickerText}>
-                  Ngày nhận phòng{' '}
+                  Ngày nhận phòng
                   {checkInDate
                     ? checkInDate.toLocaleDateString('vi-VN', {
                         day: '2-digit',

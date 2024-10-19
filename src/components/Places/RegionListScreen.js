@@ -54,7 +54,12 @@ const RegionListScreen = ({route}) => {
           style={styles.card}>
           <CardMedia source={{uri: item.imageUrl}} />
           <CardContent>
+          <View>
             <Text style={styles.title}>{item.title || 'Tiêu đề không có'}</Text>
+            <Text>{item.location}</Text>
+           <Text>{item.starRating}</Text> 
+           
+            </View>
           </CardContent>
         </Card>
       </Animatable.View>

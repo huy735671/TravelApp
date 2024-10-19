@@ -4,12 +4,13 @@ import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import icon cho số sao
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Import icon cho location và lịch
 import { colors, sizes } from '../../../constants/theme';
+import { useNavigation } from '@react-navigation/native';
 
 const SpecialOfferDetails = () => {
   const [discountedHotels, setDiscountedHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigation = useNavigation();
   useEffect(() => {
     const fetchDiscountedHotels = async () => {
       setLoading(true);
@@ -19,6 +20,7 @@ const SpecialOfferDetails = () => {
 
         const hotels = await Promise.all(discountSnapshot.docs.map(async (doc) => {
           const discountData = doc.data();
+          
           const hotelDoc = await firestore().collection('hotels').doc(discountData.hotelId).get();
           const hotelData = hotelDoc.data();
           
@@ -99,15 +101,15 @@ const SpecialOfferDetails = () => {
         </View>
   
        
-        <TouchableOpacity style={styles.bookingButton} onPress={() => handleBooking(item.roomId)}>
+        <TouchableOpacity style={styles.bookingButton} onPress={() => handleBooking(item.hotelId)}>
           <Text style={styles.bookingText}>Đặt phòng</Text>
         </TouchableOpacity>
       </View>
     );
   };
 
-  const handleBooking = (roomId) => {
-    alert(`Đặt phòng cho phòng ID: ${roomId}`);
+  const handleBooking = (hotelId) => {
+    navigation.navigate('HotelDetails', { hotelId });
   };
 
   return (

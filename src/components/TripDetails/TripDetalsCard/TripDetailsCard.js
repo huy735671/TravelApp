@@ -27,8 +27,11 @@ const TripDetailsCard = ({trip}) => {
 
   const [averageRating, setAverageRating] = useState(0); // State để lưu rating trung bình
   const [loading, setLoading] = useState(true);
+  const [showMore, setShowMore] = useState(false);
 
+  const maxDescriptionLength = 450;
   // Hàm để chuyển đổi giữa chiều cao
+
   const toggleExpand = () => {
     Animated.timing(heightAnim, {
       toValue: expanded ? 480 : 700,
@@ -37,6 +40,7 @@ const TripDetailsCard = ({trip}) => {
     }).start();
     setExpanded(!expanded);
   };
+  
 
   // Lấy dữ liệu đánh giá từ Firestore và tính trung bình rating
   useEffect(() => {
@@ -127,7 +131,11 @@ const TripDetailsCard = ({trip}) => {
           buttonTitle="Xem chi tiết"
         />
         <View style={styles.summary}>
-          <Text style={styles.summaryText}>{trip.description}</Text>
+          <Text style={styles.summaryText}>
+          {showMore
+              ? trip.description
+              : `${trip.description.substring(0, maxDescriptionLength)}...`}
+          </Text>
         </View>
 
         <WeatherInfo location={trip.location} />
@@ -145,11 +153,9 @@ const TripDetailsCard = ({trip}) => {
           title="Đánh giá"
           containerStyle={styles.sectionHeader}
           titleStyle={styles.sectionTitle}
-         
-         
         />
         <Reviews tripId={trip.id} />
-          
+
         <TouchableOpacity
           style={styles.addReviewButton}
           onPress={() => navigation.navigate('AddReview', {tripId: trip.id})}>
@@ -164,7 +170,6 @@ const TripDetailsCard = ({trip}) => {
           buttonTitle="Tất cả"
         />
         <RelatedLocations location={trip.location} />
-
       </ScrollView>
     </Animated.View>
   );
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     marginHorizontal: spacing.l,
-    paddingBottom:20,
+    paddingBottom: 20,
   },
   summaryText: {
     color: colors.primary,
