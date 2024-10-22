@@ -18,9 +18,9 @@ import {CardStyleInterpolators} from '@react-navigation/stack';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
 import BookingDetail from '../components/shared/BookingDetail';
 import RegionFilter from '../components/Places/regions';
-import ExploreScreen from '../components/Places/ExploreScreen';
 import SearchResultsScreen from '../components/Search/Hotel/SearchResultsScreen';
 import SpecialOfferDetails from '../components/Hotels/HotelHome/SpecialOfferDetails';
+import ResetPw from '../components/SignInUp/ResetPw';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -303,7 +303,7 @@ const MainNavigator = () => {
           }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="SpecialOfferDetails"
           component={SpecialOfferDetails}
           options={{
@@ -311,6 +311,22 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: true,
             headerTitle: 'Ưu đãi đặc biệt',
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+
+        <Stack.Screen
+          name="ResetPw"
+          component={ResetPw}
+          options={{
+            headerShown: true,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            headerTitle: 'Đặt lại mật khẩu',
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             headerStyle: {
               backgroundColor: '#4c8d6e',

@@ -26,7 +26,7 @@ const SignUp = () => {
         <FontAwesome name="user" size={30} style={styles.LoginIcon} />
 
         <TextInput
-          placeholder="Enter full name"
+          placeholder="Nhập tên của bạn"
           autoCapitalize={false}
           style={styles.textInput}
           onChange={setEmail}
@@ -38,7 +38,7 @@ const SignUp = () => {
         <Icons name="email" size={30} style={styles.LoginIcon} />
 
         <TextInput
-          placeholder="Email address  "
+          placeholder="Địa chỉ email  "
           autoCapitalize={false}
           style={styles.textInput}
           onChange={setEmail}
@@ -49,7 +49,7 @@ const SignUp = () => {
       <View style={styles.bodyContainer}>
         <Ionicons name="lock-closed" size={30} style={styles.LoginIcon} />
         <TextInput
-          placeholder="Password"
+          placeholder="Mật khẩu"
           autoCapitalize={false}
           style={styles.textInput}
           secureTextEntry={pwdHidden}
@@ -76,7 +76,7 @@ const SignUp = () => {
       <View style={styles.bodyContainer}>
         <Ionicons name="lock-closed" size={30} style={styles.LoginIcon} />
         <TextInput
-          placeholder="Password agian"
+          placeholder="Nhập lại mật khẩu"
           autoCapitalize={false}
           style={styles.textInput}
           secureTextEntry={pwdHidden}
@@ -104,7 +104,7 @@ const SignUp = () => {
         <Ionicons name="phone-portrait" size={30} style={styles.LoginIcon} />
 
         <TextInput
-          placeholder="Contact number +84"
+          placeholder="Số điện thoại"
           autoCapitalize={false}
           style={styles.textInput}
           onChange={setEmail}
@@ -115,12 +115,12 @@ const SignUp = () => {
 
       <View style={styles.forgetPassContainer}>
         <TouchableOpacity style={{position: 'absolute', right: 0}}>
-          <Text style={styles.forgetPassText}>Already have an account ?</Text>
+          <Text style={styles.forgetPassText}>Bạn đã có tài khoản ?</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.buttonLogin}>
-        <Text style={styles.buttonLoginText}>Sign Up</Text>
+        <Text style={styles.buttonLoginText}>Đăng ký</Text>
       </TouchableOpacity>
 
       <View></View>
@@ -142,13 +142,15 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   bodyContainer: {
-    width: WINDOW_WIDTH - 60,
-    height: 45,
-    marginLeft: 30,
+    width: WINDOW_WIDTH - 40,
+    height: 50,
+    marginLeft: 20,
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    borderRadius:20,
+
   },
   LoginIcon: {
     color: colors.gray,
@@ -179,6 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 30,
     borderRadius: 100,
+
   },
   buttonLoginText: {
     color: colors.white,

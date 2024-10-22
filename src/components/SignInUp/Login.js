@@ -78,12 +78,12 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleHeader}>Login your account.</Text>
+      <Text style={styles.titleHeader}>Đăng nhập.</Text>
 
       <View style={styles.bodyContainer}>
         <Icons name="email" size={30} style={styles.LoginIcon} />
         <TextInput
-          placeholder="E-mail"
+          placeholder="Email tài khoản"
           autoCapitalize="none"
           style={styles.textInput}
           onChangeText={setEmail}
@@ -94,7 +94,7 @@ const Login = () => {
       <View style={styles.bodyContainer}>
         <Ionicons name="lock-closed" size={30} style={styles.LoginIcon} />
         <TextInput
-          placeholder="Password"
+          placeholder="Mật khẩu"
           autoCapitalize="none" // Sử dụng "none" để tránh tự động viết hoa
           style={styles.textInput}
           secureTextEntry={pwdHidden}
@@ -121,13 +121,13 @@ const Login = () => {
         <Text style={styles.errorText}>{errorMessage}</Text>
       ) : null}
       <View style={styles.forgetPassContainer}>
-        <TouchableOpacity style={{position: 'absolute', right: 0}}>
-          <Text style={styles.forgetPassText}>Forget password ?</Text>
+        <TouchableOpacity style={{position: 'absolute', right: 0}} onPress={()=>navigation.navigate('ResetPw')}>
+          <Text style={styles.forgetPassText}>Quên mật khẩu ?</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={handlerLogin} style={styles.buttonLogin}>
-        <Text style={styles.buttonLoginText}>Login</Text>
+        <Text style={styles.buttonLoginText}>Đăng nhập</Text>
       </TouchableOpacity>
 
       <View></View>

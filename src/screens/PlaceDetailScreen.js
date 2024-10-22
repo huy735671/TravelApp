@@ -10,7 +10,6 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import WeatherInfo from '../components/TripDetails/TripDetalsCard/WeatherInfo';
 import {colors, sizes, spacing} from '../constants/theme';
 import StarRating from '../components/shared/Rating/Rating';
 import firestore from '@react-native-firebase/firestore';

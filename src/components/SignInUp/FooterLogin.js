@@ -8,7 +8,7 @@ const FooterLogin = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.crossbar} />
-        <Text> Or connect with </Text>
+        <Text> Hoặc đăng nhập với </Text>
         <View style={styles.crossbar} />
       </View>
       <View style={styles.footerContainer}>

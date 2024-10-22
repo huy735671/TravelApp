@@ -9,22 +9,22 @@ const LoginHeader = ({page, setPage}) => {
     <View style={{flex: 1}}>
       <View style={{width: '100%', height: '100%'}}>
         <View style={styles.container}>
-          <Text style={styles.titleHeader}>Welcome</Text>
-          <Text style={{color: '#ffffff'}}>Travel Hotel App</Text>
+          <Text style={styles.titleHeader}>khám phá</Text>
+          <Text style={{color: '#ffffff'}}>Thế giới tươi đẹp</Text>
         </View>
         <View style={{height: 50, flexDirection: 'row', backgroundColor:'white'}}>
           <TouchableOpacity
             style={styles.tabButton}
             onPress={() => setPage(SIGN_IN)}
             disabled={page === SIGN_IN}>
-            <Text style={{fontSize: 20, color: '#4D8D6E'}}>Sign In</Text>
+            <Text style={{fontSize: 20, color: '#4D8D6E'}}>Đăng nhập</Text>
             {page === SIGN_IN && <View style={styles.tabUnderline} />}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.tabButton}
             onPress={() => setPage(SIGN_UP)}
             disabled={page === SIGN_UP}>
-            <Text style={{fontSize: 20, color: '#4D8D6E'}}>Sign Up</Text>
+            <Text style={{fontSize: 20, color: '#4D8D6E'}}>Đăng ký</Text>
             {page === SIGN_UP && <View style={styles.tabUnderline} />}
           </TouchableOpacity>
         </View>
