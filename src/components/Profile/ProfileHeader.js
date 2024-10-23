@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Image, Text} from 'react-native';
+import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {shadow, sizes} from '../../constants/theme';
@@ -42,12 +42,14 @@ const ProfileHeader = () => {
       <View style={styles.proFileNameContainer}>
         <Text style={styles.profileName}>
           {userData ? userData.username : 'Nguyễn Văn A'}{' '}
-          {/* Hiển thị tên người dùng */}
+         
         </Text>
         <Text style={styles.profileEmail}>
           {userData ? userData.email : 'avannguyen@gmail.com'}
         </Text>
+       
       </View>
+      
     </View>
   );
 };
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#d1d1d1',
   },
+  
 });
 
 export default ProfileHeader;

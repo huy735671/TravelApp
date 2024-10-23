@@ -65,14 +65,11 @@ const MainNavigator = () => {
           name="Profile"
           component={ProfileScreen}
           options={{
-            headerShown: false,
+            headerShown: true,
+            headerTitle: 'Chỉnh sửa hồ sơ',
             useNativeDriver: true,
             gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
-              },
-            }),
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
         />
         <Stack.Screen
@@ -83,20 +80,7 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: true,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            transitionSpec: {
-              open: {
-                animation: 'timing',
-                config: {
-                  duration: 500, // Thời gian hiệu ứng
-                },
-              },
-              close: {
-                animation: 'timing',
-                config: {
-                  duration: 500,
-                },
-              },
-            },
+            
           }}
         />
 
@@ -108,20 +92,20 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: true,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            transitionSpec: {
-              open: {
-                animation: 'timing',
-                config: {
-                  duration: 500, // Thời gian hiệu ứng
-                },
-              },
-              close: {
-                animation: 'timing',
-                config: {
-                  duration: 500,
-                },
-              },
-            },
+            // transitionSpec: {
+            //   open: {
+            //     animation: 'timing',
+            //     config: {
+            //       duration: 500, // Thời gian hiệu ứng
+            //     },
+            //   },
+            //   close: {
+            //     animation: 'timing',
+            //     config: {
+            //       duration: 500,
+            //     },
+            //   },
+            // },
           }}
         />
         <Stack.Screen
@@ -132,20 +116,7 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            transitionSpec: {
-              open: {
-                animation: 'timing',
-                config: {
-                  duration: 500, // Thời gian hiệu ứng
-                },
-              },
-              close: {
-                animation: 'timing',
-                config: {
-                  duration: 500,
-                },
-              },
-            },
+            
           }}
         />
         <Stack.Screen
@@ -156,20 +127,7 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            transitionSpec: {
-              open: {
-                animation: 'timing',
-                config: {
-                  duration: 500, // Thời gian hiệu ứng
-                },
-              },
-              close: {
-                animation: 'timing',
-                config: {
-                  duration: 500,
-                },
-              },
-            },
+           
           }}
         />
         <Stack.Screen
