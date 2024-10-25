@@ -21,6 +21,7 @@ import RegionFilter from '../components/Places/regions';
 import SearchResultsScreen from '../components/Search/Hotel/SearchResultsScreen';
 import SpecialOfferDetails from '../components/Hotels/HotelHome/SpecialOfferDetails';
 import ResetPw from '../components/SignInUp/ResetPw';
+import BookingSuccessScreen from '../components/Hotels/BookingSuccessScreen';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -285,6 +286,22 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: true,
             headerTitle: 'Đặt lại mật khẩu',
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+
+<Stack.Screen
+          name="BookingSuccess"
+          component={BookingSuccessScreen}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             headerStyle: {
               backgroundColor: '#4c8d6e',

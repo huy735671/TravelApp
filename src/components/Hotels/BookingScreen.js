@@ -19,6 +19,7 @@ import Icon from '../shared/Icon';
 import {colors, shadow, sizes} from '../../constants/theme';
 import Divider from '../shared/Divider';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Toast from 'react-native-toast-message';
 
 const BookingScreen = ({route, navigation}) => {
   const {room, checkInDate, checkOutDate} = route.params;
@@ -142,6 +143,7 @@ const BookingScreen = ({route, navigation}) => {
       discountId: selectedDiscount ? selectedDiscount.discountId : null, // Cập nhật discountId nếu có
       roomId: room.id, // Lưu roomId ở đây
       status: 'pending',
+      
     };
 
     try {
@@ -181,8 +183,19 @@ const BookingScreen = ({route, navigation}) => {
         }
       }
 
-      alert('Đặt phòng thành công!');
-      navigation.goBack();
+      Toast.show({
+        text1: 'Đặt phòng thành công!',
+        text2: 'Cảm ơn bạn đã đặt phòng tại khách sạn của chúng tôi.',
+        type: 'success',
+      });
+      navigation.navigate('BookingSuccess', {
+        room,
+        checkInDate,
+        checkOutDate,
+        totalPrice: calculateDiscountedPrice(),
+        hotelId: room.hotelId,
+
+      });
     } catch (error) {
       console.error('Error creating booking: ', error);
       alert('Có lỗi xảy ra trong quá trình đặt phòng.');

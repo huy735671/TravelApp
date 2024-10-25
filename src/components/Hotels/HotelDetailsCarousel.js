@@ -153,7 +153,7 @@ const HotelDetailsCarousel = ({hotel}) => {
 
         <View style={styles.amenitiesHeader}>
           <Text style={styles.amenitiesHeaderText}>
-            Tiện nghi
+            Cực kỳ phù hợp cho kỳ lưu trú của bạn
           </Text>
         </View>
 
@@ -171,7 +171,7 @@ const HotelDetailsCarousel = ({hotel}) => {
         <Divider />
         <View style={styles.reviewContainer}>
           <Text style={styles.reviewContainerText}>
-            Đánh giá
+            Đánh giá của khách hàng
           </Text>
           <HotelReviews hotelId={hotel.id} />
         </View>
