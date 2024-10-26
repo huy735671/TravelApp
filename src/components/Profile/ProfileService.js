@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import Icon from 'react-native-vector-icons/FontAwesome'; 
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, sizes} from '../../constants/theme';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const ProfileService = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -20,7 +20,7 @@ const ProfileService = () => {
     useState(false);
   const [isPushNotificationEnabled, setIsPushNotificationEnabled] =
     useState(false);
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -53,12 +53,33 @@ const ProfileService = () => {
   const togglePushNotification = () =>
     setIsPushNotificationEnabled(previousState => !previousState);
 
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        setUserInfo(user);
+      } else {
+        navigation.navigate('Login');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   const handleDeleteAccount = () => {
     // Xử lý xóa tài khoản ở đây
   };
-
-  const handleLogout = () => {
-    auth().signOut();
+  const handleLogout = async () => {
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      try {
+        await auth().signOut();
+        console.log('Đăng xuất thành công');
+        navigation.navigate('Login');
+      } catch (error) {
+        console.error('Lỗi khi đăng xuất: ', error);
+      }
+    } else {
+      console.log('Không có người dùng nào đang đăng nhập');
+    }
   };
 
   return (
@@ -86,9 +107,11 @@ const ProfileService = () => {
             editable={false}
             selectTextOnFocus={false}
           />
-           <TouchableOpacity style={styles.editProfileButton} onPress={()=>navigation.navigate('Profile', { userInfo })}>
-          <Text style={styles.editProfileText}>Chỉnh sửa hồ sơ</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.editProfileButton}
+            onPress={() => navigation.navigate('Profile', {userInfo})}>
+            <Text style={styles.editProfileText}>Chỉnh sửa hồ sơ</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <Text style={styles.loadingText}>Đang tải thông tin người dùng...</Text>
@@ -180,17 +203,15 @@ const styles = StyleSheet.create({
   editProfileButton: {
     marginTop: 10,
     paddingVertical: 8,
-    borderWidth:1,
-    borderColor:'#ddd',
+    borderWidth: 1,
+    borderColor: '#ddd',
     paddingHorizontal: 16,
     borderRadius: 5,
-    alignItems:'center',
-    
-    
+    alignItems: 'center',
   },
   editProfileText: {
     color: colors.primary,
-    fontSize:sizes.body,
+    fontSize: sizes.body,
     fontWeight: 'bold',
   },
   sectionTitle: {

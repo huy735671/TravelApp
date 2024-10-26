@@ -17,6 +17,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {launchImageLibrary} from 'react-native-image-picker';
+import { colors } from '../constants/theme';
 
 const ProfileScreen = () => {
   const route = useRoute();
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   avatar: {
     width: 100,

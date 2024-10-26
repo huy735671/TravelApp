@@ -70,12 +70,12 @@ const styles = StyleSheet.create({
     ...shadow.light,
     flexDirection: 'column',
     backgroundColor:'#4c8d6e',
+
   },
   profileAvatar: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height:100,
     borderRadius: 9999,
-    marginBottom: 16, 
   },
   proFileNameContainer: {
     alignItems: 'center', 
