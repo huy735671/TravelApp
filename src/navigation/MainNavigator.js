@@ -23,12 +23,14 @@ import SpecialOfferDetails from '../components/Hotels/HotelHome/SpecialOfferDeta
 import ResetPw from '../components/SignInUp/ResetPw';
 import BookingSuccessScreen from '../components/Hotels/BookingSuccessScreen';
 
+
 const Stack = createSharedElementStackNavigator();
 
 const MainNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -309,6 +311,8 @@ const MainNavigator = () => {
             headerTintColor: '#fff',
           }}
         />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );

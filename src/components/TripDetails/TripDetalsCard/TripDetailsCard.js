@@ -90,12 +90,13 @@ const TripDetailsCard = ({trip}) => {
       } catch (error) {
         console.error('Error fetching ratings:', error);
       } finally {
-        setLoading(false); // Kết thúc loading
+        setLoading(false); 
       }
     };
 
     fetchRatings();
   }, [trip.id]);
+
 
   return (
     <Animated.View style={[styles.container, {height: heightAnim}]}>
@@ -140,6 +141,7 @@ const TripDetailsCard = ({trip}) => {
 
         <WeatherInfo location={trip.location} />
 
+          
         <SectionHeader
           title="Khách sạn liên quan"
           containerStyle={styles.SectionHeader}
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   locationText: {
-    fontSize: sizes.title,
+    fontSize: sizes.h2,
     color: colors.primary,
   },
   divider: {

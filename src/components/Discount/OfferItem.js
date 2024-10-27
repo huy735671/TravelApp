@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 const OfferItem = ({offer}) => {
   const [hotelName, setHotelName] = useState('');
@@ -46,42 +45,6 @@ const OfferItem = ({offer}) => {
     navigation.navigate('HotelDetails', {hotelId: offer.hotelId});
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      'Xác nhận xóa',
-      'Bạn có chắc chắn muốn xóa mã giảm giá này không?',
-      [
-        {
-          text: 'Hủy',
-          style: 'cancel',
-        },
-        {
-          text: 'Xóa',
-          onPress: async () => {
-            try {
-              const docRef = firestore()
-                .collection('userDiscounts')
-                .doc(offer.userDiscountId);
-              const doc = await docRef.get();
-              if (!doc.exists) {
-                Alert.alert('Thông báo', 'Mã giảm giá không tồn tại.');
-                return;
-              }
-
-              // Cập nhật trường usedBy
-              await docRef.update({usedBy: true});
-              console.log('Mã giảm giá đã được cập nhật thành công!');
-              Alert.alert('Thông báo', 'Mã giảm giá đã được xóa thành công!');
-            } catch (error) {
-              console.error('Error deleting user discount: ', error);
-              Alert.alert('Thông báo', 'Đã xảy ra lỗi khi xóa mã giảm giá.'); // Thông báo lỗi cho người dùng
-            }
-          },
-        },
-      ],
-    );
-  };
-
   return (
     <View style={styles.offerContainer}>
       <View style={styles.offerDetails}>
@@ -99,9 +62,6 @@ const OfferItem = ({offer}) => {
           <Text style={styles.detailsButtonText}>Dùng ngay</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-        <Icon name="trash-outline" size={24} color="black" />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -118,6 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    
   },
   offerDetails: {
     flex: 1,
@@ -152,11 +113,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  deleteButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
   },
 });
 

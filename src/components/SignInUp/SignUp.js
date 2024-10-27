@@ -20,7 +20,7 @@ const SignUp = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleHeader}>...</Text>
+      <Text style={styles.titleHeader}>Đăng ký.</Text>
 
       <View style={styles.bodyContainer}>
         <FontAwesome name="user" size={30} style={styles.LoginIcon} />
@@ -149,7 +149,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius:20,
+    borderRadius:10,
+    borderWidth:1,
+    borderColor:'#ddd',
 
   },
   LoginIcon: {
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4c8d6e',
     marginTop: 20,
     marginLeft: 30,
-    borderRadius: 100,
+    borderRadius: 10,
 
   },
   buttonLoginText: {

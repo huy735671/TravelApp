@@ -44,7 +44,6 @@ const Login = () => {
       // Đăng nhập với Firebase Auth
       await auth().signInWithEmailAndPassword(trimmedEmail, trimmedPassword);
 
-      console.log('Đăng nhập thành công với email:', trimmedEmail);
 
       // Truy xuất dữ liệu người dùng dựa trên email trong Firestore
       const querySnapshot = await firestore()
@@ -63,18 +62,12 @@ const Login = () => {
         );
       }
 
-      navigation.replace('Root'); // Chuyển hướng sau khi đăng nhập thành công
+      navigation.replace('Root'); 
     } catch (error) {
-      console.error('Đăng nhập thất bại:', error);
-      if (error.code === 'auth/user-not-found') {
-        setErrorMessage('Không tìm thấy tài khoản với địa chỉ email này.');
-      } else if (error.code === 'auth/wrong-password') {
-        setErrorMessage('Sai mật khẩu. Vui lòng thử lại.');
-      } else {
-        setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại sau.');
-      }
-    }
-  };
+    
+      setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại sau.');
+  }
+};
 
   return (
     <View style={styles.container}>
@@ -95,10 +88,10 @@ const Login = () => {
         <Ionicons name="lock-closed" size={30} style={styles.LoginIcon} />
         <TextInput
           placeholder="Mật khẩu"
-          autoCapitalize="none" // Sử dụng "none" để tránh tự động viết hoa
+          autoCapitalize="none" 
           style={styles.textInput}
           secureTextEntry={pwdHidden}
-          onChangeText={setPassword} // Sử dụng onChangeText thay cho onChange
+          onChangeText={setPassword} 
           value={password}
         />
 
@@ -156,6 +149,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    borderRadius:10,
+    borderWidth:1,
+    borderColor:'#ddd',
   },
   LoginIcon: {
     color: colors.gray,
