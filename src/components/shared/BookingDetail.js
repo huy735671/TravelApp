@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firestore from '@react-native-firebase/firestore';
@@ -85,6 +86,35 @@ const BookingDetail = () => {
     // Thêm hành động chat với nhân viên tại đây
     alert('Chat với nhân viên'); // Thay thế với hành động thực tế của bạn
   };
+  const handleCancelBooking = async () => {
+    Alert.alert(
+      "Xác nhận hủy đặt phòng",
+      "Bạn có chắc chắn muốn hủy đặt phòng?",
+      [
+        {
+          text: "Hủy",
+          onPress: () => console.log("Hủy hủy bỏ"),
+          style: "cancel"
+        },
+        { text: "Đồng ý", onPress: async () => {
+            try {
+              await firestore()
+                .collection('bookings')
+                .doc(bookingDetails.id)
+                .update({ status: 'cancelled' });
+  
+              // Cập nhật lại thông tin đặt phòng để phản ánh trạng thái mới
+              setBookingDetails(prev => ({ ...prev, status: 'cancelled' }));
+              Alert.alert("Thông báo", "Đặt phòng đã được hủy thành công.");
+            } catch (error) {
+              console.error('Error canceling booking: ', error);
+              Alert.alert("Lỗi", "Có lỗi xảy ra khi hủy đặt phòng. Vui lòng thử lại.");
+            }
+        } }
+      ]
+    );
+  };
+  
 
   if (loading) {
     return (
@@ -128,6 +158,12 @@ const BookingDetail = () => {
         statusColor = '#3b82f6'; // Màu xanh dương
         statusIcon = 'check-circle'; // Icon tương ứng
         break;
+      case 'cancelled': // Thêm trường hợp mới cho trạng thái "Đã hủy"
+        statusText = 'Đã hủy';
+        statusColor = '#d9534f'; // Màu đỏ
+        statusIcon = 'times-circle'; // Icon tương ứng
+        break;
+
       default:
         statusText = 'Trạng thái không xác định';
         statusColor = 'grey'; // Màu xám
@@ -160,13 +196,19 @@ const BookingDetail = () => {
           <Text style={styles.buttonText}>Đánh giá</Text>
         </TouchableOpacity>
       );
+    } else if (bookingDetails.status === 'cancelled') {
+      return (
+        <TouchableOpacity style={styles.buttonOutline} disabled>
+          <Text style={styles.buttonText}>Đặt phòng đã bị hủy</Text>
+        </TouchableOpacity>
+      );
     } else {
       return (
         <>
           <TouchableOpacity style={styles.buttonOutline}>
             <Text style={styles.buttonText}>Liên hệ khách sạn</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonDestructive}>
+          <TouchableOpacity style={styles.buttonDestructive} onPress={handleCancelBooking}>
             <Text style={[styles.buttonText, styles.whiteText]}>
               Hủy đặt phòng
             </Text>

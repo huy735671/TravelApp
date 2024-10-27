@@ -25,6 +25,7 @@ const BookingScreen = ({route, navigation}) => {
   const {room, checkInDate, checkOutDate} = route.params;
   const [adults, setAdults] = useState(room.capacity);
   const [children, setChildren] = useState(0);
+  const [rooms, setRooms] = useState(1);
   const [hotelInfo, setHotelInfo] = useState(null);
   const [userDiscounts, setUserDiscounts] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -76,7 +77,7 @@ const BookingScreen = ({route, navigation}) => {
 
   const calculateTotalPrice = () => {
     const dayCount = calculateTotalDays();
-    return dayCount * room.pricePerNight;
+    return dayCount * room.pricePerNight * rooms; // Cập nhật giá theo số phòng
   };
 
   const calculateDiscountedPrice = () => {
@@ -133,6 +134,7 @@ const BookingScreen = ({route, navigation}) => {
       roomType: room.roomType,
       adults,
       children,
+      rooms,
       checkInDate,
       checkOutDate,
       totalPrice: calculateDiscountedPrice(), // Lưu giá sau giảm giá
@@ -140,10 +142,9 @@ const BookingScreen = ({route, navigation}) => {
         uid: user.uid,
         email: user.email,
       },
-      discountId: selectedDiscount ? selectedDiscount.discountId : null, // Cập nhật discountId nếu có
-      roomId: room.id, // Lưu roomId ở đây
+      discountId: selectedDiscount ? selectedDiscount.discountId : null, 
+      roomId: room.id, 
       status: 'pending',
-      
     };
 
     try {
@@ -194,7 +195,6 @@ const BookingScreen = ({route, navigation}) => {
         checkOutDate,
         totalPrice: calculateDiscountedPrice(),
         hotelId: room.hotelId,
-
       });
     } catch (error) {
       console.error('Error creating booking: ', error);
@@ -219,6 +219,19 @@ const BookingScreen = ({route, navigation}) => {
   const decreaseChildren = () => {
     if (children > 0) {
       setChildren(prev => prev - 1);
+    }
+  };
+
+  const increaseRooms = () => {
+    setRooms(prev => Number(prev) + 1); // Tăng số phòng
+    setAdults(prev => Number(prev) + 1);
+  };
+
+  const decreaseRooms = () => {
+    if (rooms > 1) {
+      // Đảm bảo số phòng không nhỏ hơn 1
+      setRooms(prev => Number(prev) - 1);
+      setAdults(prev => Number(prev) - 1);
     }
   };
 
@@ -277,7 +290,6 @@ const BookingScreen = ({route, navigation}) => {
       </Animatable.View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* <Text style={styles.title}></Text> */}
         {room.image && (
           <Image source={{uri: room.image}} style={styles.roomImage} />
         )}
@@ -296,6 +308,22 @@ const BookingScreen = ({route, navigation}) => {
         </View>
 
         <View style={styles.bodyContainer}>
+          <View style={styles.inputBodyContainer}>
+            <View style={styles.guestsContainer}>
+              <Text style={styles.guestLabel}>Số phòng:</Text>
+              <View style={styles.guestControls}>
+                <TouchableOpacity onPress={decreaseRooms}>
+                  <Text style={styles.guestControl}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.guestCount}>{rooms}</Text>
+                <TouchableOpacity onPress={increaseRooms}>
+                  <Text style={styles.guestControl}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          <Divider />
+
           <View style={styles.inputBodyContainer}>
             <View style={styles.guestsContainer}>
               <Text style={styles.guestLabel}>Người lớn:</Text>
@@ -513,10 +541,10 @@ const styles = StyleSheet.create({
     height: 200,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   inputBodyContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   guestsContainer: {
     flexDirection: 'row',
@@ -533,11 +561,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   guestControl: {
-    fontSize: sizes.h2,
+    fontSize: sizes.h3,
     padding: 10,
-    backgroundColor: '#eee',
-    borderRadius: 5,
+    backgroundColor: '#ddd',
     marginHorizontal: 5,
+    borderRadius: 50,
   },
   guestCount: {
     fontSize: sizes.h3,
@@ -636,10 +664,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: sizes.h3 + 2, // Tăng kích thước một chút
     color: 'black', // Màu sắc
-
   },
 
-  
   originalPriceLabel: {
     fontWeight: 'bold',
     fontSize: 15,

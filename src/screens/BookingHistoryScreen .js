@@ -138,6 +138,18 @@ const BookingHistoryScreen = () => {
             Hoàn thành
           </Text>
         </TouchableOpacity>
+
+
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            filter === 'cancelled' && styles.activeFilterButton,
+          ]}
+          onPress={() => handleFilterChange('cancelled')}>
+          <Text style={filter === 'cancelled' ? styles.activeFilterText : styles.filterText}>
+            Đã hủy
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {filteredBookings.length > 0 ? (
@@ -179,12 +191,16 @@ const BookingHistoryScreen = () => {
                           ? styles.completed
                           : booking.status === 'pending'
                           ? styles.pending
+                          : booking.status === 'cancelled' // Thêm điều kiện cho trạng thái 'Đã hủy'
+                          ? styles.cancelled
                           : null,
                       ]}>
                       {booking.status === 'confirmed'
                         ? 'Sắp tới'
                         : booking.status === 'completed'
                         ? 'Đã hoàn thành'
+                        : booking.status === 'cancelled' // Hiển thị thông báo cho trạng thái 'Đã hủy'
+                        ? 'Đã hủy'
                         : 'Đang chờ xác nhận'}
                     </Text>
                   </View>
@@ -229,6 +245,9 @@ const styles = StyleSheet.create({
   },
   activeFilterText: {
     color: '#fff',
+  },
+  cancelled: {
+    color: '#ff4d4f', 
   },
   bookingItem: {
     padding: 16,
