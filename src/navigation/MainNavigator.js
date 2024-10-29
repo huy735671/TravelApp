@@ -137,14 +137,15 @@ const MainNavigator = () => {
           name="RegionListScreen"
           component={RegionListScreen}
           options={{
-            headerShown: false,
+            headerShown: true,
+            headerTitle:'Danh sách địa điểm đề xuất',
             useNativeDriver: true,
             gestureEnabled: false,
-            cardStyleInterpolator: ({current: {progress}}) => ({
-              cardStyle: {
-                opacity: progress,
-              },
-            }),
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
           }}
         />
 

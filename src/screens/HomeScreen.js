@@ -60,6 +60,9 @@ const HomeScreen = ({navigation}) => {
         )}>
         <TopPlacesCorousel list={TOP_PLACES} />
         <ExploreScreen />
+        
+        <ViewPlacesByRegion />
+
 
         <SectionHeader
           title="Địa điểm khác"
@@ -69,7 +72,6 @@ const HomeScreen = ({navigation}) => {
 
         <TripsList list={PLACES} />
 
-        <ViewPlacesByRegion />
       </ScrollView>
     </View>
   );

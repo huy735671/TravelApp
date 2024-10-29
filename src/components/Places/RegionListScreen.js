@@ -1,13 +1,18 @@
-import {StyleSheet, Text, View, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as Animatable from 'react-native-animatable';
 import Icon from '../shared/Icon';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
-import Card from '../shared/Card/card';
-import CardMedia from '../shared/Card/CardMedia';
-import CardContent from '../shared/Card/CardContent';
+
 import {spacing, sizes, colors} from '../../constants/theme';
 
 const RegionListScreen = ({route}) => {
@@ -34,102 +39,70 @@ const RegionListScreen = ({route}) => {
     fetchPlaces();
   }, [title]);
 
-  const renderPlace = ({item, index}) => {
-    const even = index % 2 === 0; // Kiểm tra nếu index là số chẵn
-
+  const renderPlace = ({item}) => {
     return (
-      <Animatable.View
-        animation="fadeIn"
-        delay={index * 100}
-        style={{
-          paddingTop: index === 0 ? spacing.l : 0, // Padding cho thẻ đầu tiên
-          paddingLeft: even ? spacing.l / 2 : 0, // Thêm padding bên trái cho thẻ chẵn
-          paddingRight: even ? 0 : spacing.l / 2, // Thêm padding bên phải cho thẻ lẻ
-          paddingBottom: spacing.l,
-          flex: 1, // Để cho các thẻ co giãn
-          paddingLeft:10,
-        }}>
-        <Card
-          onPress={() => navigation.navigate('TripDetails', { trip: item })}
-          style={styles.card}>
-          <CardMedia source={{uri: item.imageUrl}} />
-          <CardContent>
-          <View>
-            <Text style={styles.title}>{item.title || 'Tiêu đề không có'}</Text>
-            <Text>{item.location}</Text>
-           <Text>{item.starRating}</Text> 
-           
-            </View>
-          </CardContent>
-        </Card>
-      </Animatable.View>
+      <TouchableOpacity
+        style={styles.placeContainer}
+        onPress={() => navigation.navigate('TripDetails', {trip: item})}>
+        <Image source={{uri: item.imageUrl}} style={styles.image} />
+        <View style={styles.infoContainer}>
+          <Text style={styles.placeTitle}>
+            {item.title || 'Tiêu đề không có'}
+          </Text>
+          <Text style={styles.location}>{item.location}</Text>
+          <Text style={styles.starRating}>{item.starRating}</Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Animatable.View
-        style={[styles.backButton, {marginTop: insets.top}]}
-        animation="fadeIn"
-        delay={500}
-        duration={400}
-        easing="ease-in-out">
-        <Icon
-          icon="Back"
-          style={styles.backIcon}
-          size={40}
-          onPress={navigation.goBack}
-        />
-      </Animatable.View>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Các địa điểm du lịch tại {title}</Text>
-      </View>
+      {/* <Text style={styles.headerTitle}>Các địa điểm du lịch tại {title}</Text> */}
 
       <FlatList
         data={places}
         renderItem={renderPlace}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
       />
     </View>
   );
 };
 
-export default RegionListScreen;
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  card: {
-    borderRadius: 10,
-    overflow: 'hidden',
-    elevation: 1,
     backgroundColor: colors.white,
-    width: '100%',
-    
   },
-  title: {
-    fontSize: sizes.body,
+
+  placeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  infoContainer: {
+    flex: 1,
+  },
+  placeTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    color: colors.primary,
-    marginVertical: 4,
   },
   location: {
-    fontSize: sizes.body,
-    color: colors.lightGray,
-    
+    fontSize: 14,
+    color: '#555',
   },
-  columnWrapper: {
-    justifyContent: 'space-between', // Căn giữa các cột
+  starRating: {
+    fontSize: 16,
+    color: '#FFD700',
   },
 });
+
+export default RegionListScreen;

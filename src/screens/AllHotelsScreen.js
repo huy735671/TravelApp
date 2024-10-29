@@ -19,6 +19,8 @@ import HotelsList from '../components/Hotels/hotelsList';
 import LocationsScreen from '../components/Hotels/LocationsScreen';
 import SearchBar from '../components/Search/Hotel/SearchBar';
 import SpecialOffer from '../components/Hotels/HotelHome/SpecialOffer';
+import MostBookedHotels from '../components/Hotels/MostBookedHotels';
+import AllListHotel from '../components/Hotels/AllListHotel';
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width * 0.85;
@@ -103,8 +105,8 @@ const AllHotelsScreen = ({navigation}) => {
       fetchHotels(); // Lấy lại danh sách khách sạn nếu không có từ khóa tìm kiếm
     }
   };
-  const formatPrice = (price) => {
-    if (price === 0) return "0";
+  const formatPrice = price => {
+    if (price === 0) return '0';
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
@@ -116,7 +118,9 @@ const AllHotelsScreen = ({navigation}) => {
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{hotel.title}</Text>
         <Text style={styles.hotelLocation}>{hotel.location}</Text>
-        <Text style={styles.priceText}>{formatPrice(hotel.pricePerNight)} Vnd/đêm</Text>
+        <Text style={styles.priceText}>
+          {formatPrice(hotel.pricePerNight)} Vnd/đêm
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -136,8 +140,8 @@ const AllHotelsScreen = ({navigation}) => {
       <ScrollView style={styles.container}>
         <SearchBar navigation={navigation} />
         <View>
-        <Text style={styles.headerTitle}>Ưu đãi đặc biệt</Text>
-        <SpecialOffer navigation={navigation} />
+          <Text style={styles.headerTitle}>Ưu đãi đặc biệt</Text>
+          <SpecialOffer navigation={navigation} />
         </View>
 
         <Text style={styles.headerTitle}>Khách sạn gần bạn</Text>
@@ -158,9 +162,10 @@ const AllHotelsScreen = ({navigation}) => {
         <Text style={styles.headerTitle}>Tìm theo chỗ nghỉ</Text>
         <LocationsScreen />
 
-        <Text style={styles.headerTitle}>
-          Lên kế hoạch dễ dàng và nhanh chóng{' '}
-        </Text>
+        <Text style={styles.headerTitle}>Khách sạn phổ biến</Text>
+        <MostBookedHotels navigation={navigation} />
+
+        <Text style={styles.headerTitle}> Tất cả các khách sạn</Text>
       </ScrollView>
     </View>
   );
