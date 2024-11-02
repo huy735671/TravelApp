@@ -21,13 +21,11 @@ import FavoriteButton from '../shared/FavoriteButton';
 const {width} = Dimensions.get('window');
 
 const TourDetail = ({route}) => {
-  const {tourId} = route.params;
+  const {tourId} = route.params || {};
   const [tourDetail, setTourDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-
-  // State để quản lý việc mở rộng thông tin
   const [expandedSections, setExpandedSections] = useState({
     itinerary: false,
     guide: false,
@@ -50,7 +48,9 @@ const TourDetail = ({route}) => {
       }
     };
 
-    fetchTourDetail();
+    if (tourId) {
+      fetchTourDetail();
+    }
   }, [tourId]);
 
   if (loading) {
@@ -80,158 +80,172 @@ const TourDetail = ({route}) => {
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
   };
 
-  const formatPrice = (price) => {
+  const formatPrice = price => {
     const numberPrice = typeof price === 'number' ? price : parseFloat(price);
     return numberPrice.toLocaleString('vi-VN') + 'đ/người';
   };
 
- 
-
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
-
-      <FlatList
-        data={images}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => (
-          <Image source={{uri: item}} style={styles.image} resizeMode="cover" />
-        )}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.imageList}
-      />
-      <Animatable.View
-        style={[styles.backButton, {marginTop: insets.top}]}
-        animation="fadeIn"
-        delay={500}
-        duration={400}
-        easing="ease-in-out">
-        <Icon icon="Back" style={styles.backIcon} onPress={navigation.goBack} />
-      </Animatable.View>
-
-      <Animatable.View
-        style={[styles.favoriteButton, {marginTop: insets.top}]}
-        animation="fadeIn"
-        delay={500}
-        duration={400}
-        easing="ease-in-out">
-        <FavoriteButton />
-      </Animatable.View>
-
-      <View style={styles.detailsContainer}>
-        <Text style={styles.tourName}>{tourDetail.name}</Text>
-        <View style={styles.dateContainer}>
-          <Icon icon="calendar" size={20} color={colors.primary} />
-          <Text style={styles.dateText}>
-            {formatDate(tourDetail.startDate)} -
-            {formatDate(tourDetail.endDate)}
-          </Text>
-        </View>
-
-        <Text style={styles.tourPrice}>{formatPrice(tourDetail.price)}</Text>
-
-        <View style={styles.infoContainer}>
-          <Text style={styles.tourName}>Thông tin chuyến đi</Text>
-          <View style={{flexDirection: 'row'}}>
-            <Icon icon="Location" size={25} color={colors.primary} />
-            <Text style={styles.tourDescription}>
-              Khởi hành: {tourDetail.departure}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Icon icon="Location" size={25} color={colors.primary} />
-            <Text style={styles.tourDescription}>
-              Điểm đến: {tourDetail.destination}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Icon icon="Car" size={25} color={colors.primary} />
-            <Text style={styles.tourDescription}>
-              Phương tiện: {tourDetail.transportation}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <Icon icon="Food" size={20} color={colors.primary} />
-            <Text style={styles.tourDescription}>
-              
-              Bữa ăn: {tourDetail.meals}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.bodyContainer}>
-          <Text style={styles.tourName}>Mô tả tour</Text>
-          <Text style={styles.tourDescription}>{tourDetail.description}</Text>
-
-          <TouchableOpacity
-            onPress={() => toggleSection('itinerary')}
-            style={styles.sectionHeader}>
-            <Text style={styles.tourName}>Lịch trình</Text>
-            <Icon
-              icon={expandedSections.itinerary ? 'arrowTop' : 'arrowBottom'}
-              size={30}
-              color={colors.primary}
-            />
-          </TouchableOpacity>
-          {expandedSections.itinerary && (
-            <Text style={styles.tourDescription}>{tourDetail.itinerary}</Text>
-          )}
-          <View
-            style={{borderWidth: 0.7, borderColor: '#ddd', marginVertical: 5}}
+     
+        <Animatable.View
+          style={[styles.backButton, {marginTop: insets.top}]}
+          animation="fadeIn"
+          delay={500}
+          duration={400}
+          easing="ease-in-out">
+          <Icon
+            icon="Back"
+            style={styles.backIcon}
+            onPress={navigation.goBack}
           />
+        </Animatable.View>
 
-          <TouchableOpacity
-            onPress={() => toggleSection('guide')}
-            style={styles.sectionHeader}>
-            <Text style={styles.tourName}>Hướng dẫn viên</Text>
-            <Icon
-              icon={expandedSections.guide ? 'arrowTop' : 'arrowBottom'}
-              size={30}
-              color={colors.primary}
+        <Animatable.View
+          style={[styles.favoriteButton, {marginTop: insets.top}]}
+          animation="fadeIn"
+          delay={500}
+          duration={400}
+          easing="ease-in-out">
+          <FavoriteButton />
+        </Animatable.View>
+   
+      <ScrollView>
+        <FlatList
+          data={images}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
+            <Image
+              source={{uri: item}}
+              style={styles.image}
+              resizeMode="cover"
             />
-          </TouchableOpacity>
-          {expandedSections.guide && (
-            <Text style={styles.tourDescription}>{tourDetail.guide}</Text>
           )}
-          <View
-            style={{borderWidth: 0.7, borderColor: '#ddd', marginVertical: 5}}
-          />
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.imageList}
+        />
+        <View style={styles.detailsContainer}>
+          <Text style={styles.tourName}>{tourDetail.name}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <View style={styles.dateContainer}>
+              <Icon icon="calendar" size={20} color={colors.primary} />
+              <Text style={styles.dateText}>
+                {formatDate(tourDetail.startDate)} -{' '}
+                {formatDate(tourDetail.endDate)}
+              </Text>
+            </View>
+            <View style={styles.dateContainer}>
+              <Text style={styles.dateText}>{tourDetail.duration} </Text>
+            </View>
+          </View>
+          <Text style={styles.tourPrice}>{formatPrice(tourDetail.price)}</Text>
 
-          <TouchableOpacity
-            onPress={() => toggleSection('cancellationPolicy')}
-            style={styles.sectionHeader}>
-            <Text style={styles.tourName}>Chính sách hủy tour</Text>
-            <Icon
-              icon={
-                expandedSections.cancellationPolicy ? 'arrowTop' : 'arrowBottom'
-              }
-              size={30}
-              color={colors.primary}
+          <View style={styles.infoContainer}>
+            <Text style={styles.tourName}>Thông tin chuyến đi</Text>
+            <View style={{flexDirection: 'row'}}>
+              <Icon icon="Location" size={25} color={colors.primary} />
+              <Text style={styles.tourDescription}>
+                Khởi hành: {tourDetail.departure}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Icon icon="Location" size={25} color={colors.primary} />
+              <Text style={styles.tourDescription}>
+                Điểm đến: {tourDetail.destination}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Icon icon="Car" size={25} color={colors.primary} />
+              <Text style={styles.tourDescription}>
+                Phương tiện: {tourDetail.transportation}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Icon icon="Food" size={20} color={colors.primary} />
+              <Text style={styles.tourDescription}>
+                Bữa ăn: {tourDetail.meals}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.bodyContainer}>
+            <Text style={styles.tourName}>Mô tả tour</Text>
+            <Text style={styles.tourDescription}>{tourDetail.description}</Text>
+
+            <TouchableOpacity
+              onPress={() => toggleSection('itinerary')}
+              style={styles.sectionHeader}>
+              <Text style={styles.tourName}>Lịch trình</Text>
+              <Icon
+                icon={expandedSections.itinerary ? 'arrowTop' : 'arrowBottom'}
+                size={30}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+
+            {expandedSections.itinerary && (
+              <Text style={styles.tourDescription}>{tourDetail.itinerary}</Text>
+            )}
+            <View
+              style={{borderWidth: 0.7, borderColor: '#ddd', marginVertical: 5}}
             />
-          </TouchableOpacity>
-          {expandedSections.cancellationPolicy && (
+            <TouchableOpacity
+              onPress={() => toggleSection('guide')}
+              style={styles.sectionHeader}>
+              <Text style={styles.tourName}>Hướng dẫn viên</Text>
+              <Icon
+                icon={expandedSections.guide ? 'arrowTop' : 'arrowBottom'}
+                size={30}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+            {expandedSections.guide && (
+              <Text style={styles.tourDescription}>{tourDetail.guide}</Text>
+            )}
+            <View
+              style={{borderWidth: 0.7, borderColor: '#ddd', marginVertical: 5}}
+            />
+
+            <TouchableOpacity
+              onPress={() => toggleSection('cancellationPolicy')}
+              style={styles.sectionHeader}>
+              <Text style={styles.tourName}>Chính sách hủy tour</Text>
+              <Icon
+                icon={
+                  expandedSections.cancellationPolicy
+                    ? 'arrowTop'
+                    : 'arrowBottom'
+                }
+                size={30}
+                color={colors.primary}
+              />
+            </TouchableOpacity>
+            {expandedSections.cancellationPolicy && (
+              <Text style={styles.tourDescription}>
+                {tourDetail.cancellationPolicy}
+              </Text>
+            )}
+
+            <View
+              style={{borderWidth: 0.7, borderColor: '#ddd', marginVertical: 5}}
+            />
+          </View>
+
+          <View style={styles.infoContainer}>
+            <Text style={styles.tourName}>Liên hệ</Text>
             <Text style={styles.tourDescription}>
-              {tourDetail.cancellationPolicy}
+              Số điện thoại: {tourDetail.contact}
             </Text>
-          )}
-          <View
-            style={{borderWidth: 0.7, borderColor: '#ddd', marginVertical: 5}}
-          />
+          </View>
         </View>
-
-        <View style={styles.infoContainer}>
-          <Text style={styles.tourName}>Liên hệ</Text>
-          <Text style={styles.tourDescription}>
-            Số điện thoại: {tourDetail.contact}
-          </Text>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -292,6 +306,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ddd',
+    marginRight: 20,
   },
   dateText: {
     fontSize: 16,
@@ -316,7 +331,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: colors.primary,
     marginBottom: 10,
-
   },
   bodyContainer: {
     marginTop: 10,

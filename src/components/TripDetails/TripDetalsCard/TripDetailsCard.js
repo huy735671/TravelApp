@@ -116,13 +116,16 @@ const TripDetailsCard = ({trip}) => {
       <Divider style={styles.divider} />
 
       <ScrollView style={styles.scrollBox} showsVerticalScrollIndicator={false}>
-        {loading ? (
+      {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <RatingOverall
-            rating={averageRating}
-            containerStyle={styles.rating}
-          />
+          <>
+            {averageRating > 0 ? (
+              <RatingOverall rating={averageRating} containerStyle={styles.rating} />
+            ) : (
+              <Text style={styles.noRatingText}>Chưa có đánh giá</Text>
+            )}
+          </>
         )}
 
         <SectionHeader
@@ -261,6 +264,11 @@ const styles = StyleSheet.create({
   addReviewButtonText: {
     color: colors.light,
     fontWeight: 'bold',
+  },
+  noRatingText: {
+    marginHorizontal: spacing.l,
+    color: colors.lightGray,
+    fontStyle: 'italic',
   },
 });
 

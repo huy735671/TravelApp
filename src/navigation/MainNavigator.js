@@ -182,7 +182,7 @@ const MainNavigator = () => {
               open: {
                 animation: 'timing',
                 config: {
-                  duration: 500, // Thời gian hiệu ứng
+                  duration: 500, 
                 },
               },
               close: {

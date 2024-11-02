@@ -50,7 +50,11 @@ const RegionListScreen = ({route}) => {
             {item.title || 'Tiêu đề không có'}
           </Text>
           <Text style={styles.location}>{item.location}</Text>
-          <Text style={styles.starRating}>{item.starRating}</Text>
+          <Text style={styles.starRating}>
+            {item.starRating && item.starRating > 0
+              ? `${item.starRating} ⭐` 
+              : 'Chưa có đánh giá'}
+             </Text>
         </View>
       </TouchableOpacity>
     );
