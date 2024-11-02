@@ -22,7 +22,7 @@ import SearchResultsScreen from '../components/Search/Hotel/SearchResultsScreen'
 import SpecialOfferDetails from '../components/Hotels/HotelHome/SpecialOfferDetails';
 import ResetPw from '../components/SignInUp/ResetPw';
 import BookingSuccessScreen from '../components/Hotels/BookingSuccessScreen';
-
+import TourDetail from '../components/Tour/TourDetail';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -30,7 +30,6 @@ const MainNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -83,7 +82,6 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: true,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            
           }}
         />
 
@@ -119,7 +117,6 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-            
           }}
         />
         <Stack.Screen
@@ -130,7 +127,6 @@ const MainNavigator = () => {
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-           
           }}
         />
         <Stack.Screen
@@ -138,7 +134,7 @@ const MainNavigator = () => {
           component={RegionListScreen}
           options={{
             headerShown: true,
-            headerTitle:'Danh sách địa điểm đề xuất',
+            headerTitle: 'Danh sách địa điểm đề xuất',
             useNativeDriver: true,
             gestureEnabled: false,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
@@ -297,14 +293,14 @@ const MainNavigator = () => {
           }}
         />
 
-<Stack.Screen
+        <Stack.Screen
           name="BookingSuccess"
           component={BookingSuccessScreen}
           options={{
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: true,
-            
+
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
             headerStyle: {
               backgroundColor: '#4c8d6e',
@@ -313,7 +309,20 @@ const MainNavigator = () => {
           }}
         />
 
-
+        <Stack.Screen
+          name="TourDetail"
+          component={TourDetail}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

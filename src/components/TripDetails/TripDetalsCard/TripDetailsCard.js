@@ -18,6 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 import RelatedLocations from './RelatedLocations';
 import firestore from '@react-native-firebase/firestore'; // Import Firestore
 import WeatherInfo from './WeatherInfo';
+import ToursCarousel from '../../Tour/ToursCarousel';
 
 const TripDetailsCard = ({trip}) => {
   const navigation = useNavigation();
@@ -71,9 +72,9 @@ const TripDetailsCard = ({trip}) => {
               starRating: avgRating,
             });
           } else {
-            // Bỏ qua không thông báo khi không tìm thấy trong places
+          
 
-            // Kiểm tra trong topPlaces
+          
             const topPlacesDoc = await firestore()
               .collection('topPlaces')
               .doc(trip.id)
@@ -163,6 +164,15 @@ const TripDetailsCard = ({trip}) => {
           onPress={() => navigation.navigate('AddReview', {tripId: trip.id})}>
           <Text style={styles.addReviewButtonText}>Viết Đánh Giá</Text>
         </TouchableOpacity>
+
+        <SectionHeader
+          title="Tours liên quan"
+          containerStyle={styles.sectionHeader}
+          titleStyle={styles.sectionTitle}
+          onPress={() => {}}
+          buttonTitle="Tất cả"
+        />
+        <ToursCarousel location={trip.location} />
 
         <SectionHeader
           title="Địa điểm liên quan"

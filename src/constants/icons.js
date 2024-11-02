@@ -11,7 +11,12 @@ const Back = require('../../assets/icons/Back.png');
 const Filter = require('../../assets/icons/Filter.png');
 const Add = require('../../assets/icons/Add.png');
 const Graph = require('../../assets/icons/Graph.png');
-
+const calendar = require('../../assets/icons/calendar.png');
+const clock = require('../../assets/icons/clock.png');
+const Car = require('../../assets/icons/Car.png');
+const Food = require('../../assets/icons/Food.png');
+const arrowTop = require('../../assets/icons/arrowTop.png');
+const arrowBottom = require('../../assets/icons/arrowBottom.png');
 
 
 
@@ -30,4 +35,10 @@ export default {
   Filter,
   Add,
   Graph,
+  calendar,
+  clock,
+  Car,
+  Food,
+  arrowTop,
+  arrowBottom,
 };
