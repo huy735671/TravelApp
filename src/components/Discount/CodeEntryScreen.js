@@ -116,7 +116,7 @@ const CodeEntryScreen = () => {
         </Text>
         <View style={styles.footerImageBox}>
           <Image
-            source={require('../../../assets/images/images.jpg')}
+            source={require('../../../assets/images/code/uudai1.jpg')}
             style={styles.imageBox}
           />
           <View>

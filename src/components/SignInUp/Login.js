@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
 import {colors, sizes} from '../../constants/theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,12 +17,14 @@ import firestore from '@react-native-firebase/firestore';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from '../shared/Icon';
 import FooterLogin from './FooterLogin';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
-  const [email, setEmail] = useState('huynew@gmail.com');
-  const [password, setPassword] = useState('123456Huy');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [pwdHidden, setPwdHidden] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [userData, setUserData] = useState(null); // Lưu thông tin người dùng
 
   const navigation = useNavigation();
 
@@ -33,39 +35,73 @@ const Login = () => {
 
   const handlerLogin = async () => {
     setErrorMessage('');
-
+  
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
-
+  
+    if (!trimmedEmail || !trimmedPassword) {
+      setErrorMessage('Vui lòng nhập email và mật khẩu.');
+      return;
+    }
+  
     if (!validateEmail(trimmedEmail)) {
       setErrorMessage('Địa chỉ email không hợp lệ.');
       return;
     }
-
+  
     try {
       await auth().signInWithEmailAndPassword(trimmedEmail, trimmedPassword);
-
+  
+      // Lưu email vào AsyncStorage
+      await AsyncStorage.setItem('userEmail', trimmedEmail);
+  
+      // Lấy thông tin người dùng từ Firestore
       const querySnapshot = await firestore()
         .collection('users')
         .where('email', '==', trimmedEmail)
         .get();
-
+  
       if (!querySnapshot.empty) {
-        querySnapshot.forEach(doc => {
-          const userData = doc.data();
-          console.log('Thông tin người dùng từ Firestore:', userData);
+        querySnapshot.forEach(async doc => {
+          const data = doc.data();
+          setUserData(data);
+  
+          // Lưu avatarUrl và username vào AsyncStorage
+          await AsyncStorage.setItem('avatarUrl', data.avatarUrl || '');
+          await AsyncStorage.setItem('username', data.username || '');
         });
       } else {
-        console.log(
-          'Không tìm thấy tài liệu người dùng với email này trong Firestore.',
-        );
+        console.log('Không tìm thấy tài liệu người dùng với email này trong Firestore.');
       }
-
+  
       navigation.replace('Root');
     } catch (error) {
-      setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại sau.');
+      setErrorMessage('Sai tài khoản hoặc mật khẩu! Vui lòng thử lại.');
     }
   };
+  
+
+  const loadUserData = async () => {
+    try {
+      const savedEmail = await AsyncStorage.getItem('userEmail');
+      const savedAvatar = await AsyncStorage.getItem('avatarUrl');
+      const savedUsername = await AsyncStorage.getItem('username');
+
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setUserData({
+          avatarUrl: savedAvatar,
+          username: savedUsername,
+        });
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin người dùng:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -77,18 +113,32 @@ const Login = () => {
       <SafeAreaView>
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon icon="Back" size={40} color='white'  style={styles.icon} />
+            <Icon icon="Back" size={40} color="white" style={styles.icon} />
           </TouchableOpacity>
         </View>
+        
         <View style={styles.imageBox}>
-          <Image
-            source={require('../../../assets/images/LoginIcon.png')}
-            style={styles.img}
-          />
+          {userData && userData.avatarUrl ? (
+            <Image
+              source={{uri: userData.avatarUrl}}
+              style={styles.avatar}
+            />
+          ) : (
+            <Image
+              source={require('../../../assets/images/LoginIcon.png')}
+              style={styles.img}
+            />
+          )}
         </View>
 
+        {userData && userData.username ? (
+          <Text style={styles.welcomeText}>
+            Chào mừng trở lại, {userData.username} !
+          </Text>
+        ) : null}
+
         <View style={styles.loginContainer}>
-          <View style={{marginBottom:20}}/>
+          <View style={{marginBottom: 20}} />
           <Text style={styles.label}>Email:</Text>
           <View style={styles.bodyContainer}>
             <Icon icon="Email" size={30} style={styles.LoginIcon} />
@@ -112,7 +162,6 @@ const Login = () => {
               onChangeText={setPassword}
               value={password}
             />
-
             <TouchableOpacity
               style={{
                 height: '100%',
@@ -143,10 +192,9 @@ const Login = () => {
           <TouchableOpacity onPress={handlerLogin} style={styles.buttonLogin}>
             <Text style={styles.buttonLoginText}>Đăng nhập</Text>
           </TouchableOpacity>
-          <View style={{marginTop:30}}/>
-          <FooterLogin/>
+          <View style={{marginTop: 50}} />
+          <FooterLogin />
         </View>
-        
       </SafeAreaView>
     </View>
   );
@@ -163,17 +211,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     padding: 10,
   },
-  titleHeader: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'black',
-    marginLeft: 30,
-  },
   icon: {
-    backgroundColor:colors.green,
+    backgroundColor: colors.green,
     borderTopRightRadius: 20,
     borderBottomLeftRadius: 20,
-    
   },
   imageBox: {
     alignItems: 'center',
@@ -181,6 +222,18 @@ const styles = StyleSheet.create({
   img: {
     width: 250,
     height: 250,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  welcomeText: {
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#fff',
+    marginBottom: 20,
   },
   loginContainer: {
     height: '100%',
@@ -197,11 +250,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderBottomWidth: 2, 
-    borderBottomColor: '#ddd', 
-    borderTopWidth: 0, 
-    borderLeftWidth: 0,
-    borderRightWidth: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ddd',
   },
   label: {
     marginLeft: 30,
@@ -219,8 +269,6 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     fontSize: 16,
-    // backgroundColor:'#eef0f2',
-    
   },
   forgetPassContainer: {
     width: WINDOW_WIDTH - 60,
@@ -228,7 +276,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom:20,
+    marginBottom: 20,
   },
   forgetPassText: {
     color: '#707070',
@@ -244,12 +292,13 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   buttonLoginText: {
-    color: colors.white,
-    fontSize: sizes.h3,
+    fontSize: sizes.h2,
+    fontWeight: '600',
+    color: colors.light,
   },
   errorText: {
     color: 'red',
     textAlign: 'center',
-    marginBottom: 10,
+    marginTop: 10,
   },
 });
