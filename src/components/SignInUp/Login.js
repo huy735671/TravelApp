@@ -1,5 +1,6 @@
 import {
   Image,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -9,28 +10,29 @@ import {
 import React, {useState} from 'react';
 import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
 import {colors, sizes} from '../../constants/theme';
-import Icons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from '../shared/Icon';
+import FooterLogin from './FooterLogin';
 
 const Login = () => {
   const [email, setEmail] = useState('huynew@gmail.com');
   const [password, setPassword] = useState('123456Huy');
   const [pwdHidden, setPwdHidden] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigation = useNavigation();
 
   const validateEmail = email => {
-    // Regex để kiểm tra định dạng email
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
   const handlerLogin = async () => {
-    setErrorMessage(''); // Reset error message
+    setErrorMessage('');
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
@@ -41,14 +43,11 @@ const Login = () => {
     }
 
     try {
-      // Đăng nhập với Firebase Auth
       await auth().signInWithEmailAndPassword(trimmedEmail, trimmedPassword);
 
-
-      // Truy xuất dữ liệu người dùng dựa trên email trong Firestore
       const querySnapshot = await firestore()
         .collection('users')
-        .where('email', '==', trimmedEmail) // Truy vấn dựa trên email
+        .where('email', '==', trimmedEmail)
         .get();
 
       if (!querySnapshot.empty) {
@@ -62,68 +61,93 @@ const Login = () => {
         );
       }
 
-      navigation.replace('Root'); 
+      navigation.replace('Root');
     } catch (error) {
-    
       setErrorMessage('Đăng nhập thất bại. Vui lòng thử lại sau.');
-  }
-};
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleHeader}>Đăng nhập.</Text>
-
-      <View style={styles.bodyContainer}>
-        <Icons name="email" size={30} style={styles.LoginIcon} />
-        <TextInput
-          placeholder="Email tài khoản"
-          autoCapitalize="none"
-          style={styles.textInput}
-          onChangeText={setEmail}
-          value={email}
-        />
-      </View>
-
-      <View style={styles.bodyContainer}>
-        <Ionicons name="lock-closed" size={30} style={styles.LoginIcon} />
-        <TextInput
-          placeholder="Mật khẩu"
-          autoCapitalize="none" 
-          style={styles.textInput}
-          secureTextEntry={pwdHidden}
-          onChangeText={setPassword} 
-          value={password}
-        />
-
-        <TouchableOpacity
-          style={{
-            height: '100%',
-            aspectRatio: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => setPwdHidden(!pwdHidden)}>
-          <Ionicons
-            name={pwdHidden ? 'eye-off-outline' : 'eye-outline'}
-            size={24}
-            style={{width: 24, height: 24, color: 'gray'}}
+      <StatusBar
+        barStyle="light-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <SafeAreaView>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon icon="Back" size={40} color='white'  style={styles.icon} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.imageBox}>
+          <Image
+            source={require('../../../assets/images/LoginIcon.png')}
+            style={styles.img}
           />
-        </TouchableOpacity>
-      </View>
-      {errorMessage ? (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      ) : null}
-      <View style={styles.forgetPassContainer}>
-        <TouchableOpacity style={{position: 'absolute', right: 0}} onPress={()=>navigation.navigate('ResetPw')}>
-          <Text style={styles.forgetPassText}>Quên mật khẩu ?</Text>
-        </TouchableOpacity>
-      </View>
+        </View>
 
-      <TouchableOpacity onPress={handlerLogin} style={styles.buttonLogin}>
-        <Text style={styles.buttonLoginText}>Đăng nhập</Text>
-      </TouchableOpacity>
+        <View style={styles.loginContainer}>
+          <View style={{marginBottom:20}}/>
+          <Text style={styles.label}>Email:</Text>
+          <View style={styles.bodyContainer}>
+            <Icon icon="Email" size={30} style={styles.LoginIcon} />
+            <TextInput
+              placeholder="Email tài khoản"
+              autoCapitalize="none"
+              style={styles.textInput}
+              onChangeText={setEmail}
+              value={email}
+            />
+          </View>
 
-      <View></View>
+          <Text style={styles.label}>Mật khẩu:</Text>
+          <View style={styles.bodyContainer}>
+            <Icon icon="Key" size={30} style={styles.LoginIcon} />
+            <TextInput
+              placeholder="Mật khẩu"
+              autoCapitalize="none"
+              style={styles.textInput}
+              secureTextEntry={pwdHidden}
+              onChangeText={setPassword}
+              value={password}
+            />
+
+            <TouchableOpacity
+              style={{
+                height: '100%',
+                aspectRatio: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => setPwdHidden(!pwdHidden)}>
+              <Ionicons
+                name={pwdHidden ? 'eye-off-outline' : 'eye-outline'}
+                size={24}
+                style={{width: 24, height: 24, color: 'gray'}}
+              />
+            </TouchableOpacity>
+          </View>
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          ) : null}
+
+          <View style={styles.forgetPassContainer}>
+            <TouchableOpacity
+              style={{position: 'absolute', right: 0}}
+              onPress={() => navigation.navigate('ResetPw')}>
+              <Text style={styles.forgetPassText}>Quên mật khẩu ?</Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={handlerLogin} style={styles.buttonLogin}>
+            <Text style={styles.buttonLoginText}>Đăng nhập</Text>
+          </TouchableOpacity>
+          <View style={{marginTop:30}}/>
+          <FooterLogin/>
+        </View>
+        
+      </SafeAreaView>
     </View>
   );
 };
@@ -133,7 +157,11 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#7b70f9',
+  },
+  headerContainer: {
+    marginLeft: 10,
+    padding: 10,
   },
   titleHeader: {
     fontSize: 24,
@@ -141,17 +169,46 @@ const styles = StyleSheet.create({
     color: 'black',
     marginLeft: 30,
   },
+  icon: {
+    backgroundColor:colors.green,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 20,
+    
+  },
+  imageBox: {
+    alignItems: 'center',
+  },
+  img: {
+    width: 250,
+    height: 250,
+  },
+  loginContainer: {
+    height: '100%',
+    backgroundColor: colors.light,
+    borderTopRightRadius: 50,
+    borderTopLeftRadius: 50,
+  },
   bodyContainer: {
     width: WINDOW_WIDTH - 60,
     height: 45,
     marginLeft: 30,
-    marginTop: 20,
+    marginTop: 10,
+    marginBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius:10,
-    borderWidth:1,
-    borderColor:'#ddd',
+    backgroundColor: '#fff',
+    borderBottomWidth: 2, 
+    borderBottomColor: '#ddd', 
+    borderTopWidth: 0, 
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+  },
+  label: {
+    marginLeft: 30,
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
   LoginIcon: {
     color: colors.gray,
@@ -162,6 +219,8 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     fontSize: 16,
+    // backgroundColor:'#eef0f2',
+    
   },
   forgetPassContainer: {
     width: WINDOW_WIDTH - 60,
@@ -169,6 +228,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom:20,
   },
   forgetPassText: {
     color: '#707070',
@@ -188,8 +248,8 @@ const styles = StyleSheet.create({
     fontSize: sizes.h3,
   },
   errorText: {
-    color: 'red', // Màu sắc cho thông báo lỗi
+    color: 'red',
     textAlign: 'center',
-    marginBottom: 10, // Khoảng cách dưới thông báo lỗi
+    marginBottom: 10,
   },
 });

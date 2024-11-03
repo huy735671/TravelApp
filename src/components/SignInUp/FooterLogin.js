@@ -42,15 +42,14 @@ export default FooterLogin;
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
+    
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
-    width: WINDOW_WIDTH - 60,
+    width: WINDOW_WIDTH - 50,
     marginLeft: 30,
   },
   crossbar: {

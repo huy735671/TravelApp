@@ -23,6 +23,8 @@ import SpecialOfferDetails from '../components/Hotels/HotelHome/SpecialOfferDeta
 import ResetPw from '../components/SignInUp/ResetPw';
 import BookingSuccessScreen from '../components/Hotels/BookingSuccessScreen';
 import TourDetail from '../components/Tour/TourDetail';
+import SignUp from '../components/SignInUp/SignUp';
+import Login from '../components/SignInUp/Login';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -37,6 +39,27 @@ const MainNavigator = () => {
             headerShown: false,
             useNativeDriver: true,
             gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          }}
+        />
+
+<Stack.Screen
+          name="SignIn"
+          component={Login}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: false,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
         />
         <Stack.Screen

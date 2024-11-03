@@ -17,6 +17,9 @@ const Car = require('../../assets/icons/Car.png');
 const Food = require('../../assets/icons/Food.png');
 const arrowTop = require('../../assets/icons/arrowTop.png');
 const arrowBottom = require('../../assets/icons/arrowBottom.png');
+const Email = require('../../assets/icons/Email.png');
+const Key = require('../../assets/icons/Key.png');
+const Phone = require('../../assets/icons/Phone.png');
 
 
 
@@ -41,4 +44,7 @@ export default {
   Food,
   arrowTop,
   arrowBottom,
+  Email,
+  Key,
+  Phone,
 };

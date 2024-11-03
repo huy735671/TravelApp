@@ -1,32 +1,86 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, StatusBar} from 'react-native';
-import LoginHome from '../components/SignInUp/LoginHeader';
-import Login from '../components/SignInUp/Login';
-import FooterLogin from '../components/SignInUp/FooterLogin';
-import SignUp from '../components/SignInUp/SignUp';
-const SIGN_IN = 'SIGN_IN';
-const SIGN_UP = 'SIGN_UP';
-export default LoginScreen = ({navigation}) => {
-  const [page, setPage] = useState('SIGN_IN');
+import React from 'react';
+import { View, StyleSheet, StatusBar, Text, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, sizes } from '../constants/theme';
 
+export default LoginScreen = ({ navigation }) => {
   return (
-    <View style={{width: '100%', height: '100%'}}>
+    <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle="light-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
-      <View style={{width: '100%', height: '25%'}}>
-        <LoginHome page={page} setPage={setPage} />
+      <View style={styles.welcomeContainer}>
+        <Text style={styles.welcomeText}>Chào mừng đến với TravelNest</Text>
+
+        <View>
+          <Image source={require('../../assets/images/booking.png')} style={styles.image} />
+        </View>
+
+        <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.registerButtonText}>Đăng ký</Text>
+        </TouchableOpacity>
+
+        <View style={styles.loginContainer}>
+          <Text style={styles.alreadyText}>Đã có tài khoản? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+            <Text style={styles.loginText}>Đăng nhập</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={{height: '60%', width: '100%', backgroundColor: '#eeeeee',}}>
-        {page === SIGN_IN ? <Login /> : <SignUp/>}
-      </View>
-      <View style={{flex: 1}}>
-        <FooterLogin />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#6666FF',
+  },
+  welcomeContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  welcomeText: {
+    fontWeight: 'bold',
+    fontSize: sizes.title,
+    alignSelf: 'flex-start', 
+    marginLeft: 20,        
+    marginTop: 60,         
+    color: '#ffffff',      
+  },
+  image: {
+    marginTop: 100,
+    width: 350,
+    height: 350,
+  },
+  registerButton: {
+    backgroundColor: colors.green,
+    paddingVertical: 15,
+    width: '90%', 
+    borderRadius: 8,
+    marginTop: 50,
+    alignItems: 'center',
+  },
+  registerButtonText: {
+    color: '#fff',
+    fontSize: sizes.h2,
+    fontWeight: 'bold',
+  },
+  loginContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  alreadyText: {
+    color: '#ffffff',
+    fontSize: sizes.h3,
+  },
+  loginText: {
+    color: '#FFFF33', 
+    fontSize: sizes.h3,
+    textDecorationLine: 'underline',
+  },
+
+});
