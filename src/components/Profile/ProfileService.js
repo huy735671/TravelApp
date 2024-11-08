@@ -12,7 +12,7 @@ import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors, sizes} from '../../constants/theme';
 import {useNavigation} from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const ProfileService = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [isTwoFactorEnabled, setIsTwoFactorEnabled] = useState(false);
@@ -72,7 +72,7 @@ const ProfileService = () => {
     if (currentUser) {
       try {
         await auth().signOut();
-        console.log('Đăng xuất thành công');
+        await AsyncStorage.removeItem('userInfo'); 
         navigation.navigate('Login');
       } catch (error) {
         console.error('Lỗi khi đăng xuất: ', error);

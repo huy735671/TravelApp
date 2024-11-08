@@ -24,8 +24,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [pwdHidden, setPwdHidden] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [userData, setUserData] = useState(null); // Lưu thông tin người dùng
-
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
   const navigation = useNavigation();
 
   const validateEmail = email => {

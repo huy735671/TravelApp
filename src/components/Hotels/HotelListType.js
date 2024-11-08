@@ -81,12 +81,16 @@ const HotelListType = ({route}) => {
           {item.title ? item.title : 'Khách sạn không tên'}
         </Text>
 
+        {item.starRating && item.starRating > 0 ? (
         <StarRating
           showLabelInline
           rating={Number(item.starRating)}
           size={20}
           containerStyle={styles.rating}
         />
+      ) : (
+        <Text style={styles.noRatingText}>Chưa có đánh giá</Text>
+      )}
         
         <Text>{item.address}</Text>
         

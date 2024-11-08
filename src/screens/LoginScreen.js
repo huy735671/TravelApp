@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, StatusBar, Text, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { colors, sizes } from '../constants/theme';
+import auth from '@react-native-firebase/auth'; 
 
-export default LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }) => {
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user && !isNavigating) {
+        setIsNavigating(true); // Set flag to prevent multiple navigations
+        navigation.replace('Root'); 
+      }
+    });
+
+    // Clean up subscription on unmount
+    return () => unsubscribe();
+  }, [navigation, isNavigating]);
+
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="dark-content"
+        barStyle="light-content"
         translucent
         backgroundColor="transparent"
       />
@@ -41,17 +56,16 @@ export default LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent:'center',
+    justifyContent: 'center',
   },
   background: {
     flex: 1,
     resizeMode: 'cover', 
-    
   },
   welcomeContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop:40,
+    marginTop: 40,
   },
   logo: {
     width: 80, 
@@ -101,3 +115,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+export default LoginScreen;

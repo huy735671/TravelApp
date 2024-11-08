@@ -21,7 +21,7 @@ const PlaceDetailScreen = ({route}) => {
   const [topPlaces, setTopPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null); // State cho hình ảnh đang được phóng to
+  const [selectedImage, setSelectedImage] = useState(null); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -162,6 +162,8 @@ const PlaceDetailScreen = ({route}) => {
             Phương tiện công cộng: {trip.publicTransport}
           </Text>
         </View>
+      
+    
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hoạt động</Text>

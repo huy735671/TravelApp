@@ -121,12 +121,18 @@ const HotelDetailsCarousel = ({hotel}) => {
         <View style={{marginTop: 20, paddingHorizontal: 16,}}>
           <Text style={[styles.title,{marginBottom: 10}]}>{hotel.title}</Text>
 
-          <StarRating
-            showLabelInline
-            rating={Number(hotel.starRating)}
-            size={20}
-            containerStyle={styles.rating}
-          />
+          {hotel.starRating && hotel.starRating > 0 ? (
+            <StarRating
+              showLabelInline
+              rating={Number(hotel.starRating)}
+              size={20}
+              containerStyle={styles.rating}
+            />
+          ) : (
+            <Text style={{fontSize: sizes.body, color: colors.gray}}>
+              Chưa có đánh giá
+            </Text>
+          )}
           <View
             style={{
               flexDirection: 'row',

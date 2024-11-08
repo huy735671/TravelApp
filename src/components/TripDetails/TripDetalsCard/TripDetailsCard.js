@@ -11,12 +11,12 @@ import {
 import HotelsCarousel from './HotelsCarousel';
 import Divider from '../../shared/Divider';
 import SectionHeader from '../../shared/SectionHeader';
-import RatingOverall from '../../shared/Rating/RatingOverall'; // Import component RatingOverall
+import RatingOverall from '../../shared/Rating/RatingOverall'; 
 import Reviews from '../../Reviews/Reviews';
 import {colors, sizes, spacing} from '../../../constants/theme';
 import {useNavigation} from '@react-navigation/native';
 import RelatedLocations from './RelatedLocations';
-import firestore from '@react-native-firebase/firestore'; // Import Firestore
+import firestore from '@react-native-firebase/firestore'; 
 import WeatherInfo from './WeatherInfo';
 import ToursCarousel from '../../Tour/ToursCarousel';
 
@@ -26,7 +26,7 @@ const TripDetailsCard = ({trip}) => {
   const [expanded, setExpanded] = useState(false);
   const heightAnim = useRef(new Animated.Value(480)).current;
 
-  const [averageRating, setAverageRating] = useState(0); // State để lưu rating trung bình
+  const [averageRating, setAverageRating] = useState(0); 
   const [loading, setLoading] = useState(true);
   const [showMore, setShowMore] = useState(false);
 

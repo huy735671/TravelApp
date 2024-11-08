@@ -6,12 +6,12 @@ import StarRating from '../../shared/Rating/Rating';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from '../../../constants/theme';
 
-const HotelReviews = ({ hotelId }) => { // Remove navigation prop from here
+const HotelReviews = ({ hotelId }) => { 
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(true);
   
-  const navigation = useNavigation(); // Keep using useNavigation to get the navigation object
+  const navigation = useNavigation(); 
 
   useEffect(() => {
     const fetchReviewsAndRatings = async () => {
@@ -59,7 +59,7 @@ const HotelReviews = ({ hotelId }) => { // Remove navigation prop from here
         const average =
           validRatings.length > 0
             ? (total / validRatings.length).toFixed(1)
-            : 0; // Tính trung bình và làm tròn
+            : 0; 
 
         setAverageRating(average);
 
@@ -98,7 +98,8 @@ const HotelReviews = ({ hotelId }) => { // Remove navigation prop from here
             <Text style={styles.user}>{username}</Text>
             <Text style={styles.date}>{date}</Text>
           </View>
-          <StarRating rating={rating} disabled={true} size={15} showLabelTop />
+          {/* Ẩn StarRating */}
+          {/* <StarRating rating={rating} disabled={true} size={15} showLabelTop /> */}
         </View>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.reviewDescription}</Text>
@@ -113,16 +114,22 @@ const HotelReviews = ({ hotelId }) => { // Remove navigation prop from here
   return (
     <View style={styles.reviewsList}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text style={styles.averageRating}>{averageRating} </Text>
-
-        <View style={{ flexDirection: 'column', paddingHorizontal: 10 }}>
-          <Text style={{ textAlign: 'center' }}>Đánh giá chung</Text>
-          <StarRating
-            rating={parseFloat(averageRating)}
-            disabled={true}
-            size={15}
-          />
-        </View>
+        {averageRating > 0 ? (
+          <>
+            <Text style={styles.averageRating}>{averageRating} </Text>
+            <View style={{ flexDirection: 'column', paddingHorizontal: 10 }}>
+              <Text style={{ textAlign: 'center' }}>Đánh giá chung</Text>
+              {/* Hiện thị sao nếu có đánh giá */}
+              <StarRating
+                rating={parseFloat(averageRating)}
+                disabled={true}
+                size={15}
+              />
+            </View>
+          </>
+        ) : (
+          <Text style={styles.noRatingText}>Chưa có đánh giá</Text> // Hiển thị nếu không có đánh giá
+        )}
       </View>
       {reviews.slice(0, 3).map((review, index) => (
         <React.Fragment key={review.id}>
@@ -150,6 +157,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  noRatingText: {
+    fontSize: 16,
+    color: '#555',
+    fontStyle: 'italic',
   },
   reviewContainer: {
     marginVertical: 10,
@@ -190,7 +202,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 10,
     borderRadius: 5,
-    
   },
   seeMoreText: {
     color: colors.primary,

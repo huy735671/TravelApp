@@ -95,12 +95,16 @@ const filteredHotels = hotels.filter(hotel => {
       <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
       <View style={styles.cardDetails}>
         <Text style={styles.hotelName}>{item.title}</Text>
+        {item.starRating && item.starRating > 0 ? (
         <StarRating
           showLabelInline
           rating={Number(item.starRating)}
           size={20}
           containerStyle={styles.rating}
         />
+        ):(
+          <Text style={styles.noRatingText}>Chưa có đánh giá</Text>
+        )}
         <Text>{item.address}</Text>
         <View style={styles.priceContainer}>
           <Text style={styles.bodyText}>
@@ -119,7 +123,7 @@ const filteredHotels = hotels.filter(hotel => {
           key={star}
           style={[
             styles.starButton,
-            selectedStarRating === star && styles.selectedStarButton // Thêm lớp chọn cho sao đã chọn
+            selectedStarRating === star && styles.selectedStarButton 
           ]}
           onPress={() => {
             if (selectedStarRating === star) {

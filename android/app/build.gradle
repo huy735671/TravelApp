@@ -111,6 +111,10 @@ dependencies {
     implementation project(':react-native-vector-icons')
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-analytics")
+implementation fileTree(dir: "libs", include: ["*.aar"])
+//zalo
+implementation("com.squareup.okhttp3:okhttp:4.6.0")
+    implementation("commons-codec:commons-codec:1.14")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

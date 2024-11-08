@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f0f0f0',
   },
   avatarContainer: {
     alignItems: 'center',
@@ -243,6 +243,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
+    
   },
   avatarPlaceholder: {
     width: 100,
@@ -294,8 +295,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#eaeaea',
   },
   largeInput: {
-    height: 100, // Tăng chiều cao của ô nhập
-    textAlignVertical: 'top', // Đảm bảo văn bản bắt đầu từ phía trên cùng
+    height: 100, 
+    textAlignVertical: 'top', 
   },
   genderSelector: {
     borderWidth: 1,
