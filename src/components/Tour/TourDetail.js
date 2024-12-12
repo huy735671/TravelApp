@@ -9,6 +9,7 @@ import {
   StatusBar,
   Dimensions,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {colors, shadow, sizes, spacing} from '../../constants/theme';
@@ -31,6 +32,8 @@ const TourDetail = ({route}) => {
     guide: false,
     cancellationPolicy: false,
   });
+
+  const scrollY = new Animated.Value(0); // Thêm Animated Value để theo dõi cuộn
 
   useEffect(() => {
     const fetchTourDetail = async () => {
@@ -75,47 +78,61 @@ const TourDetail = ({route}) => {
     }));
   };
 
-  const formatDate = date => {
-    const d = new Date(date);
-    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-  };
-
   const formatPrice = price => {
     const numberPrice = typeof price === 'number' ? price : parseFloat(price);
     return numberPrice.toLocaleString('vi-VN') + 'đ/người';
   };
 
+  const headerBackgroundOpacity = scrollY.interpolate({
+    inputRange: [0, 100],  // Khi cuộn xuống 200px, opacity thay đổi
+    outputRange: [0, 1],   // 0 opacity khi cuộn lên, 1 khi cuộn xuống
+    extrapolate: 'clamp',  // Chặn giá trị ra ngoài phạm vi
+  });
+
   return (
     <View style={styles.container}>
       <StatusBar
-        barStyle="dark-content"
+        barStyle="light-content"
         translucent
         backgroundColor="rgba(0,0,0,0)"
       />
-     
-        <Animatable.View
-          style={[styles.backButton, {marginTop: insets.top}]}
-          animation="fadeIn"
-          delay={500}
-          duration={400}
-          easing="ease-in-out">
-          <Icon
-            icon="Back"
-            style={styles.backIcon}
-            onPress={navigation.goBack}
-          />
-        </Animatable.View>
+      
+      {/* Background Animated View */}
+      <Animated.View
+        style={[
+          styles.headerBackground,
+          {opacity: headerBackgroundOpacity},
+        ]}
+      />
+      
+      <Animatable.View
+        style={[styles.backButton, {marginTop: insets.top}]}
+        animation="fadeIn"
+        delay={500}
+        duration={400}
+        easing="ease-in-out">
+        <Icon
+          icon="Back"
+          style={styles.backIcon}
+          onPress={navigation.goBack}
+        />
+      </Animatable.View>
 
-        <Animatable.View
-          style={[styles.favoriteButton, {marginTop: insets.top}]}
-          animation="fadeIn"
-          delay={500}
-          duration={400}
-          easing="ease-in-out">
-          <FavoriteButton />
-        </Animatable.View>
-   
-      <ScrollView>
+      <Animatable.View
+        style={[styles.favoriteButton, {marginTop: insets.top}]}
+        animation="fadeIn"
+        delay={500}
+        duration={400}
+        easing="ease-in-out">
+        <FavoriteButton />
+      </Animatable.View>
+
+      <ScrollView
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {y: scrollY}}}], // Lắng nghe sự kiện cuộn
+          {useNativeDriver: false}
+        )}
+      >
         <FlatList
           data={images}
           keyExtractor={(item, index) => index.toString()}
@@ -134,14 +151,7 @@ const TourDetail = ({route}) => {
           <Text style={styles.tourName}>{tourDetail.name}</Text>
           <View style={{flexDirection: 'row'}}>
             <View style={styles.dateContainer}>
-              <Icon icon="calendar" size={20} color={colors.primary} />
-              <Text style={styles.dateText}>
-                {formatDate(tourDetail.startDate)} -{' '}
-                {formatDate(tourDetail.endDate)}
-              </Text>
-            </View>
-            <View style={styles.dateContainer}>
-              <Text style={styles.dateText}>{tourDetail.duration} </Text>
+              <Text style={styles.dateText}>Hành trình: {tourDetail.duration} </Text>
             </View>
           </View>
           <Text style={styles.tourPrice}>{formatPrice(tourDetail.price)}</Text>
@@ -253,6 +263,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  headerBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 90, 
+    backgroundColor: colors.green,
+
+    zIndex: 1,
   },
   loadingText: {
     textAlign: 'center',
