@@ -19,7 +19,7 @@ const SearchInput = ({onSearch}) => {
         </View>
         <TextInput
           style={styles.field}
-          placeholder="Search"
+          placeholder="Tìm kiếm"
           value={search}
           onChangeText={handleSearchChange}
         />

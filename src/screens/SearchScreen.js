@@ -46,22 +46,22 @@ const SearchScreen = () => {
 
   const tabs = [
     {
-      title: 'All',
+      title: 'Tất cả',
       content: () => <SearchMasonry key="all" list={filteredData} />, // Dùng filteredData cho tab 'All'
     },
     {
-      title: 'Places',
+      title: 'Địa điểm',
       content: () => <SearchMasonry key="places" list={places.filter(place => place.title.toLowerCase().includes(searchTerm.toLowerCase()))} />, // Lọc theo tìm kiếm cho tab 'Places'
     },
     {
-      title: 'Hotels',
+      title: 'Khách sạn',
       content: () => <SearchMasonry key="hotels" list={hotels.filter(hotel => hotel.title.toLowerCase().includes(searchTerm.toLowerCase()))} />, // Lọc theo tìm kiếm cho tab 'Hotels'
     },
   ];
 
   return (
     <View style={styles.container}>
-      <MainHeader title="Search" />
+      <MainHeader title="Tìm kiếm" />
       <SearchInput onSearch={setSearchTerm} />
       <Tabs items={tabs} />
     </View>

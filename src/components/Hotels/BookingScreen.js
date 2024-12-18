@@ -142,8 +142,8 @@ const BookingScreen = ({route, navigation}) => {
         uid: user.uid,
         email: user.email,
       },
-      discountId: selectedDiscount ? selectedDiscount.discountId : null, 
-      roomId: room.id, 
+      discountId: selectedDiscount ? selectedDiscount.discountId : null,
+      roomId: room.id,
       status: 'pending',
     };
 
