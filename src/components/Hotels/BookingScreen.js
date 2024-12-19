@@ -36,23 +36,7 @@ const BookingScreen = ({route, navigation}) => {
 
   const insets = useSafeAreaInsets();
 
-  const fetchHotelDiscount = async () => {
-    try {
-      const discountSnapshot = await firestore()
-        .collection('hotelDiscount')
-        .where('roomId', '==', room.id)
-        .get();
-
-      if (!discountSnapshot.empty) {
-        const discountData = discountSnapshot.docs[0].data();
-        setHotelDiscount(discountData);
-      } else {
-        console.log('Không tìm thấy giảm giá cho phòng này.');
-      }
-    } catch (error) {
-      console.error('Error fetching hotel discount: ', error);
-    }
-  };
+  
 
   // Fetch hotel info và discount khi component mount
   useEffect(() => {

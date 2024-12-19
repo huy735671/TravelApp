@@ -13,7 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 const locations = [
   {
     id: '1',
-    title: 'Thành phố Hồ Chí Minh',
+    title: 'TP. Hồ Chí Minh',
     image:
       'https://tphcm.dangcongsan.vn/DATA/72/IMAGES/2023/11/tao-da-de-tphcm-phat-trien-thanh-do-thi-thong-minh1517188897.jpg',
   },

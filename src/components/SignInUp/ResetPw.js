@@ -8,21 +8,22 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
-import Toast from 'react-native-toast-message'; // Import Toast
-import {sizes} from '../../constants/theme';
+import Toast from 'react-native-toast-message'; 
+import {colors, sizes} from '../../constants/theme';
+import auth from '@react-native-firebase/auth';
+
 
 const ResetPw = () => {
   const [email, setEmail] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  // Email validation function using regex
   const validateEmail = email => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     if (email.trim() === '') {
       Toast.show({
         type: 'error',
@@ -31,8 +32,8 @@ const ResetPw = () => {
       });
       return;
     }
-
-    // Check if the entered email is valid
+  
+    // Kiểm tra định dạng email
     if (!validateEmail(email)) {
       Toast.show({
         type: 'error',
@@ -41,10 +42,36 @@ const ResetPw = () => {
       });
       return;
     }
-
-    // Show modal for success case
-    setModalMessage('Yêu cầu đặt lại mật khẩu đã được gửi đến ' + email);
-    setModalVisible(true);
+  
+    try {
+      // Gửi yêu cầu đặt lại mật khẩu qua Firebase
+      await auth().sendPasswordResetEmail(email);
+  
+      // Hiển thị thông báo thành công
+      setModalMessage('Yêu cầu đặt lại mật khẩu đã được gửi đến ' + email);
+      setModalVisible(true);
+    } catch (error) {
+      // Xử lý các lỗi từ Firebase
+      if (error.code === 'auth/user-not-found') {
+        Toast.show({
+          type: 'error',
+          text1: 'Lỗi',
+          text2: 'Tài khoản không tồn tại. Vui lòng kiểm tra lại email.',
+        });
+      } else if (error.code === 'auth/invalid-email') {
+        Toast.show({
+          type: 'error',
+          text1: 'Lỗi',
+          text2: 'Email không hợp lệ. Vui lòng nhập đúng định dạng email.',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Lỗi',
+          text2: 'Đã có lỗi xảy ra. Vui lòng thử lại sau.',
+        });
+      }
+    }
   };
 
   return (
@@ -125,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
   },
   button: {
-    backgroundColor: '#3498db',
+    backgroundColor: colors.green,
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 10,

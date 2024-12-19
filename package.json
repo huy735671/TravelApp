@@ -29,6 +29,7 @@
     "crypto-js": "^4.2.0",
     "i": "^0.3.7",
     "metro-react-native-babel-preset": "^0.77.0",
+    "moment": "^2.30.1",
     "npm": "^10.8.2",
     "react": "^18.2.0",
     "react-native": "^0.74.5",
