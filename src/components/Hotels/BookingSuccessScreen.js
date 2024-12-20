@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, BackHandler } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, BackHandler, SafeAreaView } from 'react-native';
 import { colors, sizes } from '../../constants/theme';
 import firestore from '@react-native-firebase/firestore';
 
@@ -84,7 +84,7 @@ const BookingSuccessScreen = ({navigation, route}) => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle="dark-content"
         translucent
@@ -141,21 +141,22 @@ const BookingSuccessScreen = ({navigation, route}) => {
         onPress={() => navigation.navigate('Home')}>
         <Text style={styles.buttonText}>Trang chủ</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
     backgroundColor: colors.light,
   },
   bookingImage: {
-    width: 300,
-    height: 300,
+    width: 200,
+    height: 200,
   },
   hotelContainer: {
     flexDirection: 'row',
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.primary,
     marginBottom: 10,
+    textAlign: 'center',
   },
   message: {
     fontSize: sizes.h3,

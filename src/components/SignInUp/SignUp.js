@@ -7,8 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Animated,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {WINDOW_WIDTH} from '@gorhom/bottom-sheet';
 import {colors, sizes} from '../../constants/theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -92,9 +93,11 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pwdHidden, setPwdHidden] = useState(true);
   const [address, setAddress] = useState('');
-
   const [avatar, setAvatar] = useState(null);
   const navigation = useNavigation();
+
+  const scrollY = useRef(new Animated.Value(0)).current;
+
 
   const handleSignUp = async () => {
     if (!email || !password || !fullName || !phoneNumber) {
@@ -185,12 +188,26 @@ const SignUp = () => {
             <Icon icon="Back" size={40} color="#fff" style={styles.icon} />
           </TouchableOpacity>
         </View>
-        <View style={styles.imageBox}>
-          <Image
-            source={require('../../../assets/images/SingiupIcon.png')}
-            style={styles.img}
-          />
-        </View>
+
+        <Animated.ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: false }
+          )}
+        >
+          {/* Hình ảnh với độ mờ thay đổi */}
+          <Animated.View style={styles.imageBox}>
+            <Animated.Image
+              source={require('../../../assets/images/SingiupIcon.png')}
+              style={[styles.img, { opacity: scrollY.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: [1, 0], // Từ không mờ đến mờ khi kéo lên
+                  extrapolate: 'clamp',
+              }) }]}
+            />
+          </Animated.View>
 
         <View style={styles.signUpContainer}>
           <TouchableOpacity
@@ -232,7 +249,7 @@ const SignUp = () => {
           <View style={styles.bodyContainer}>
             <Icon icon="Key" size={30} style={styles.LoginIcon} />
             <TextInput
-              placeholder="********"
+              placeholder="Nhập mật khẩu"
               autoCapitalize="none"
               style={styles.textInput}
               secureTextEntry={pwdHidden}
@@ -254,7 +271,7 @@ const SignUp = () => {
           <View style={styles.bodyContainer}>
             <Icon icon="Key" size={30} style={styles.LoginIcon} />
             <TextInput
-              placeholder="********"
+              placeholder="Nhập lại mật khẩu"
               autoCapitalize="none"
               style={styles.textInput}
               secureTextEntry={pwdHidden}
@@ -272,7 +289,7 @@ const SignUp = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.label}>Số điện thoại và Tỉnh thành:</Text>
+          {/* <Text style={styles.label}>Số điện thoại và Tỉnh thành:</Text>
           <View style={styles.bodyContainerRow}>
             <View style={styles.phoneContainer}>
               <Icon icon="Phone" size={30} style={styles.LoginIcon} />
@@ -301,9 +318,9 @@ const SignUp = () => {
                 ))}
               </Picker>
             </View>
-          </View>
+          </View> */}
 
-          {/* <Text style={styles.label}>Số điện thoại:</Text>
+          <Text style={styles.label}>Số điện thoại:</Text>
           <View style={styles.bodyContainer}>
             <Icon icon="Phone" size={30} style={styles.LoginIcon} />
             <TextInput
@@ -316,7 +333,7 @@ const SignUp = () => {
             />
           </View>
 
-          <Text style={styles.label}>Địa chỉ:</Text>
+          <Text style={styles.label}>Tỉnh thành:</Text>
           <View style={styles.bodyContainer}>
             <Icon icon="Location" size={30} style={styles.LoginIcon} />
             <Picker
@@ -327,7 +344,7 @@ const SignUp = () => {
                 <Picker.Item key={index} label={province} value={province} />
               ))}
             </Picker>
-          </View> */}
+          </View>
 
           <View style={styles.forgetPassContainer}>
             <TouchableOpacity
@@ -341,6 +358,7 @@ const SignUp = () => {
             <Text style={styles.buttonLoginText}>Đăng ký</Text>
           </TouchableOpacity>
         </View>
+        </Animated.ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -362,6 +380,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
     borderTopRightRadius: 50,
     borderTopLeftRadius: 50,
+    paddingTop: 20,
+    paddingBottom: 65,
   },
   icon: {
     backgroundColor: colors.green,
@@ -381,7 +401,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginLeft: 20,
     marginTop: 10,
-    marginBottom: 5,
+    
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import {
   View,
   Text,
@@ -8,31 +8,33 @@ import {
   Modal,
   TextInput,
   ScrollView,
-  SafeAreaView
+  SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import CryptoJS from 'crypto-js';
 import moment from 'moment';
-import firestore from "@react-native-firebase/firestore";
+import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { Linking } from 'react-native';
+import {Linking} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { colors, sizes } from '../../constants/theme';
+import {colors, sizes} from '../../constants/theme';
+import {color} from 'react-native-elements/dist/helpers';
 
 // ZaloPay configuration
 const config = {
-    app_id: "2553",
-    key1: "PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL",
-    key2: "trMrHtvjo6myautxDUiAcYsVtaeQ8nhf",
-    endpoint: "https://sb-openapi.zalopay.vn/v2/create",
-    query_endpoint: "https://sb-openapi.zalopay.vn/v2/query"
-  };
-
-const formatCurrency = (amount) => {
-  return amount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  app_id: '2553',
+  key1: 'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL',
+  key2: 'trMrHtvjo6myautxDUiAcYsVtaeQ8nhf',
+  endpoint: 'https://sb-openapi.zalopay.vn/v2/create',
+  query_endpoint: 'https://sb-openapi.zalopay.vn/v2/query',
 };
 
-const PaymentZalo = ({ route, navigation }) => {
-  const { bookingId, totalAmount, email, fullName, phone, address } = route.params;
+const formatCurrency = amount => {
+  return amount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
+const PaymentZalo = ({route, navigation}) => {
+  const {bookingId, totalAmount, email, fullName, phone} = route.params;
   console.log(route.params);
 
   const [lastTransactionId, setLastTransactionId] = useState(null);
@@ -41,22 +43,71 @@ const PaymentZalo = ({ route, navigation }) => {
   const [editedphone, setEditedphone] = useState(phone);
   const [isLoading, setIsLoading] = useState(false);
 
-
-
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: false
+      headerShown: false,
     });
   }, [navigation]);
 
-
+  useEffect(() => {
+    let intervalId;
   
+    if (lastTransactionId) {
+      intervalId = setInterval(async () => {
+        try {
+          const data = `${config.app_id}|${lastTransactionId}|${config.key1}`;
+          const mac = CryptoJS.HmacSHA256(data, config.key1).toString();
+  
+          const response = await fetch(config.query_endpoint, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: `app_id=${config.app_id}&app_trans_id=${lastTransactionId}&mac=${mac}`,
+          });
+  
+          const result = await response.json();
+  
+          if (result.return_code === 1) {
+            clearInterval(intervalId);
+            await firestore().collection('bookings').doc(bookingId).update({
+              paymentStatus: 'completed',
+            });
+            Alert.alert(
+              'Thanh toán thành công',
+              'Đơn đặt phòng của bạn đã được xác nhận.',
+              [
+                {
+                  text: 'OK',
+                  onPress: () =>
+                    navigation.navigate('BookingSuccess', {bookingId}),
+                },
+              ]
+            );
+          } else if (result.return_code === 2) {
+            clearInterval(intervalId);
+            await firestore().collection('bookings').doc(bookingId).update({
+              paymentStatus: 'failed',
+              status: 'cancelled',
+            });
+            Alert.alert('Thanh toán thất bại', 'Vui lòng thử lại sau.');
+          }
+        } catch (error) {
+          console.error('Error checking status:', error);
+        }
+      }, 5000); // Check every 5 seconds
+    }
+  
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [lastTransactionId]);
+  
+
   const validatePaymentData = () => {
     if (!email) {
       throw new Error('Email không được để trống');
     }
     if (!totalAmount || totalAmount < 1000) {
-        throw new Error('Số tiền thanh toán phải lớn hơn 1000 VND');
+      throw new Error('Số tiền thanh toán phải lớn hơn 1000 VND');
     }
     if (!bookingId) {
       throw new Error('Mã đặt phòng không hợp lệ');
@@ -67,35 +118,34 @@ const PaymentZalo = ({ route, navigation }) => {
   };
 
   // Create ZaloPay order with error handling
-  const createZaloPayOrder = async (order) => {
+  const createZaloPayOrder = async order => {
     try {
-        console.log('Sending order to ZaloPay:', JSON.stringify(order, null, 2));
-        
-        const response = await fetch(config.endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(order)
-        });
+      console.log('Sending order to ZaloPay:', JSON.stringify(order, null, 2));
 
-        console.log('Response status:', response.status);
-        const responseData = await response.json();
-        console.log('ZaloPay response:', responseData);
+      const response = await fetch(config.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(order),
+      });
 
-        if (responseData.return_code !== 1) {
-            console.log('Error code:', responseData.return_code);
-            console.log('Error message:', responseData.return_message);
-            throw new Error(responseData.return_message || 'Giao dịch thất bại');
-        }
+      console.log('Response status:', response.status);
+      const responseData = await response.json();
+      console.log('ZaloPay response:', responseData);
 
-        return responseData;
+      if (responseData.return_code !== 1) {
+        console.log('Error code:', responseData.return_code);
+        console.log('Error message:', responseData.return_message);
+        throw new Error(responseData.return_message || 'Giao dịch thất bại');
+      }
+
+      return responseData;
     } catch (error) {
-        console.error('ZaloPay API Error details:', error);
-        throw new Error('Không thể kết nối đến ZaloPay: ' + error.message);
+      console.error('ZaloPay API Error details:', error);
+      throw new Error('Không thể kết nối đến ZaloPay: ' + error.message);
     }
-};
-  
+  };
 
   const handlePayment = async () => {
     setIsLoading(true);
@@ -107,11 +157,11 @@ const PaymentZalo = ({ route, navigation }) => {
       const appTransId = `${timestamp}_${email.split('@')[0]}`;
 
       // Update booking status first
-      await firestore().collection("bookings").doc(bookingId).update({
-        paymentMethod: "ZaloPay",
+      await firestore().collection('bookings').doc(bookingId).update({
+        paymentMethod: 'ZaloPay',
         transactionId: appTransId,
-        paymentStatus: "pending",
-        updatedAt: firestore.FieldValue.serverTimestamp()
+        paymentStatus: 'pending',
+        updatedAt: firestore.FieldValue.serverTimestamp(),
       });
 
       // Prepare order data
@@ -122,45 +172,52 @@ const PaymentZalo = ({ route, navigation }) => {
         app_time: Date.now(),
         amount: parseInt(totalAmount), // Convert to integer
         description: `Thanh toán đặt phòng #${bookingId}`,
-        bank_code: "zalopayapp",
-        callback_url: "https://yourdomain.com/callback",
-        item: JSON.stringify([{
+        bank_code: 'zalopayapp',
+        callback_url: 'https://yourdomain.com/callback',
+        item: JSON.stringify([
+          {
             itemid: bookingId,
-            itemname: "Hotel Booking Payment",
+            itemname: 'Hotel Booking Payment',
             itemprice: parseInt(totalAmount),
-            itemquantity: 1
-        }]),
+            itemquantity: 1,
+          },
+        ]),
         embed_data: JSON.stringify({
-            redirecturl: "https://yourdomain.com/redirect"
-        })
-    };
-    
-    // Tạo MAC theo thứ tự chính xác
-    const dataStr = config.app_id + "|" +
-        order.app_trans_id + "|" +
-        order.app_user + "|" +
-        order.amount + "|" +
-        order.app_time + "|" +
-        order.embed_data + "|" +
+          redirecturl: 'https://yourdomain.com/redirect',
+        }),
+      };
+
+      // Tạo MAC theo thứ tự chính xác
+      const dataStr =
+        config.app_id +
+        '|' +
+        order.app_trans_id +
+        '|' +
+        order.app_user +
+        '|' +
+        order.amount +
+        '|' +
+        order.app_time +
+        '|' +
+        order.embed_data +
+        '|' +
         order.item;
-    
-    order.mac = CryptoJS.HmacSHA256(dataStr, config.key1).toString();
+
+      order.mac = CryptoJS.HmacSHA256(dataStr, config.key1).toString();
       // Create ZaloPay order
       const responseData = await createZaloPayOrder(order);
-      
 
       setLastTransactionId(appTransId);
       await Linking.openURL(responseData.order_url);
-      
     } catch (error) {
       console.error('Payment Error:', error);
       Alert.alert('Lỗi Thanh Toán', error.message);
-      
+
       // Revert booking status if payment fails
       try {
-        await firestore().collection("bookings").doc(bookingId).update({
-          paymentStatus: "failed",
-          updatedAt: firestore.FieldValue.serverTimestamp()
+        await firestore().collection('bookings').doc(bookingId).update({
+          paymentStatus: 'failed',
+          updatedAt: firestore.FieldValue.serverTimestamp(),
         });
       } catch (revertError) {
         console.error('Error reverting booking status:', revertError);
@@ -182,17 +239,17 @@ const PaymentZalo = ({ route, navigation }) => {
 
       const response = await fetch(config.query_endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `app_id=${config.app_id}&app_trans_id=${lastTransactionId}&mac=${mac}`
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `app_id=${config.app_id}&app_trans_id=${lastTransactionId}&mac=${mac}`,
       });
 
       const result = await response.json();
 
       if (result.return_code === 1) {
         // Payment successful
-        await firestore().collection("bookings").doc(bookingId).update({
+        await firestore().collection('bookings').doc(bookingId).update({
           paymentStatus: 'completed',
-        //   status: 'confirmed'
+          //   status: 'confirmed'
         });
 
         Alert.alert(
@@ -201,20 +258,23 @@ const PaymentZalo = ({ route, navigation }) => {
           [
             {
               text: 'OK',
-              onPress: () => navigation.navigate('BookingSuccess', { bookingId })
-            }
-          ]
+              onPress: () => navigation.navigate('BookingSuccess', {bookingId}),
+            },
+          ],
         );
       } else if (result.return_code === 2) {
         // Payment failed
-        await firestore().collection("bookings").doc(bookingId).update({
+        await firestore().collection('bookings').doc(bookingId).update({
           paymentStatus: 'failed',
-          status: 'cancelled'
+          status: 'cancelled',
         });
 
         Alert.alert('Thanh toán thất bại', 'Vui lòng thử lại sau.');
       } else {
-        Alert.alert('Đang xử lý', 'Giao dịch đang được xử lý. Vui lòng thử lại sau.');
+        Alert.alert(
+          'Đang xử lý',
+          'Giao dịch đang được xử lý. Vui lòng thử lại sau.',
+        );
       }
     } catch (error) {
       console.error('Status Check Error:', error);
@@ -231,7 +291,7 @@ const PaymentZalo = ({ route, navigation }) => {
     try {
       await firestore().collection('bookings').doc(bookingId).update({
         fullName: editedFullName,
-        phone: editedphone
+        phone: editedphone,
       });
 
       setIsEditModalVisible(false);
@@ -242,146 +302,158 @@ const PaymentZalo = ({ route, navigation }) => {
     }
   };
 
-
   return (
-    <SafeAreaView style={styles.bodyContainer}>
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <MaterialIcons name="arrow-back" size={24} color={colors.primary} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Thanh toán với ZaloPay</Text>
-      </View>
+    <View style={styles.bodyContainer}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="rgba(0,0,0,0)"
+      />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Thanh toán trực tuyến</Text>
+        </View>
 
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Thông tin thanh toán</Text>
-          <TouchableOpacity 
-            style={styles.editButton}
-            onPress={() => setIsEditModalVisible(true)}
-          >
-            <Text style={styles.editButtonText}>Sửa thông tin</Text>
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>Thông tin thanh toán</Text>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => setIsEditModalVisible(true)}>
+              <Text style={styles.editButtonText}>Sửa thông tin</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Họ tên:</Text>
+            <Text style={styles.value}>{editedFullName}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Email:</Text>
+            <Text style={styles.value}>{email}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Số điện thoại:</Text>
+            <Text style={styles.value}>{editedphone || 'Chưa cập nhật'}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Mã đơn hàng:</Text>
+            <Text style={styles.value}>{bookingId}</Text>
+          </View>
+
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Số tiền:</Text>
+            <Text style={styles.amount}>{formatCurrency(totalAmount)} VNĐ</Text>
+          </View>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.primaryButton]}
+            onPress={handlePayment}>
+            <Text style={styles.buttonText}>Thanh toán với ZaloPay</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton]}
+            onPress={checkTransactionStatus}>
+            <Text style={styles.buttonTextCheck}>Kiểm tra trạng thái</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={async () => {
+              try {
+                // Xóa phòng khỏi Firestore
+                await firestore()
+                  .collection('bookings')
+                  .doc(bookingId)
+                  .delete();
+
+                // Quay lại màn hình trước đó
+                navigation.goBack();
+              } catch (error) {
+                console.error('Error deleting booking:', error);
+                Alert.alert(
+                  'Lỗi',
+                  'Không thể hủy đặt phòng, vui lòng thử lại.',
+                );
+              }
+            }}>
+            <Text style={styles.buttonText}>Hủy</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Họ tên:</Text>
-          <Text style={styles.value}>{editedFullName}</Text>
-        </View>
+        <Modal
+          visible={isEditModalVisible}
+          transparent={true}
+          animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Cập nhật thông tin</Text>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>{email}</Text>
-        </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Họ tên:</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editedFullName}
+                  onChangeText={setEditedFullName}
+                  placeholder="Nhập họ tên"
+                />
+              </View>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Số điện thoại:</Text>
-          <Text style={styles.value}>{editedphone || 'Chưa cập nhật'}</Text>
-        </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Số điện thoại:</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editedphone}
+                  onChangeText={setEditedphone}
+                  placeholder="Nhập số điện thoại"
+                  keyboardType="phone-pad"
+                />
+              </View>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Địa chỉ:</Text>
-          <Text style={styles.value}>{address}</Text>
-        </View>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => setIsEditModalVisible(false)}>
+                  <Text style={styles.buttonText}>Hủy</Text>
+                </TouchableOpacity>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Số tiền:</Text>
-          <Text style={styles.amount}>{formatCurrency(totalAmount)} VNĐ</Text>
-        </View>
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[styles.button, styles.primaryButton]}
-          onPress={handlePayment}
-        >
-          <Text style={styles.buttonText}>Thanh toán với ZaloPay</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[styles.button, styles.secondaryButton]}
-          onPress={checkTransactionStatus}
-        >
-          <Text style={styles.buttonText}>Kiểm tra trạng thái</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[styles.button, styles.cancelButton]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.buttonText}>Hủy</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        visible={isEditModalVisible}
-        transparent={true}
-        animationType="slide"
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Cập nhật thông tin</Text>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Họ tên:</Text>
-              <TextInput
-                style={styles.input}
-                value={editedFullName}
-                onChangeText={setEditedFullName}
-                placeholder="Nhập họ tên"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Số điện thoại:</Text>
-              <TextInput
-                style={styles.input}
-                value={editedphone}
-                onChangeText={setEditedphone}
-                placeholder="Nhập số điện thoại"
-                keyboardType="phone-pad"
-              />
-            </View>
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setIsEditModalVisible(false)}
-              >
-                <Text style={styles.buttonText}>Hủy</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.modalButton, styles.primaryButton]}
-                onPress={handleUpdateInfo}
-              >
-                <Text style={styles.buttonText}>Lưu</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.primaryButton]}
+                  onPress={handleUpdateInfo}>
+                  <Text style={styles.buttonText}>Lưu</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </ScrollView>
-    </SafeAreaView>
+        </Modal>
+      </View>
+    </View>
   );
 };
 
 export default PaymentZalo;
 
 const styles = StyleSheet.create({
-    bodyContainer: {
-        flex: 1,
-    },
+  bodyContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#fff',
   },
   header: {
+    marginTop: 50,
+    justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#fff',
-    elevation: 2,
   },
   title: {
     fontSize: sizes.h2,
@@ -425,20 +497,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  
+
   label: {
     fontSize: 16,
     color: '#546E7A',
     flex: 1,
   },
-  
+
   value: {
     fontSize: 16,
     color: '#37474F',
     flex: 2,
     textAlign: 'right',
   },
-  
+
   amount: {
     fontSize: 18,
     fontWeight: '700',
@@ -446,14 +518,13 @@ const styles = StyleSheet.create({
     flex: 2,
     textAlign: 'right',
   },
-  
+
   buttonContainer: {
-    gap: 12,
-    marginTop: 'auto',
-    marginBottom: 20,
+    padding: 16,
   },
-  
+
   button: {
+    marginTop: 10,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -467,19 +538,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  
+
   primaryButton: {
     backgroundColor: '#2196F3',
   },
-  
+
   secondaryButton: {
-    backgroundColor: '#1976D2',
+    backgroundColor: colors.light,
   },
-  
+  buttonTextCheck: {
+    color: colors.primary,
+    fontWeight: 'bold',
+    fontSize: sizes.h3,
+  },
   cancelButton: {
     backgroundColor: '#FF4444',
   },
-  
+
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,

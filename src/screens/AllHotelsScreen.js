@@ -20,7 +20,7 @@ import LocationsScreen from '../components/Hotels/LocationsScreen';
 import SearchBar from '../components/Search/Hotel/SearchBar';
 import SpecialOffer from '../components/Hotels/HotelHome/SpecialOffer';
 import MostBookedHotels from '../components/Hotels/MostBookedHotels';
-import AllListHotel from '../components/Hotels/AllListHotel';
+
 
 const {width} = Dimensions.get('screen');
 const cardWidth = width * 0.85;
