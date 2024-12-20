@@ -36,8 +36,6 @@ const BookingScreen = ({route, navigation}) => {
 
   const insets = useSafeAreaInsets();
 
-  
-
   // Fetch hotel info và discount khi component mount
   useEffect(() => {
     const fetchRoomDiscount = async () => {
@@ -112,77 +110,69 @@ const BookingScreen = ({route, navigation}) => {
       return;
     }
 
-    const bookingData = {
-      hotelId: room.hotelId,
-      roomNumber: room.roomNumber,
-      roomType: room.roomType,
-      adults,
-      children,
-      rooms,
-      checkInDate,
-      checkOutDate,
-      totalPrice: calculateDiscountedPrice(), // Lưu giá sau giảm giá
-      bookedBy: {
-        uid: user.uid,
-        email: user.email,
-      },
-      discountId: selectedDiscount ? selectedDiscount.discountId : null,
-      roomId: room.id,
-      status: 'pending',
-    };
-
     try {
-      // Thêm đặt phòng
-      await firestore().collection('bookings').add(bookingData);
+      // Lấy thông tin người dùng từ Firestore dựa trên email
+      const userDoc = await firestore()
+        .collection('users')
+        .doc(user.email) // Dùng email của người dùng làm ID
+        .get();
 
-      // Cập nhật mã giảm giá nếu có
-      if (selectedDiscount) {
-        // Lấy thông tin mã giảm giá từ collection discounts
-        const discountDoc = await firestore()
-          .collection('discounts')
-          .doc(selectedDiscount.discountId)
-          .get();
-
-        if (discountDoc.exists) {
-          const discountData = discountDoc.data();
-          const currentMaxUsage = discountData.maxUsage;
-
-          // Kiểm tra nếu maxUsage lớn hơn 0
-          if (currentMaxUsage > 0) {
-            // Giảm maxUsage đi 1
-            await firestore()
-              .collection('discounts')
-              .doc(selectedDiscount.discountId)
-              .update({maxUsage: currentMaxUsage - 1});
-
-            // Cập nhật thông tin sử dụng mã giảm giá
-            await firestore()
-              .collection('userDiscounts')
-              .doc(selectedDiscount.id) // Sử dụng ID của mã giảm giá
-              .update({usedBy: true}); // Cập nhật trường usedBy
-          } else {
-            alert('Mã giảm giá đã hết lượt sử dụng.');
-          }
-        } else {
-          console.log('Discount not found!');
-        }
+      if (!userDoc.exists) {
+        alert('Không tìm thấy người dùng trong cơ sở dữ liệu.');
+        return;
       }
 
-      Toast.show({
-        text1: 'Đặt phòng thành công!',
-        text2: 'Cảm ơn bạn đã đặt phòng tại khách sạn của chúng tôi.',
-        type: 'success',
-      });
-      navigation.navigate('BookingSuccess', {
-        room,
+      const userData = userDoc.data();
+      console.log(userData); // Hiển thị thông tin người dùng
+
+      // Lấy fullName và phone từ dữ liệu người dùng
+      const fullName = userData.username || user.displayName || 'Khách hàng'; // username từ Firestore hoặc displayName từ Firebase Auth
+      const phone = userData.phone || user.phoneNumber || ''; // Số điện thoại từ Firestore hoặc phoneNumber từ Firebase Auth
+
+      const bookingData = {
+        hotelId: room.hotelId,
+        roomNumber: room.roomNumber,
+        roomType: room.roomType,
+        adults,
+        children,
+        rooms,
         checkInDate,
         checkOutDate,
         totalPrice: calculateDiscountedPrice(),
-        hotelId: room.hotelId,
-      });
+        bookedBy: {
+          uid: user.uid,
+          email: user.email,
+        },
+        discountId: selectedDiscount ? selectedDiscount.discountId : null,
+        roomId: room.id,
+        status: 'pending',
+        phone: phone, // Số điện thoại lấy từ Firestore hoặc Firebase Auth
+      };
+
+      try {
+        const bookingRef = await firestore()
+          .collection('bookings')
+          .add(bookingData);
+        const bookingId = bookingRef.id;
+
+        // Pass username và phone là 'fullName' và 'phone' tương ứng
+        navigation.navigate('PaymentZalo', {
+          bookingId: bookingId,
+          totalAmount: calculateDiscountedPrice(),
+          email: user.email,
+          fullName: fullName, 
+          phone: phone, 
+          address: hotelInfo?.address || '',
+          
+
+          
+        });
+      } catch (error) {
+        console.error('Error creating booking: ', error);
+        Alert.alert('Lỗi', 'Có lỗi xảy ra trong quá trình đặt phòng.');
+      }
     } catch (error) {
-      console.error('Error creating booking: ', error);
-      alert('Có lỗi xảy ra trong quá trình đặt phòng.');
+      console.error('Lỗi khi lấy thông tin người dùng:', error);
     }
   };
 

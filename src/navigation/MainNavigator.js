@@ -26,6 +26,7 @@ import TourDetail from '../components/Tour/TourDetail';
 import SignUp from '../components/SignInUp/SignUp';
 import Login from '../components/SignInUp/Login';
 import MapScreen from '../components/TripDetails/TripDetalsCard/MapBox/MapScreen';
+import PaymentZalo from '../components/Hotels/PaymentZalo';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -362,6 +363,22 @@ const MainNavigator = () => {
             headerTintColor: '#fff',
           }}
         />
+
+<Stack.Screen
+          name="PaymentZalo"
+          component={PaymentZalo}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

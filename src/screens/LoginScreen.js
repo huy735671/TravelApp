@@ -57,10 +57,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    
   },
   background: {
     flex: 1,
     resizeMode: 'cover', 
+    
   },
   welcomeContainer: {
     justifyContent: 'center',
@@ -68,8 +70,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   logo: {
-    width: 80, 
-    height: 80,     
+    width: 30, 
+    height: 30,     
     alignSelf: 'flex-start',
     marginLeft: 20,
     marginTop: 40,

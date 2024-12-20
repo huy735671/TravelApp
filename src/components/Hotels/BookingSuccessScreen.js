@@ -1,27 +1,36 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  StatusBar,
-  BackHandler,
-} from 'react-native';
-import {colors, sizes} from '../../constants/theme';
+import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, BackHandler } from 'react-native';
+import { colors, sizes } from '../../constants/theme';
 import firestore from '@react-native-firebase/firestore';
 
 const BookingSuccessScreen = ({navigation, route}) => {
-  const {room, checkInDate, checkOutDate, totalPrice, hotelId} = route.params;
-
+  const { bookingId } = route.params; // Lấy bookingId từ params
+  const [bookingInfo, setBookingInfo] = useState(null);
   const [hotelInfo, setHotelInfo] = useState({
     name: '',
     address: '',
     image: '',
   });
 
+  // Lấy thông tin booking từ Firestore
   useEffect(() => {
-    const fetchHotelInfo = async () => {
+    const fetchBookingInfo = async () => {
+      try {
+        const bookingDoc = await firestore()
+          .collection('bookings')
+          .doc(bookingId) // Dùng bookingId để lấy thông tin booking
+          .get();
+        if (bookingDoc.exists) {
+          const data = bookingDoc.data();
+          setBookingInfo(data); // Lưu thông tin booking vào state
+          fetchHotelInfo(data.hotelId); // Sau khi lấy thông tin booking, gọi hàm lấy thông tin khách sạn
+        }
+      } catch (error) {
+        console.error('Error fetching booking info: ', error);
+      }
+    };
+
+    const fetchHotelInfo = async (hotelId) => {
       try {
         const hotelDoc = await firestore()
           .collection('hotels')
@@ -32,7 +41,7 @@ const BookingSuccessScreen = ({navigation, route}) => {
           setHotelInfo({
             name: data.title,
             address: data.address,
-            image: data.imageUrl, 
+            image: data.imageUrl,
           });
         }
       } catch (error) {
@@ -40,8 +49,19 @@ const BookingSuccessScreen = ({navigation, route}) => {
       }
     };
 
-    fetchHotelInfo();
-  }, [hotelId]);
+    if (bookingId) {
+      fetchBookingInfo();
+    }
+  }, [bookingId]);
+
+  // Hàm chuyển đổi định dạng ngày
+  const formatDate = dateString => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   useEffect(() => {
     const onBackPress = () => {
@@ -54,16 +74,15 @@ const BookingSuccessScreen = ({navigation, route}) => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     };
   }, []);
-  // Hàm chuyển đổi định dạng ngày
-  const formatDate = dateString => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
 
-  
+  if (!bookingInfo) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -81,20 +100,20 @@ const BookingSuccessScreen = ({navigation, route}) => {
       </Text>
       <View style={styles.roomInfoContainer}>
         <Text style={styles.roomInfoTitle}>Phòng:</Text>
-        <Text style={styles.roomInfoValue}>{room.roomType}</Text>
+        <Text style={styles.roomInfoValue}>{bookingInfo.roomType}</Text>
       </View>
       <View style={styles.roomInfoContainer}>
         <Text style={styles.roomInfoTitle}>Ngày nhận phòng:</Text>
-        <Text style={styles.roomInfoValue}>{formatDate(checkInDate)}</Text>
+        <Text style={styles.roomInfoValue}>{formatDate(bookingInfo.checkInDate)}</Text>
       </View>
       <View style={styles.roomInfoContainer}>
         <Text style={styles.roomInfoTitle}>Ngày trả phòng:</Text>
-        <Text style={styles.roomInfoValue}>{formatDate(checkOutDate)}</Text>
+        <Text style={styles.roomInfoValue}>{formatDate(bookingInfo.checkOutDate)}</Text>
       </View>
       <View style={styles.roomInfoContainer}>
         <Text style={styles.roomInfoTitle}>Tổng thanh toán:</Text>
         <Text style={styles.roomInfoValue}>
-          {totalPrice.toLocaleString('vi-VN')} VNĐ
+          {bookingInfo.totalPrice.toLocaleString('vi-VN')} VNĐ
         </Text>
       </View>
       <View style={{borderTopWidth: 1,width:'100%', borderColor:'#ddd'}}>
@@ -142,7 +161,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 15,
-    width: '100%', // Chiếm 100% chiều rộng
+    width: '100%',
     paddingHorizontal: 20,
     borderWidth: 1,
     padding: 10,
@@ -151,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
   },
   hotelImage: {
-    width: 60, // Giảm kích thước hình ảnh khách sạn
+    width: 60,
     height: 60,
     borderRadius: 10,
     marginRight: 10,
@@ -179,10 +198,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  roomInfo: {
-    fontSize: sizes.h3,
-    marginBottom: 5,
+  roomInfoContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 5,
+  },
+  roomInfoTitle: {
+    fontSize: sizes.h3,
+    fontWeight: 'bold',
+  },
+  roomInfoValue: {
+    fontSize: sizes.h3,
+    color: colors.primary,
+    fontWeight: 'bold',
   },
   button: {
     marginTop: 20,
@@ -196,24 +225,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: sizes.h3,
-  },
-  roomInfoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 5,
-  },
-
-  roomInfoTitle: {
-    fontSize: sizes.h3,
-    fontWeight: 'bold',
-  },
-
-  roomInfoValue: {
-    fontSize: sizes.h3,
-    color: colors.primary,
-    fontWeight: 'bold',
   },
 });
 
