@@ -206,6 +206,7 @@ const ProfileScreen = () => {
             value={bio}
             onChangeText={setBio}
             placeholder="Giới thiệu ngắn về bản thân"
+            placeholderTextColor={'#999'}
             multiline={true}
           />
 
@@ -215,6 +216,7 @@ const ProfileScreen = () => {
             value={travelHobby}
             onChangeText={setTravelHobby}
             placeholder="Ví dụ: Khám phá ẩm thực, leo núi, tham quan di tích lịch sử"
+            placeholderTextColor={'#999'}
             multiline={true}
           />
         </View>
@@ -276,11 +278,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginBottom: 20,
     textAlign: 'center',
+    color: colors.primary,
   },
   label: {
     fontWeight: 'bold',
     marginBottom: 5,
     fontSize: 16,
+    color: colors.primary,
   },
   input: {
     borderWidth: 1,
@@ -289,6 +293,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 20,
+    color: colors.primary,
   },
 
   disabledInput: {
@@ -309,6 +314,7 @@ const styles = StyleSheet.create({
   },
   genderText: {
     fontSize: 16,
+    color:colors.primary,
   },
   modalOverlay: {
     flex: 1,
@@ -327,6 +333,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
     textAlign: 'center',
+    color: colors.primary,
   },
   modalItem: {
     paddingVertical: 10,
@@ -334,6 +341,12 @@ const styles = StyleSheet.create({
   modalItemText: {
     fontSize: 16,
     textAlign: 'center',
+    color: colors.primary,
+    borderWidth:1,
+    borderRadius:5,
+    padding:5,
+    borderColor:'#ddd',
+
   },
   modalCloseButton: {
     marginTop: 10,
@@ -358,6 +371,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 10,
+    color: colors.primary,
   },
   saveButton: {
     backgroundColor: '#007bff',

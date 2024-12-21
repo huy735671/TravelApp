@@ -15,6 +15,7 @@ const StarRating = ({
   rating,
   disabled = true,
   size = 20,
+  
 }) => {
   // Lấy giá trị rating chính xác
   const _rating = getCorrectRating(rating);

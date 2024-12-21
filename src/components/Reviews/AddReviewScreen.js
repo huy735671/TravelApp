@@ -141,6 +141,8 @@ const AddReviewScreen = ({route}) => {
         <TextInput
           style={styles.titleInput} // Sử dụng style mới cho ô tiêu đề
           placeholder="Nhập tiêu đề ngắn gọn"
+          placeholderTextColor={colors.gray}
+          
           value={title}
           onChangeText={setTitle}
         />
@@ -148,6 +150,7 @@ const AddReviewScreen = ({route}) => {
         <TextInput
           style={styles.descriptionInput} // Sử dụng style mới cho ô mô tả
           placeholder="Chia sẻ trải nghiệm của bạn..."
+          placeholderTextColor={colors.gray}
           value={reviewDescription}
           onChangeText={setReviewDescription}
           multiline

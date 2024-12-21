@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.primary,
   },
   LoginIcon: {
     color: colors.gray,
@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     fontSize: 16,
+    color: colors.primary,
   },
   forgetPassContainer: {
     width: WINDOW_WIDTH - 60,

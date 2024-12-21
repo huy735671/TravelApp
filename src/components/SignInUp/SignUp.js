@@ -226,6 +226,7 @@ const SignUp = () => {
             <Icon icon="User" size={30} style={styles.LoginIcon} />
             <TextInput
               placeholder="Nguyễn Văn A"
+              placeholderTextColor={colors.gray}
               autoCapitalize="none"
               style={styles.textInput}
               onChangeText={setFullName}
@@ -238,6 +239,7 @@ const SignUp = () => {
             <Icon icon="Email" size={30} style={styles.LoginIcon} />
             <TextInput
               placeholder="name@gmail.com"
+              placeholderTextColor={colors.gray}
               autoCapitalize="none"
               style={styles.textInput}
               onChangeText={setEmail}
@@ -250,7 +252,9 @@ const SignUp = () => {
             <Icon icon="Key" size={30} style={styles.LoginIcon} />
             <TextInput
               placeholder="Nhập mật khẩu"
+              placeholderTextColor={colors.gray}
               autoCapitalize="none"
+
               style={styles.textInput}
               secureTextEntry={pwdHidden}
               onChangeText={setPassword}
@@ -272,6 +276,8 @@ const SignUp = () => {
             <Icon icon="Key" size={30} style={styles.LoginIcon} />
             <TextInput
               placeholder="Nhập lại mật khẩu"
+
+              placeholderTextColor={colors.gray}
               autoCapitalize="none"
               style={styles.textInput}
               secureTextEntry={pwdHidden}
@@ -325,6 +331,7 @@ const SignUp = () => {
             <Icon icon="Phone" size={30} style={styles.LoginIcon} />
             <TextInput
               placeholder="0326..."
+              placeholderTextColor={colors.gray}
               autoCapitalize="none"
               style={styles.textInput}
               onChangeText={setPhoneNumber}
@@ -416,7 +423,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.primary,
   },
   LoginIcon: {
     color: colors.gray,
@@ -427,6 +434,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     fontSize: 16,
+    color:colors.primary,
   },
   eyeIconContainer: {
     height: '100%',

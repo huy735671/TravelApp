@@ -99,9 +99,10 @@ const styles = StyleSheet.create({
   hotelName: {
     fontWeight: 'bold',
     fontSize: 16,
+    color: colors.primary,
   },
   hotelLocation: {
-    color: colors.grey,
+    color: colors.primary,
     fontSize: 14,
   },
   priceText: {

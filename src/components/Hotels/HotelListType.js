@@ -182,6 +182,10 @@ const styles = StyleSheet.create({
     right: 10, 
     alignItems: 'flex-end',
   },
+  noRatingText:{
+    color: colors.gray,
+
+  },
 });
 
 export default HotelListType;

@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Import Icon
 import { colors, sizes } from '../../../constants/theme';
 
 const SearchResultsScreen = ({ route, navigation }) => {
-  const { location } = route.params; // Nhận location từ SearchBar
+  const { location } = route.params; 
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,12 +14,15 @@ const SearchResultsScreen = ({ route, navigation }) => {
       try {
         const snapshot = await firestore()
           .collection('hotels')
-          .where('location', '==', location) // Tìm khách sạn theo location
-          .get();
-        const hotelsList = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+          .get(); // Lấy tất cả khách sạn thay vì sử dụng `where`
+        
+        // Lọc khách sạn dựa trên địa điểm chứa chuỗi tìm kiếm (không phân biệt chữ hoa chữ thường)
+        const hotelsList = snapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(hotel =>
+            hotel.location.toLowerCase().includes(location.toLowerCase()) // Tìm kiếm không phân biệt chữ hoa chữ thường
+          );
+  
         setHotels(hotelsList);
       } catch (error) {
         console.error('Error fetching hotels:', error);
@@ -27,9 +30,10 @@ const SearchResultsScreen = ({ route, navigation }) => {
         setLoading(false);
       }
     };
-
+  
     fetchHotelsByLocation();
   }, [location]);
+  
 
   const renderStars = (starRating) => {
     if (starRating === 0) {
@@ -130,9 +134,10 @@ const styles = StyleSheet.create({
   hotelName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: colors.primary,
   },
   hotelLocation: {
-    color: colors.grey,
+    color: colors.primary,
     marginBottom: 5,
   },
   priceText: {
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
   starText: {
     marginLeft: 5,
     fontSize: 14,
-    color: colors.grey,
+    color: colors.primary,
   },
   bookNowButton: {
     backgroundColor: colors.primary,

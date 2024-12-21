@@ -110,11 +110,12 @@ const styles = StyleSheet.create({
   tourName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: colors.primary,
   },
   tourPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: colors.secondary,
+    color: colors.primary,
   },
   detailsButton: {
     marginTop: 5,

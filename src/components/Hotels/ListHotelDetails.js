@@ -172,6 +172,8 @@ const filteredHotels = hotels.filter(hotel => {
           <TextInput
             style={styles.field}
             placeholder="Tìm kiếm"
+            placeholderTextColor={colors.gray}
+
             value={search}
             onChangeText={handleSearch}
           />
@@ -302,6 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 10,
   },
+  
   starButton: {
     marginHorizontal: 5,
     padding: 10,
@@ -312,6 +315,10 @@ const styles = StyleSheet.create({
   starText: {
     fontSize: 16,
     color: colors.primary,
+  },
+  noRatingText:{
+    color: colors.primary,
+
   },
 });
 

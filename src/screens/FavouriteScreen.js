@@ -121,10 +121,7 @@ const FavouriteScreen = () => {
     }
   };
   
-  
-  
-  
-  
+
 
   if (loading) {
     return (
@@ -192,7 +189,7 @@ const FavouriteScreen = () => {
           )}
         />
       ) : (
-        <Text>Chưa có chuyến đi yêu thích nào.</Text>
+        <Text style={styles.noFavourite}>Chưa có chuyến đi yêu thích nào.</Text>
       )}
     </View>
   );
@@ -253,6 +250,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color:colors.primary,
   },
   locationText: {
     fontSize: 14,
@@ -289,5 +287,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  noFavourite:{
+
+    textAlign:'center',
+    fontSize:20,
+    color:colors.primary,
   },
 });

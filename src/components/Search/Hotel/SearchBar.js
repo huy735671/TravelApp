@@ -13,11 +13,11 @@ const SearchBar = ({navigation}) => {
   const [location, setLocation] = useState('');
 
   const handleSearch = () => {
-    // Chuyển hướng sang trang tìm kiếm và truyền địa chỉ người dùng nhập
-    if (location) {
-      navigation.navigate('SearchResults', {location});
+    if (location.trim()) {
+      navigation.navigate('SearchResults', { location: location.trim() }); // Truyền địa điểm đã nhập
     }
   };
+  
 
   return (
     <View style={styles.searchBarContainer}>
@@ -30,6 +30,7 @@ const SearchBar = ({navigation}) => {
         <TextInput
           style={styles.searchInput}
           placeholder="Bạn muốn đi đâu?"
+          placeholderTextColor={colors.gray}
           value={location}
           onChangeText={setLocation}
         />
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   searchInput: {
+    color:colors.primary,
     backgroundColor: colors.white,
     paddingLeft: spacing.xl + spacing.s,
     paddingRight: spacing.m,

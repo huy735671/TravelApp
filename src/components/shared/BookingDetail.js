@@ -17,12 +17,13 @@ const BookingDetail = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const {bookingId} = route.params;
-
   const [bookingDetails, setBookingDetails] = useState(null);
   const [hotelDetails, setHotelDetails] = useState(null);
   const [roomDetails, setRoomDetails] = useState(null);
   const [hotelOwnerDetails, setHotelOwnerDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
@@ -33,39 +34,31 @@ const BookingDetail = () => {
           .get();
 
         if (bookingDoc.exists) {
-          const bookingData = {id: bookingDoc.id, ...bookingDoc.data()};
+          const bookingData = { id: bookingDoc.id, ...bookingDoc.data() };
           setBookingDetails(bookingData);
 
-          const hotelDoc = await firestore()
-            .collection('hotels')
-            .doc(bookingData.hotelId)
-            .get();
+          // Check if the status is 'pending' and calculate time remaining
+          if (bookingData.status === 'pending' && bookingData.updatedAt) {
+            const updatedAt = bookingData.updatedAt.toDate();
+            const timeElapsed = new Date() - updatedAt;
+            const timeLeft = 12 * 60 * 60 * 1000 - timeElapsed; // 12 hours in milliseconds
+            setTimeRemaining(timeLeft > 0 ? timeLeft : 0);
 
-          if (hotelDoc.exists) {
-            const hotelData = {id: hotelDoc.id, ...hotelDoc.data()};
-            setHotelDetails(hotelData);
-
-            if (hotelData.partner) {
-              const ownerDoc = await firestore()
-                .collection('users')
-                .doc(hotelData.partner)
-                .get();
-
-              if (ownerDoc.exists) {
-                const ownerData = {id: ownerDoc.id, ...ownerDoc.data()};
-                setHotelOwnerDetails(ownerData);
-              }
+            if (timeLeft <= 0) {
+              await cancelBooking(bookingData.id); // Automatically cancel if 12 hours have passed
             }
-          }
 
-          const roomDoc = await firestore()
-            .collection('rooms')
-            .doc(bookingData.roomId)
-            .get();
-
-          if (roomDoc.exists) {
-            const roomData = {id: roomDoc.id, ...roomDoc.data()};
-            setRoomDetails(roomData);
+            // Start countdown
+            const intervalId = setInterval(() => {
+              setTimeRemaining(prevTime => {
+                const newTime = prevTime - 1000; // Reduce 1 second
+                if (newTime <= 0) {
+                  clearInterval(intervalId); // Stop the countdown
+                  cancelBooking(bookingData.id); // Automatically cancel if time reaches 0
+                }
+                return newTime > 0 ? newTime : 0;
+              });
+            }, 1000);
           }
         }
       } catch (error) {
@@ -78,6 +71,42 @@ const BookingDetail = () => {
     fetchBookingDetails();
   }, [bookingId]);
 
+
+  useEffect(() => {
+    const fetchAdditionalDetails = async () => {
+      try {
+        if (bookingDetails) {
+          // Lấy thông tin khách sạn
+          if (bookingDetails.hotelId) {
+            const hotelDoc = await firestore()
+              .collection('hotels')
+              .doc(bookingDetails.hotelId)
+              .get();
+            if (hotelDoc.exists) {
+              setHotelDetails(hotelDoc.data());
+            }
+          }
+  
+          // Lấy thông tin phòng
+          if (bookingDetails.roomId) {
+            const roomDoc = await firestore()
+              .collection('rooms')
+              .doc(bookingDetails.roomId)
+              .get();
+            if (roomDoc.exists) {
+              setRoomDetails(roomDoc.data());
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching additional details: ', error);
+      }
+    };
+  
+    fetchAdditionalDetails();
+  }, [bookingDetails]);
+  
+
   const handleReviewPress = hotelId => {
     navigation.navigate('ReviewSection', {hotelId});
   };
@@ -86,6 +115,24 @@ const BookingDetail = () => {
     // Thêm hành động chat với nhân viên tại đây
     alert('Chat với nhân viên'); // Thay thế với hành động thực tế của bạn
   };
+
+
+  const cancelBooking = async (bookingId) => {
+    try {
+      await firestore()
+        .collection('bookings')
+        .doc(bookingId)
+        .update({ status: 'cancelled' });
+
+      setBookingDetails(prev => ({ ...prev, status: 'cancelled' }));
+      Alert.alert("Thông báo", "Đặt phòng đã bị hủy tự động sau 12 giờ.");
+    } catch (error) {
+      console.error('Error canceling booking: ', error);
+      Alert.alert("Lỗi", "Có lỗi xảy ra khi hủy đặt phòng. Vui lòng thử lại.");
+    }
+  };
+
+  
   const handleCancelBooking = async () => {
     Alert.alert(
       "Xác nhận hủy đặt phòng",
@@ -173,12 +220,26 @@ const BookingDetail = () => {
 
     return (
       <View style={styles.statusContainer}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Icon name={statusIcon} size={20} color={statusColor} />
-        <Text style={[styles.cardStatus, {color: statusColor}]}>
+        <Text style={[styles.cardStatus, { color: statusColor }]}>
           {statusText}
-        </Text>
+        </Text></View>
+        {statusText === 'Chờ xác nhận' && timeRemaining > 0 && (
+          <View style={styles.countdownContainer}>
+            <Text style={styles.countdown}>
+              Phòng của bạn sẽ bị hủy nếu chủ khách sạn không xác nhận sau: {formatTimeRemaining(timeRemaining)}
+            </Text>
+          </View>
+        )}
       </View>
     );
+  };
+
+  const formatTimeRemaining = (time) => {
+    const hours = Math.floor(time / 1000 / 60 / 60);
+    const minutes = Math.floor((time / 1000 / 60) % 60);
+    return `${hours} giờ ${minutes} phút`;
   };
 
   const renderButtons = () => {
@@ -225,7 +286,7 @@ const BookingDetail = () => {
           Khách sạn {hotelDetails ? hotelDetails.title : 'Khách sạn'}
         </Text>
         <Text style={styles.roomTitle}>
-          {roomDetails ? roomDetails.roomType : 'Phòng'}{' '}
+          {roomDetails ? roomDetails.roomType : 'Phòng'}
         </Text>
 
         <View style={styles.detailRow}>
@@ -370,11 +431,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: colors.primary,
   },
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: colors.primary,
   },
   roomTitle: {
     fontSize: 16,
@@ -389,9 +452,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     color: '#555',
+    
   },
   value: {
     fontSize: 14,
+    color:colors.primary,
   },
   contactRow: {
     flexDirection: 'row',
@@ -402,9 +467,19 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     marginBottom: 8,
+  },
+  countdownContainer: {
+    marginTop: 10, 
+  },
+  countdown: {
+    fontSize: 14,
+    color: 'red',
+  },
+  buttonContainer: {
+    marginTop: 20,
   },
   cardStatus: {
     fontSize: 16,
@@ -432,6 +507,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color:colors.gray,
   },
   whiteText: {
     color: '#fff',
@@ -464,6 +540,7 @@ const styles = StyleSheet.create({
   supportTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: colors.gray,
   },
 });
 

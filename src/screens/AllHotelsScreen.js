@@ -20,6 +20,7 @@ import LocationsScreen from '../components/Hotels/LocationsScreen';
 import SearchBar from '../components/Search/Hotel/SearchBar';
 import SpecialOffer from '../components/Hotels/HotelHome/SpecialOffer';
 import MostBookedHotels from '../components/Hotels/MostBookedHotels';
+import HomelistHotel from '../components/Hotels/HomelistHotel';
 
 
 const {width} = Dimensions.get('screen');
@@ -166,8 +167,9 @@ const AllHotelsScreen = ({navigation}) => {
         <MostBookedHotels navigation={navigation} />
 
         <Text style={styles.headerTitle}> Tất cả các khách sạn</Text>
+        <HomelistHotel />
       </ScrollView>
-    </View>
+    </View> 
   );
 };
 
@@ -215,9 +217,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 5,
+    color: colors.primary,
   },
   hotelLocation: {
-    color: colors.grey,
+    color: colors.primary,
     marginBottom: 5,
     fontSize: 14,
   },

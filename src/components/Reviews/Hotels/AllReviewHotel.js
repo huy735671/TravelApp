@@ -235,6 +235,7 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: sizes.body,
     fontWeight: 'bold',
+    color: colors.primary,
   },
   filter: {
     fontSize: sizes.body,

@@ -118,7 +118,7 @@ const HotelReviews = ({ hotelId }) => {
           <>
             <Text style={styles.averageRating}>{averageRating} </Text>
             <View style={{ flexDirection: 'column', paddingHorizontal: 10 }}>
-              <Text style={{ textAlign: 'center' }}>Đánh giá chung</Text>
+              <Text style={{ textAlign: 'center', color:colors.primary }}>Đánh giá chung</Text>
               {/* Hiện thị sao nếu có đánh giá */}
               <StarRating
                 rating={parseFloat(averageRating)}
@@ -128,7 +128,7 @@ const HotelReviews = ({ hotelId }) => {
             </View>
           </>
         ) : (
-          <Text style={styles.noRatingText}>Chưa có đánh giá</Text> // Hiển thị nếu không có đánh giá
+          <Text style={styles.noRatingText}>Chưa có đánh giá</Text> 
         )}
       </View>
       {reviews.slice(0, 3).map((review, index) => (
@@ -150,18 +150,19 @@ const HotelReviews = ({ hotelId }) => {
 
 const styles = StyleSheet.create({
   reviewsList: {
-    paddingHorizontal: 10,
     paddingBottom: 20,
   },
   averageRating: {
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: colors.primary,
   },
   noRatingText: {
     fontSize: 16,
     color: '#555',
     fontStyle: 'italic',
+    color: colors.primary,
   },
   reviewContainer: {
     marginVertical: 10,
@@ -186,17 +187,21 @@ const styles = StyleSheet.create({
   },
   user: {
     fontWeight: 'bold',
+    color: colors.primary,
   },
   date: {
     fontSize: 12,
     color: '#555',
+    color: colors.gray,
   },
   title: {
     fontWeight: 'bold',
     fontSize: 16,
+    color: colors.primary,
   },
   description: {
     marginTop: 5,
+    color: colors.gray,
   },
   seeMoreButton: {
     marginTop: 10,

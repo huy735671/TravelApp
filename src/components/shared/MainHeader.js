@@ -24,7 +24,9 @@ const MainHeader = ({title}) => {
         icon="Notification"
         size={40}
         color={colors.light}
-        onPress={() => {}}
+        onPress={() => {
+          navigation.navigate('Notification');
+        }}
       />
     </View>
   );

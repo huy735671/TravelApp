@@ -26,6 +26,8 @@ import TourDetail from '../components/Tour/TourDetail';
 import SignUp from '../components/SignInUp/SignUp';
 import Login from '../components/SignInUp/Login';
 import PaymentZalo from '../components/Hotels/PaymentZalo';
+import HomelistHotel from '../components/Hotels/HomelistHotel';
+import NotificationScreen from '../screens/NotificationScreen';
 
 const Stack = createSharedElementStackNavigator();
 
@@ -350,8 +352,37 @@ const MainNavigator = () => {
 
 
 <Stack.Screen
+          name="HomelistHotel"
+          component={HomelistHotel}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+<Stack.Screen
           name="PaymentZalo"
           component={PaymentZalo}
+          options={{
+            headerShown: false,
+            useNativeDriver: true,
+            gestureEnabled: true,
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            headerStyle: {
+              backgroundColor: '#4c8d6e',
+            },
+            headerTintColor: '#fff',
+          }}
+        />
+
+<Stack.Screen
+          name="Notification"
+          component={NotificationScreen}
           options={{
             headerShown: false,
             useNativeDriver: true,

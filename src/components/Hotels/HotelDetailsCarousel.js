@@ -129,7 +129,7 @@ const HotelDetailsCarousel = ({hotel}) => {
               containerStyle={styles.rating}
             />
           ) : (
-            <Text style={{fontSize: sizes.body, color: colors.gray}}>
+            <Text style={{fontSize: sizes.body, color: colors.primary}}>
               Chưa có đánh giá
             </Text>
           )}
@@ -163,13 +163,15 @@ const HotelDetailsCarousel = ({hotel}) => {
           </Text>
         </View>
 
-        <View style={styles.amenitiesContainer}>{renderAmenities()}</View>
+        <View style={styles.amenitiesContainer}>
+          {renderAmenities()}
+          </View>
         <Divider />
         <View style={styles.priceContainer}>
           <Text style={styles.priceText}>Giá cho 1 đêm {'\n'}2 người</Text>
           <View style={styles.priceTag}>
-            <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: 5}}>
-              {cheapestRoom ? formatPrice(cheapestRoom.pricePerNight) : '0'} VND
+            <Text style={{fontSize: 20, fontWeight: 'bold', color: colors.primary, fontWeight:'bold'}}>
+              {cheapestRoom ? formatPrice(cheapestRoom.pricePerNight) : '0'}đ
             </Text>
           </View>
         </View>
@@ -288,6 +290,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20,
     marginHorizontal: 20,
+
   },
   amenitiesHeader: {
     padding: 16,
@@ -315,6 +318,7 @@ const styles = StyleSheet.create({
   },
   amenityText: {
     fontSize: sizes.body,
+    color: colors.primary,
   },
 });
 
