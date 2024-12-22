@@ -117,7 +117,7 @@ const BookingSuccessScreen = ({navigation, route}) => {
         </Text>
       </View>
       <View style={{borderTopWidth: 1,width:'100%', borderColor:'#ddd'}}>
-        <Text style={{fontWeight: 'bold', fontSize: sizes.h3, marginTop: 10}}>
+        <Text style={{fontWeight: 'bold', fontSize: sizes.h3, marginTop: 10, color: colors.primary}}>
           Chi tiết đặt phòng
         </Text>
       </View>
@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     fontSize: sizes.h2,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: colors.primary,
   },
   hotelAddress: {
     fontSize: sizes.h3,
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: sizes.h3,
     textAlign: 'center',
     marginBottom: 20,
+    color: colors.gray,
   },
   roomInfoContainer: {
     flexDirection: 'row',
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
   roomInfoTitle: {
     fontSize: sizes.h3,
     fontWeight: 'bold',
+    color: colors.gray,
   },
   roomInfoValue: {
     fontSize: sizes.h3,

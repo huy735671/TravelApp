@@ -384,7 +384,8 @@ const MainNavigator = () => {
           name="Notification"
           component={NotificationScreen}
           options={{
-            headerShown: false,
+            headerShown: true,
+            title: 'Thông báo',
             useNativeDriver: true,
             gestureEnabled: true,
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,

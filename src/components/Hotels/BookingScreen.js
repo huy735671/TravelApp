@@ -276,7 +276,7 @@ const BookingScreen = ({route, navigation}) => {
             }}>
             {room.roomType}
           </Text>
-          <Text style={{fontSize: sizes.h3}}>
+          <Text style={{fontSize: sizes.h3, color: colors.gray}}>
             Phòng sang trọng với view {room.view}
           </Text>
         </View>
@@ -544,6 +544,7 @@ const styles = StyleSheet.create({
   guestCount: {
     fontSize: sizes.h3,
     paddingHorizontal: 10,
+    color: colors.primary,
   },
   discountContainer: {
     marginVertical: 15,
@@ -596,9 +597,11 @@ const styles = StyleSheet.create({
     fontSize: sizes.h2,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: colors.primary,
   },
   hotelInfoText: {
-    fontSize: sizes.h3,
+    fontSize: sizes.body+2,
+    color: colors.gray,
   },
   backButton: {
     position: 'absolute',

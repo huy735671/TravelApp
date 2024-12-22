@@ -17,11 +17,16 @@ import RoomsBottomSheet from './RoomsBottomSheet';
 import HotelReviews from '../Reviews/Hotels/HotelReviews';
 import firestore from '@react-native-firebase/firestore';
 import Divider from '../shared/Divider';
+import ImageViewing from 'react-native-image-viewing';
+
 
 const HotelDetailsCarousel = ({hotel}) => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [cheapestRoom, setCheapestRoom] = useState(null);
+  const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
 
   const fetchCheapestRoom = async hotelId => {
     try {
@@ -84,6 +89,10 @@ const HotelDetailsCarousel = ({hotel}) => {
       </View>
     );
   }
+  const handleImagePress = (index) => {
+    setSelectedImageIndex(index);
+    setImageViewVisible(true);
+  };
 
   const renderAmenities = () => {
     return hotel.amenities.map((amenity, index) => (
@@ -110,6 +119,7 @@ const HotelDetailsCarousel = ({hotel}) => {
         source={{uri: hotel.imageUrl}}
         style={[styles.image, {height: imageHeight}]}
       />
+      
 
       <Animated.ScrollView
         style={styles.content}
@@ -118,6 +128,19 @@ const HotelDetailsCarousel = ({hotel}) => {
           {useNativeDriver: false},
         )}
         scrollEventThrottle={16}>
+
+<ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={styles.galleryContainer}>
+          {hotel.gallery &&
+            hotel.gallery.map((imageUrl, index) => (
+              <TouchableOpacity key={index} onPress={() => handleImagePress(index)}>
+                <Image source={{uri: imageUrl}} style={styles.galleryImage} />
+              </TouchableOpacity>
+            ))}
+        </ScrollView>
+
         <View style={{marginTop: 20, paddingHorizontal: 16,}}>
           <Text style={[styles.title,{marginBottom: 10}]}>{hotel.title}</Text>
 
@@ -197,7 +220,14 @@ const HotelDetailsCarousel = ({hotel}) => {
           onClose={() => setBottomSheetVisible(false)}
         />
       )}
+      <ImageViewing
+        images={hotel.gallery.map((uri) => ({uri}))}
+        imageIndex={selectedImageIndex}
+        visible={isImageViewVisible}
+        onRequestClose={() => setImageViewVisible(false)}
+      />
     </View>
+
   );
 };
 
@@ -320,6 +350,19 @@ const styles = StyleSheet.create({
     fontSize: sizes.body,
     color: colors.primary,
   },
+  galleryContainer: {
+    marginVertical: 10,
+    marginHorizontal: 16,
+  },
+  
+  galleryImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    marginRight: 10,
+    resizeMode: 'cover',
+  },
+  
 });
 
 export default HotelDetailsCarousel;
